@@ -18,3 +18,5 @@ Thumbs.db
 .idea/
 # Claude Code local settings may contain credentials
 .claude/settings.local.json
+# Seeded fixture for the boundaries test (T013a), not a build output
+!tooling/boundaries/fixtures/packages/rules/dist/

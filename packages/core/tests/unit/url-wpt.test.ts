@@ -22,11 +22,11 @@ const raw: unknown[] = JSON.parse(
 const vectors = raw.filter((entry): entry is Vector => typeof entry === 'object');
 
 /**
- * Inputs where the native `URL` of the current Node LTS (Ada) still lags the standard: hosts with
- * Punycode labels that are not valid Punycode, which the standard now accepts and Ada rejects.
- * parseUrl returns an explicit `url.invalid` for them, never a wrong result (Principio II). The
- * test asserts they still diverge, so it fails as soon as the platform is fixed and the entry
- * can be removed. Documented in research.md (R2) as an FR-022 divergence.
+ * Inputs where the native `URL` of some Node releases (Ada) lags the standard: hosts with
+ * Punycode labels that are not valid Punycode, which the standard now accepts and older Ada
+ * rejects. On those releases parseUrl returns an explicit `url.invalid`, never a wrong result
+ * (Principio II); on releases that fixed it, the result must match the vector like any other.
+ * Documented in research.md (R2) as an FR-022 divergence.
  */
 const KNOWN_PLATFORM_DIVERGENCES = new Set([
   'http://a.b.c.xn--pokxncvks',
@@ -52,9 +52,8 @@ describe('parseUrl matches the WHATWG URL Standard (WPT urltestdata.json)', () =
 
   it.each(vectors.map((v, i) => [i, v] as const))('vector %i', (_i, v) => {
     const result = parseUrl(v.input, { standard: true, ...(v.base ? { base: v.base } : {}) });
-    if (KNOWN_PLATFORM_DIVERGENCES.has(v.input)) {
-      expect(result.ok, 'platform fixed: remove it from KNOWN_PLATFORM_DIVERGENCES').toBe(false);
-      if (!result.ok) expect(result.error.code).toBe('url.invalid');
+    if (KNOWN_PLATFORM_DIVERGENCES.has(v.input) && !result.ok) {
+      expect(result.error.code).toBe('url.invalid');
       return;
     }
     if (v.failure) {

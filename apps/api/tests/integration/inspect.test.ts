@@ -17,6 +17,9 @@ let server: Server;
 let base = '';
 const seen: Array<{ path: string; headers: IncomingHttpHeaders }> = [];
 let bytesSent = 0;
+// Far above the 256 KB cap and above what loopback socket buffers absorb (Linux takes several
+// MB), so the server only finishes if the client never stops reading.
+const HUGE_BYTES = 64 * 1024 * 1024;
 
 beforeAll(async () => {
   server = createServer((req, res) => {
@@ -45,7 +48,7 @@ beforeAll(async () => {
       const chunk = 'x'.repeat(64 * 1024);
       let sent = 0;
       const pump = () => {
-        while (sent < 2 * 1024 * 1024) {
+        while (sent < HUGE_BYTES) {
           sent += chunk.length;
           bytesSent = sent;
           if (!res.write(chunk)) return void res.once('drain', pump);
@@ -109,7 +112,7 @@ describe('fetchHop with real undici', () => {
     expect(json.ok && json.value.hops[0]?.type).toBe('final');
     const huge = await inspect(`${base}/huge`, hop());
     expect(huge.ok && huge.value.hops[0]?.type).toBe('final'); // the refresh sits after the cap
-    expect(bytesSent).toBeLessThan(2 * 1024 * 1024);
+    expect(bytesSent).toBeLessThan(HUGE_BYTES);
   });
 
   it('reports 4xx and 5xx as the final hop', async () => {
