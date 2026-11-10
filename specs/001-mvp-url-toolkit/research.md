@@ -189,10 +189,17 @@ Alternativas consideradas.
 
 ## R12. Despliegue y disponibilidad
 
-- **Decisión**: la web estática se despliega en cualquier CDN; la API, como contenedor en un
-  proveedor con autoescalado horizontal y Redis gestionado. Objetivo de disponibilidad del MVP:
-  99,5 % mensual para la web y la API. Si la API cae, las cuatro herramientas locales siguen
-  funcionando porque no dependen de ella.
+- **Decisión** (enmendada el 2026-11-10): la web estática se despliega en cualquier CDN; la API,
+  en el MVP, en **un VPS autogestionado con Docker Compose** (perfil `selfhosted`: Caddy, API,
+  Valkey y `egress-guard`). Cuando el tráfico lo pida, pasa a un proveedor de contenedores con
+  autoescalado horizontal y Valkey gestionado; la API no guarda estado, así que el cambio no toca
+  el código. Objetivo de disponibilidad del MVP: 99,5 % mensual para la web y la API. Si la API
+  cae, las cuatro herramientas locales siguen funcionando porque no dependen de ella.
+- **Razón de la enmienda**: en un VPS con Docker Engine el cortafuegos de salida ya probado se
+  aplica tal cual, mientras que muchos proveedores gestionados no filtran la salida por rangos. El
+  coste es de unos 5–10 € al mes frente a 30–50 € o más. A cambio no hay redundancia: un fallo del
+  nodo deja sin Redirect Inspector hasta que vuelve, y perder Valkey solo reinicia los contadores
+  de cuota.
 - **Razón**: separar el contenido estático del único servicio con estado externo reduce coste y
   riesgo. El proveedor concreto se elige al desplegar; el plan no depende de él.
 - **Nota**: la web no se sirve desde Docker Compose. Es lo que hace que las herramientas locales

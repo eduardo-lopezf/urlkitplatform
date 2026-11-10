@@ -74,12 +74,14 @@ funcionando sin límite porque no pasan por el servidor.
 
 Solo contadores agregados, sin etiquetas que permitan distinguir visitantes:
 
-- Usos por herramienta y resultado (`éxito` o `error`).
+- Usos por herramienta y resultado: `éxito`, `error`, resultado copiado o resultado enviado a
+  otra herramienta.
 - Errores por herramienta y código.
 - Duración de las inspecciones.
 
-La web envía un único evento mínimo `{herramienta, resultado}` con `sendBeacon`. No lleva la URL,
-ni identificador, ni cookie, ni referente útil. No hay analítica de terceros de ningún tipo.
+La web envía un único evento mínimo `{herramienta, resultado}` con una petición `fetch` que sigue
+adelante aunque cierres la página (`keepalive`). No lleva la URL, ni identificador, ni cookie, ni
+referente. No hay analítica de terceros de ningún tipo.
 
 ## Enlaces compartibles
 
@@ -96,11 +98,38 @@ copiarlo.
   tu dirección IP en el momento de la conexión, porque sin ella no hay respuesta posible. No se
   almacena ni se registra; para los contadores se usa el seudónimo descrito arriba.
 - **El proveedor de infraestructura existe.** La web se sirve desde un CDN y la API desde un
-  proveedor de contenedores; ambos pueden mantener sus propios registros operativos, sobre los
-  que aplican sus políticas y no las nuestras. Se elegirán proveedores cuyos registros no incluyan
-  rutas ni consultas, y el proveedor concreto se publicará cuando se despliegue.
+  servidor alquilado. El CDN puede mantener sus propios registros operativos, sobre los que aplica
+  sus políticas y no las nuestras. En el servidor, el cifrado termina en nuestro propio proxy, así
+  que su proveedor ve el tráfico pero no su contenido. Cuáles son y qué registran está en
+  [Proveedores y qué registran](#proveedores-y-qué-registran).
 - **El sitio que inspeccionas sabe que alguien lo inspeccionó.** Verá una petición de nuestro
   servicio, con un `User-Agent` identificable. No sabrá quién la pidió.
+
+## Proveedores y qué registran
+
+> **Borrador (T114).** Se completa al desplegar (T111 y T112). Lo marcado como _por confirmar_
+> todavía no es un compromiso.
+
+| Pieza | Quién | Qué recibe de tu visita | Qué registra |
+|---|---|---|---|
+| Web: páginas, código y catálogo de reglas | Cloudflare Pages | Tu IP, tu navegador y la página que abres (`/es/clean`). Nunca la URL que escribes: no sale del navegador, y en un enlace compartido va en el fragmento | _Por confirmar_: qué registra Cloudflare de las visitas a Pages y cuánto tiempo lo guarda. No activamos Web Analytics, Bot Fight Mode ni Zaraz |
+| Servidor de la API | Proveedor de VPS _por elegir_ (candidato: Hetzner Cloud, en la UE) | Tráfico cifrado: IPs, puertos y volumen. No ve rutas, consultas ni la URL que inspeccionas, porque el cifrado termina en nuestro Caddy | _Por confirmar_: qué registros de red guarda el proveedor |
+| Proxy TLS | Caddy, en nuestro servidor | La petición completa | Nada de la petición. No hay registro de accesos, y los errores llevan solo mensaje, estado y duración (comprobado el 2026-11-10) |
+| Contadores de cuota | Valkey, en nuestro servidor | El seudónimo del día | El contador, que caduca con su ventana |
+| DNS de la API | _Por elegir_. Si es Cloudflare, en modo «solo DNS» | Las consultas por el nombre de la API, que normalmente hace tu resolvedor y no tu dispositivo | _Por confirmar_ |
+| Certificado TLS | La autoridad que usa Caddy (Let's Encrypt por defecto) | Nada de tus visitas: solo el nombre de la API al emitir el certificado | — |
+| Errores (opcional) | _Por decidir_ si se activa Sentry | Errores sin campos de entrada, depurados antes de enviarse | Lo que establezca su política, si se activa |
+| Trazas (opcional) | _Por decidir_ si se activa un destino OTLP | Trazas con, como mucho, el dominio registrable del destino | Lo que establezca su política, si se activa |
+
+El repositorio y el build de la web están en GitHub y Cloudflare; ninguno de los dos recibe datos
+de quien visita la web.
+
+Antes de quitar la marca de borrador:
+
+- Elegir el proveedor del VPS y enlazar su política de privacidad.
+- Confirmar con la documentación de Cloudflare qué registra de las visitas a Pages y del DNS.
+- Decidir si se activan Sentry y OTLP; si no, quitar sus filas.
+- Actualizar la fecha de la cabecera.
 
 ## Cómo verificarlo
 

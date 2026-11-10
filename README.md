@@ -93,7 +93,14 @@ Guía de contribución y puertas de calidad: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licencia
 
-Pendiente de decidir. Hasta que se publique un fichero `LICENSE`, todos los derechos reservados.
+[Functional Source License 1.1, con Apache 2.0 como licencia futura](LICENSE.md)
+(`FSL-1.1-ALv2`).
+
+- Puedes usar, copiar, modificar, autoalojar y auditar el código con cualquier fin **excepto
+  ofrecer un producto o servicio que compita** con URLkit.
+- Cada versión pasa automáticamente a **Apache 2.0** dos años después de publicarse.
+- No es una licencia de código abierto según la OSI: el código es público, pero con esa
+  restricción temporal.
 
 El catálogo de reglas es propio. Las listas públicas de parámetros de seguimiento (ClearURLs,
 AdGuard) se usan solo como referencia de contraste, y cualquier dato importado requiere revisión

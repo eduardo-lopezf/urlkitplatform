@@ -1,8 +1,10 @@
-# Development entry point. The web is static and goes to a CDN, so it is not part of Compose.
+# Development entry point and, with `--profile selfhosted`, the MVP production stack on one VPS
+# (research R12). The web is static and goes to a CDN, so it is not part of Compose.
 # Cross-service configuration lives in infrastructure/ (see infrastructure/README.md).
 services:
   redis:
     image: valkey/valkey:8-alpine
+    restart: unless-stopped
     # Host ports are bound to loopback only: Valkey has no password, and with the `selfhosted`
     # profile only Caddy (80/443) may face the outside. Same for the API and monitoring below.
     ports:
@@ -11,14 +13,22 @@ services:
     networks: [default, internal]
 
   api:
-    profiles: [full]
+    profiles: [full, selfhosted]
     build: { context: ., dockerfile: apps/api/Dockerfile }
+    restart: unless-stopped
     environment:
       REDIS_URL: redis://redis:6379
       # `:?` would break `docker compose up -d` for Valkey alone: Compose interpolates every service.
       # Without a secret of 32+ characters the API refuses to start (NODE_ENV=production).
       QUOTA_SECRET: ${QUOTA_SECRET:-}
       WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:4321}
+      # Empty means disabled (see .env.example).
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      # Caddy is the only way in from outside (8787 is bound to loopback), so the client IP for
+      # quotas is the last X-Forwarded-For entry, the one Caddy adds. Without it every visitor
+      # would share Caddy's address and a single quota.
+      TRUST_PROXY: '1'
     ports:
       - '127.0.0.1:8787:8787'
     depends_on: [redis]
@@ -26,23 +36,33 @@ services:
     # ranges are dropped by egress-guard. Second barrier: never a substitute for IP validation.
     networks: [internal, egress]
 
-  # Applies the egress firewall to the egress network on the Docker host (Linux only).
+  # Applies the egress firewall to the egress network on the Docker host (Linux Docker Engine
+  # and the Docker Desktop VM). The rules are lost on reboot, so it stays running: Docker restarts
+  # it at boot and it applies them again (the script is idempotent).
   egress-guard:
-    profiles: [full]
+    profiles: [full, selfhosted]
     image: alpine:3.22
     network_mode: host
     cap_add: [NET_ADMIN]
+    init: true
     volumes:
       - ./infrastructure/egress/apply-rules.sh:/apply-rules.sh:ro
-    command: ['sh', '/apply-rules.sh', '172.30.0.0/24']
-    restart: 'no'
+    command: ['sh', '-c', 'sh /apply-rules.sh 172.30.0.0/24 && exec sleep infinity']
+    restart: unless-stopped
 
   caddy:
     profiles: [selfhosted]
     image: caddy:2-alpine
+    restart: unless-stopped
     ports: ['80:80', '443:443']
+    environment:
+      # The public name of the API; `localhost` gets a certificate from Caddy's local CA.
+      API_DOMAIN: ${API_DOMAIN:-localhost}
     volumes:
       - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      # Certificates and ACME account survive recreations (Let's Encrypt rate-limits reissues).
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on: [api]
     # Caddy needs inbound ports and outbound ACME, so it shares the egress network with the API.
     networks: [egress]
@@ -62,6 +82,10 @@ services:
       - ./infrastructure/monitoring/otel-collector.yaml:/etc/otelcol/config.yaml:ro
     ports: ['127.0.0.1:4318:4318']
     networks: [internal]
+
+volumes:
+  caddy_data: {}
+  caddy_config: {}
 
 networks:
   default: {}

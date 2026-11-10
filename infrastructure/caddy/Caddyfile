@@ -1,4 +1,17 @@
 # Only for self-hosted deployments. With a managed provider TLS is terminated there.
+{
+	# Caddy's own logs (errors such as a 502) include the request: client IP, URI and headers.
+	# Keep the message and drop the request (Principio V: never log URLs, queries or IPs).
+	log default {
+		output stderr
+		format filter {
+			fields {
+				request delete
+			}
+		}
+	}
+}
+
 {$API_DOMAIN:api.urlkit.example} {
 	encode zstd gzip
 	# Operational endpoints stay internal.

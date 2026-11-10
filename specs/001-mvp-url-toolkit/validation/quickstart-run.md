@@ -104,3 +104,42 @@ claves `quota:*` con TTL y sujeto seudonimizado.
 Sin cubrir: un host Linux con Docker Engine (mismo mecanismo, no ejecutado allí), y los servicios
 que escuchan en el propio host, que no pasan por `DOCKER-USER` (documentado en
 `infrastructure/README.md`).
+
+## IP del cliente detrás de Caddy (2026-11-10)
+
+Antes, Compose no definía `TRUST_PROXY`: detrás de Caddy todas las visitas habrían compartido una
+cuota. Además, la API tomaba la primera entrada de `X-Forwarded-For`, que escribe el cliente. Ahora
+`TRUST_PROXY=1` y se toma la última (`apps/api/src/quota/client-ip.ts`, prueba en
+`apps/api/tests/integration/client-ip.test.ts`, en rojo con la lógica anterior).
+
+Con el `Caddyfile` real (en HTTP, `API_DOMAIN=:8080`) delante de la imagen reconstruida:
+
+| Comprobación | Resultado |
+|---|---|
+| 3 peticiones desde el Mac con `X-Forwarded-For` falsificado distinto | ✅ un único sujeto `anon-ip`, contador 3 |
+| 1 petición desde otro contenedor | ✅ sujeto distinto, contador 1 |
+| `/internal/metrics` a través de Caddy | ✅ 404 |
+
+## Perfil `selfhosted` en local (T110, 2026-11-10)
+
+`docker compose --profile selfhosted up -d --build` en Docker Desktop (macOS), con
+`API_DOMAIN=localhost` (certificado de la CA local de Caddy).
+
+| Comprobación | Resultado |
+|---|---|
+| `--profile selfhosted` solo arranca Valkey, API, egress-guard y Caddy | ✅ antes fallaba: Caddy dependía de `api`, que solo estaba en `full` |
+| Comprobación de API del quickstart a través de Caddy (HTTPS) | ✅ `output` = `https://ejemplo.com/?id=1` |
+| HTTP → HTTPS | ✅ 308 |
+| `/internal/metrics` a través de Caddy | ✅ 404 |
+| Escenarios 5 y 6 a través de Caddy | ✅ `final` (301 → 303 → 200) y `blocked` |
+| Reglas de salida tras perderlas y reiniciar los contenedores (como en un arranque) | ✅ 0 → 16 reglas; `10.0.0.1` bloqueado |
+| Certificado de Caddy tras recrear el contenedor | ✅ mismo número de serie (volumen `caddy_data`) |
+| Logs de Caddy con un 502 provocado y `X-Forwarded-For`, consulta y cabeceras de prueba | ✅ solo mensaje, estado y duración; ninguna IP, URI ni cabecera |
+
+**Fallo encontrado y corregido**: los logs de error de Caddy incluían la petición completa (IP del
+cliente, URI y cabeceras). `log { output discard }` solo descartaba el log de acceso. El
+`Caddyfile` filtra ahora la petición en el logger por defecto.
+
+No probado: un reinicio real de la máquina o de Docker Desktop. Se simuló borrando las reglas y
+reiniciando los contenedores; que Docker arranque al inicio los servicios con
+`restart: unless-stopped` es su comportamiento estándar.

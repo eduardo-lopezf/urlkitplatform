@@ -24,3 +24,34 @@ jobs:
       - run: pnpm build
       - run: pnpm size
       - run: pnpm lhci
+
+  # Second SSRF barrier (Principio V) on Linux Docker Engine, which T110 could only test on
+  # Docker Desktop. It does not replace T111: the provider's own network is not tested here.
+  egress-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Valkey, API and egress-guard on Docker Engine
+        env:
+          QUOTA_SECRET: ci-only-${{ github.run_id }}-0123456789abcdef0123
+        run: docker compose --profile full up -d --build --wait redis api egress-guard
+      - name: Egress rules are in place
+        run: |
+          for i in $(seq 1 15); do
+            n=$(sudo iptables -S DOCKER-USER | grep -c 172.30.0.0/24 || true)
+            [ "$n" -ge 16 ] && exit 0; sleep 2
+          done
+          sudo iptables -S DOCKER-USER; exit 1
+      # GitHub runners are Azure VMs, where the metadata service answers. Without this control,
+      # a blocked probe would prove nothing: an address that does not exist also fails.
+      - name: Control - the runner itself reaches the cloud metadata service
+        run: curl -sf -m 3 -H 'Metadata:true' 'http://169.254.169.254/metadata/instance?api-version=2021-02-01' >/dev/null
+      # Not `! probe`: bash -e ignores negated commands, so the step would never fail.
+      - name: The API container cannot
+        run: |
+          probe() { docker compose exec -T api node -e "
+            const s = require('net').connect({ host: '$1', port: $2, timeout: 3000 });
+            s.on('connect', () => process.exit(0));
+            s.on('timeout', () => process.exit(1)); s.on('error', () => process.exit(1));"; }
+          if probe 169.254.169.254 80; then echo 'reached metadata'; exit 1; fi
+          probe 1.1.1.1 443 || { echo 'public egress broken'; exit 1; }

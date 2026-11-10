@@ -15,3 +15,5 @@ tooling/boundaries/fixtures/
 # Hand-formatted project documents: Prettier would rewrap their tables and lists.
 CLAUDE.md
 docs/
+# Legal text: kept exactly as published at fsl.software.
+LICENSE.md

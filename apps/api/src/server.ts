@@ -14,6 +14,7 @@ import { createMetrics } from './metrics/registry.ts';
 import { initErrorReporting } from './observability/errors.ts';
 import { initTracing } from './observability/tracing.ts';
 import { createLogger } from './privacy/logger.ts';
+import { clientIpFrom } from './quota/client-ip.ts';
 import { createLimiter } from './quota/limiter.ts';
 import { MemoryStore, RedisStore, type QuotaStore } from './quota/store.ts';
 
@@ -46,13 +47,13 @@ async function quotaStore(): Promise<QuotaStore> {
   );
 }
 
-/** Behind a proxy (Caddy, a load balancer) the client IP comes from X-Forwarded-For. */
+/** Behind Caddy (TRUST_PROXY=1) the client IP comes from X-Forwarded-For. */
 function clientIp(c: Context): string {
-  if (env.TRUST_PROXY === '1') {
-    const forwarded = c.req.header('x-forwarded-for')?.split(',')[0]?.trim();
-    if (forwarded) return forwarded;
-  }
-  return getConnInfo(c).remote.address ?? 'unknown';
+  return clientIpFrom({
+    forwardedFor: c.req.header('x-forwarded-for'),
+    remote: getConnInfo(c).remote.address,
+    trustProxy: env.TRUST_PROXY === '1',
+  });
 }
 
 await initTracing(env);

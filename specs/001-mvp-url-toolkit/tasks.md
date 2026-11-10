@@ -297,6 +297,23 @@ botones; la URL se conserva; un enlace copiado reproduce la entrada en otra vent
 
 ---
 
+## Phase 10: Deployment (self-hosted MVP)
+
+**Purpose**: Poner el MVP en producción: web en CDN y API en un VPS autogestionado con Compose
+(research R12, enmendada el 2026-11-10). T111–T114 necesitan el VPS, el dominio y las cuentas.
+
+- [X] T106 Amend research R12 and `docs/arquitectura.md` §13: the MVP API runs on one self-hosted VPS with Docker Compose (Caddy, API, Valkey, egress-guard); a managed provider with autoscaling and managed Valkey comes when traffic requires it
+- [X] T107 Make the `selfhosted` profile of `docker-compose.yml` production-ready: `--profile selfhosted` alone starts Valkey, API, egress-guard and Caddy; `restart: unless-stopped`; Caddy receives `API_DOMAIN`, keeps its certificates in a named volume and never logs the request (client IP, URI, headers); egress-guard re-applies its rules on every boot
+- [X] T108 [P] Add `.env.example` at repository root with every production variable (`QUOTA_SECRET`, `API_DOMAIN`, `WEB_ORIGIN`, `SENTRY_DSN`, `OTEL_EXPORTER_OTLP_ENDPOINT`) and how to generate the secret; `.env` stays out of git
+- [X] T109 [P] Document the deployment runbook (VPS and inbound firewall, DNS-only record for the API, Cloudflare Pages build settings with `PUBLIC_API_URL`, first deploy and updates) in `infrastructure/README.md`
+- [X] T110 Verify the `selfhosted` stack locally end to end (Caddy with local TLS, quickstart API check through Caddy, egress rules back after a Docker restart) and record it in `specs/001-mvp-url-toolkit/validation/quickstart-run.md`
+- [ ] T111 Provision the VPS and its firewall, deploy with `--profile selfhosted` and verify egress-guard on Linux Docker Engine
+- [ ] T112 Create the Cloudflare Pages project, build with `PUBLIC_API_URL` pointing at the API and check that `_headers` is served
+- [ ] T113 Run the quickstart scenarios against production and record them in `specs/001-mvp-url-toolkit/validation/production-run.md`
+- [ ] T114 Publish the chosen providers and what their own logs contain in `docs/privacidad.md`, as that document promises
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -305,6 +322,7 @@ botones; la URL se conserva; un enlace copiado reproduce la entrada en otra vent
 - **Foundational (Phase 2)**: depends on Setup — BLOCKS all user stories
 - **User Stories (Phases 3–8)**: depend on Foundational
 - **Polish (Phase 9)**: depends on the desired stories being complete
+- **Deployment (Phase 10)**: depends on Polish; T106 → T107 → T110 → T111 → T113; T112 after T111 (needs the API domain); T114 once providers are in place
 
 ### User Story Dependencies
 

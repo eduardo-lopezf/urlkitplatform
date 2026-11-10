@@ -417,7 +417,9 @@ lugar de confiar en los logs.
 
 - La web es **estática y va a CDN**. Es lo que hace que las herramientas locales tengan coste
   marginal cero, y por tanto no se sirve desde un contenedor propio.
-- La API es un contenedor OCI sin estado, escalable horizontalmente, con Valkey gestionado.
+- La API es un contenedor OCI sin estado y escalable horizontalmente. En el MVP corre en un único
+  VPS autogestionado con Compose (perfil `selfhosted`) junto a Valkey, Caddy y `egress-guard`; pasa
+  a un proveedor con autoescalado y Valkey gestionado cuando el tráfico lo pida (research R12).
 - Si la API cae, las cuatro herramientas locales siguen funcionando; solo se degrada Redirect
   Inspector.
 - Docker Compose es para desarrollo y para despliegues autogestionados pequeños. Si se autogestiona,
@@ -447,3 +449,4 @@ lugar de confiar en los logs.
 | 1.0.0 | 2026-11-06 | Documento inicial: decisión de fondo, pila por etapas, adaptador delgado, fronteras, versionado de reglas y mensajes, condición de activación del servicio Python |
 | 1.1.0 | 2026-11-06 | Estructura del repositorio revisada: paquete `contracts`, fronteras internas verificadas en CI, catálogo inyectado en el núcleo, ubicación y aplazamiento de `services/probes`, `tests/` y `sdk` |
 | 1.2.0 | 2026-11-06 | Superficie SSRF completa desde el MVP con vectores compartidos entre lenguajes; contratos preparados para claves de API, cuotas por organización y persistencia futura; límites estrictos del servicio de sondas |
+| 1.3.0 | 2026-11-10 | Despliegue del MVP en un VPS autogestionado con Compose; proveedor gestionado con autoescalado y Valkey gestionado cuando el tráfico lo pida |

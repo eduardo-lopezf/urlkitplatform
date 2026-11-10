@@ -5,13 +5,14 @@ necesitan la API y su entorno. Ver [`docs/arquitectura.md`](../docs/arquitectura
 
 | Directorio    | Qué contiene                                    | Cuándo se usa                                               |
 | ------------- | ----------------------------------------------- | ----------------------------------------------------------- |
-| `egress/`     | Cortafuegos de salida para la red del inspector | Compose con el perfil `full` (Linux)                        |
+| `egress/`     | Cortafuegos de salida para la red del inspector | Perfiles `full` y `selfhosted`                              |
 | `caddy/`      | Proxy inverso con HTTPS automático              | Solo si se autogestiona el despliegue (perfil `selfhosted`) |
 | `monitoring/` | Prometheus y colector de OpenTelemetry          | Perfil `monitoring`                                         |
 
 ```bash
 docker compose up -d                          # solo Valkey (desarrollo habitual)
 docker compose --profile full up -d           # + API en contenedor y cortafuegos de salida
+docker compose --profile selfhosted up -d     # producción en un VPS: lo anterior + Caddy
 docker compose --profile monitoring up -d     # + Prometheus y colector OTel
 ```
 
@@ -36,9 +37,11 @@ En Compose:
   respuesta. Las conexiones nuevas hacia esos rangos siguen descartándose.
 
 `DOCKER-USER` existe en Linux con Docker Engine y también en la VM de Docker Desktop, donde
-`network_mode: host` aplica las reglas (comprobado en macOS el 2026-11-09). En Docker Desktop las
-reglas se pierden al reiniciarlo; se vuelven a aplicar con
-`docker compose --profile full run --rm egress-guard`.
+`network_mode: host` aplica las reglas (comprobado en macOS el 2026-11-09). Las reglas se pierden
+al reiniciar la máquina o Docker Desktop, así que `egress-guard` se queda en marcha con
+`restart: unless-stopped`: Docker lo arranca de nuevo y vuelve a aplicarlas. Durante los primeros
+segundos tras un arranque la API puede estar en marcha antes que las reglas; en ese intervalo solo
+protege la validación del código.
 
 Limitación: las reglas filtran el tráfico **reenviado** (cadena `FORWARD`). Las conexiones a
 servicios que escuchan en el propio host no pasan por `DOCKER-USER`; contra ellas la barrera es la
@@ -61,10 +64,94 @@ Con un proveedor de contenedores gestionado se configura la misma política con 
   documenta en el plan de despliegue y la validación del código queda como única barrera; no se
   despliega sin decidirlo explícitamente.
 
+## IP del cliente para las cuotas
+
+La API cuenta las cuotas anónimas por IP seudonimizada. Detrás de Caddy, Compose define
+`TRUST_PROXY=1` y la API toma la **última** entrada de `X-Forwarded-For`, la que añade Caddy; las
+anteriores las escribe el cliente y permitirían saltarse los límites. Sin `TRUST_PROXY`, todas las
+personas compartirían la IP de Caddy y una sola cuota.
+
+Esto supone **un único proxy** delante de la API. Si se añade otro delante de Caddy (el proxy de
+Cloudflare, un balanceador), hay que declararlo en `trusted_proxies` de Caddy; si no, Caddy
+reenvía la IP de ese proxy y todas sus visitas comparten cuota.
+
 ## Observabilidad
 
+- Caddy no escribe log de acceso, y en sus propios logs (errores como un 502) se borra la petición
+  entera: IP del cliente, URI y cabeceras. Solo quedan el mensaje, el estado y la duración.
 - `monitoring/prometheus.yml` lee `/internal/metrics` de la API. Ese camino no se expone al
   exterior: Caddy responde 404.
 - `monitoring/otel-collector.yaml` recibe trazas OTLP y borra, como segunda barrera, cualquier
   atributo de URL o IP que llegara por error. La API ya limita los atributos a dominio
   registrable, estado y duración.
+
+## Despliegue autogestionado (VPS)
+
+Así se despliega el MVP (research R12): la web en Cloudflare Pages y la API en un VPS con el perfil
+`selfhosted`. Los pasos que necesitan cuentas o el VPS son las tareas T111–T114.
+
+### 1. Servidor
+
+- Un VPS Linux (por ejemplo Hetzner Cloud en la UE) con Ubuntu LTS y **Docker Engine** del
+  repositorio oficial de Docker, no Docker Desktop ni el paquete snap.
+- Cortafuegos de entrada del proveedor: solo 80/tcp, 443/tcp y 443/udp (HTTP/3), y 22/tcp
+  restringido a tu IP. Nada más: Valkey, la API y la monitorización ya escuchan solo en loopback.
+- Actualizaciones de seguridad automáticas del sistema (`unattended-upgrades`).
+
+### 2. DNS
+
+- Un registro `A` de `API_DOMAIN` a la IP del VPS. Sin `AAAA`: la red de salida no tiene IPv6.
+- Si el DNS está en Cloudflare, ese registro va **solo DNS** (nube gris). Con el proxy activado,
+  Caddy vería las IPs de Cloudflare y todas las visitas compartirían cuota (ver "IP del cliente
+  para las cuotas").
+
+### 3. Primer despliegue
+
+```bash
+git clone <repositorio> urlkit && cd urlkit
+cp .env.example .env        # rellenar QUOTA_SECRET (openssl rand -hex 32), API_DOMAIN, WEB_ORIGIN
+docker compose --profile selfhosted up -d --build
+```
+
+Caddy pide el certificado de `API_DOMAIN` al arrancar; el registro DNS tiene que existir antes.
+
+Comprobación:
+
+```bash
+docker compose --profile selfhosted ps                 # cuatro servicios en marcha
+curl -s -X POST https://$API_DOMAIN/v1/clean -H 'content-type: application/json' \
+  -d '{"url":"https://ejemplo.com/?utm_source=x&id=1"}'  # output sin utm_source
+curl -s -o /dev/null -w '%{http_code}\n' https://$API_DOMAIN/internal/metrics   # 404
+sudo iptables -S DOCKER-USER | grep 172.30.0.0/24       # reglas de egress-guard
+```
+
+### 4. Actualizar
+
+```bash
+git pull && docker compose --profile selfhosted up -d --build
+```
+
+No hay datos que migrar ni copias que hacer: Valkey solo guarda contadores con caducidad, y los
+certificados de Caddy viven en el volumen `caddy_data`. Lo único que hay que conservar es `.env`.
+
+### 5. Web en Cloudflare Pages
+
+Proyecto conectado al repositorio de GitHub:
+
+| Ajuste                    | Valor                             |
+| ------------------------- | --------------------------------- |
+| Directorio raíz           | raíz del repositorio              |
+| Comando de build          | `pnpm --filter @urlkit/web build` |
+| Directorio de salida      | `apps/web/dist`                   |
+| Variable `PUBLIC_API_URL` | `https://<API_DOMAIN>`            |
+| Variable `NODE_VERSION`   | `24`                              |
+
+- `PUBLIC_API_URL` se fija en el build: decide a qué API llama Redirect Inspector y qué origen
+  admite la CSP (`connect-src`). Cambiarla exige volver a desplegar la web.
+- `apps/web/public/_headers` llega a `dist/_headers`, y Pages lo aplica tal cual.
+- El dominio propio de la web es el que va en `WEB_ORIGIN` del `.env` del VPS (CORS).
+- **No activar** Web Analytics, Bot Fight Mode ni Zaraz: añaden scripts de terceros o cookies, y
+  el MVP no tiene ninguno de los dos (Principio V).
+
+Sin verificar hasta T112: que la imagen de build de Pages use la versión de pnpm de
+`packageManager` en `package.json`.

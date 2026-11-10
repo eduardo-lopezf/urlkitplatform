@@ -87,6 +87,13 @@ Esto incluye lenguajes futuros: los vectores son datos, no una suite de TypeScri
 Si encuentras un caso que la validación no cubre, **añade el vector primero**; protege a todos los
 lenguajes a la vez.
 
+## Licencia de las contribuciones
+
+El proyecto se publica bajo `FSL-1.1-ALv2` ([`LICENSE.md`](LICENSE.md)). Antes de aceptar
+contribuciones externas se pedirá un acuerdo de contribución (CLA) que permita al titular
+ofrecerlas también bajo otras condiciones, por ejemplo a clientes de la API de pago. Hasta que ese
+acuerdo exista, no se integran contribuciones de terceros.
+
 ## Commits
 
 Un commit por tarea o grupo lógico, con el identificador de la tarea en el mensaje:

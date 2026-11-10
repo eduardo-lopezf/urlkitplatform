@@ -36,9 +36,10 @@ Si no modificaste ningún fichero, dilo explícitamente.
 
 El MVP está **implementado y en validación**: las cinco herramientas, la API `/v1` y la web
 funcionan en local con todas las puertas de calidad en verde. En `specs/001-mvp-url-toolkit/tasks.md`
-hay 122 de 123 tareas marcadas; solo queda abierta T103 (prueba de usabilidad con personas). El
-registro de lo ejecutado está en `specs/001-mvp-url-toolkit/validation/`. Todavía no hay ningún commit en el repositorio. La
-rama de trabajo es `001-mvp-url-toolkit`.
+hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas) y
+T111–T114 (despliegue: necesitan el VPS, el dominio y las cuentas; la guía está en
+`infrastructure/README.md`, "Despliegue autogestionado"). El registro de lo ejecutado está en
+`specs/001-mvp-url-toolkit/validation/`. La rama de trabajo es `001-mvp-url-toolkit`.
 
 El cortafuegos de salida se probó en Docker Desktop (macOS), no en un host Linux con Docker
 Engine. `RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
