@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+.specify/
+.claude/
+specs/
+packages/core/tests/vectors/urltestdata.json
+packages/contracts/openapi.json
+packages/rules/tests/corpus/urls.json
+tooling/boundaries/fixtures/
+# Hand-formatted project documents: Prettier would rewrap their tables and lists.
+CLAUDE.md
+docs/

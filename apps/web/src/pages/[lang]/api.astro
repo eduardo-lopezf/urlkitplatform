@@ -1,0 +1,90 @@
+---
+/**
+ * Human-readable API docs (T101), rendered at build time from the published OpenAPI document
+ * of packages/contracts: the same document the API serves at /v1/openapi.json.
+ */
+import openapi from '@urlkit/contracts/openapi.json';
+import { LANGS, type Lang } from '@urlkit/i18n';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const es = lang === 'es';
+
+type Op = { summary?: string; description?: string; operationId?: string; responses: Record<string, { description?: string }> };
+const paths = Object.entries(openapi.paths as Record<string, Record<string, Op>>);
+const server = (openapi.servers?.[0]?.url as string | undefined) ?? '';
+---
+
+<Base
+  lang={lang}
+  page="api"
+  title={es ? 'API · URLkit' : 'API · URLkit'}
+  description={es ? 'API pública /v1 de URLkit.' : 'URLkit public /v1 API.'}
+>
+  <h1>API /v1</h1>
+  <p class="lede">
+    {
+      es
+        ? 'Las cinco herramientas, sin cuenta y con límites de uso por visitante. Las respuestas usan códigos estables; añade ?lang=es o ?lang=en a /explain para recibir también el texto.'
+        : 'All five tools, no account, with per-visitor limits. Responses use stable codes; add ?lang=es or ?lang=en to /explain to also get the text.'
+    }
+  </p>
+  <p>
+    {es ? 'Contrato completo:' : 'Full contract:'} <code>{server}/openapi.json</code>
+  </p>
+  <ul class="limits">
+    <li>{es ? 'Redirect Inspector: 10 por hora y 50 al día.' : 'Redirect Inspector: 10 per hour and 50 per day.'}</li>
+    <li>{es ? 'Resto de herramientas: 600 por hora.' : 'Other tools: 600 per hour.'}</li>
+    <li>{es ? 'Cabeceras RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset en cada respuesta; Retry-After en las 429.' : 'RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset headers on every response; Retry-After on 429.'}</li>
+  </ul>
+  {
+    paths.map(([path, methods]) =>
+      Object.entries(methods).map(([method, op]) => (
+        <section class="uk-card op">
+          <h2>
+            <code>
+              {method.toUpperCase()} /v1{path}
+            </code>
+          </h2>
+          <p>
+            <strong>{op.summary}</strong>
+            {op.description ? ` — ${op.description}` : ''}
+          </p>
+          <ul class="uk-muted">
+            {Object.entries(op.responses).map(([status, res]) => (
+              <li>
+                <code>{status}</code> {res.description}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )),
+    )
+  }
+  <h2>{es ? 'Ejemplo' : 'Example'}</h2>
+  <pre
+    class="mono">curl -X POST {server}/clean \
+  -H 'content-type: application/json' \
+  -d '&#123;"url":"https://ejemplo.com/?utm_source=x&amp;id=1"&#125;'</pre>
+</Base>
+
+<style>
+  .op {
+    margin-top: var(--space-3);
+  }
+  .op h2 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-base);
+  }
+  .op p,
+  .op ul {
+    margin: 0;
+  }
+  pre {
+    overflow-x: auto;
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+  }
+</style>

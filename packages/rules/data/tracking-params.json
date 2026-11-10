@@ -1,0 +1,531 @@
+[
+  {
+    "id": "tracking.utm",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "prefixes": ["utm_"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "UTM",
+    "reason": "clean.reason.campaign"
+  },
+  {
+    "id": "tracking.fbclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["fbclid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Meta",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.meta-share",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["fb_action_ids", "fb_action_types", "fb_source", "fb_ref"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Meta",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.gclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["gclid", "gclsrc"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Ads",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.dclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["dclid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Display & Video 360",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.gbraid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["gbraid", "wbraid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Ads",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.gad",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["gad_source", "gad_campaignid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Ads",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.srsltid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["srsltid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Merchant Center",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.ga-linker",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["_ga", "_gl"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Analytics",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.msclkid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["msclkid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Microsoft Advertising",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.mailchimp",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["mc_cid", "mc_eid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Mailchimp",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.igshid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["igshid", "igsh"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Instagram",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.yclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["yclid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Yandex",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.hubspot",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["_hsenc", "_hsmi", "__hssc", "__hstc", "__hsfp", "hsctatracking"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "HubSpot",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.hubspot-ads",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "prefixes": ["hsa_"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "HubSpot",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.marketo",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["mkt_tok"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Marketo",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.twclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["twclid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "X (Twitter)",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.twitter-share",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["twitter.com", "x.com"]
+    },
+    "match": {
+      "names": ["ref_src", "ref_url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "X (Twitter)",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.ttclid",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["ttclid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "TikTok",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.si",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["youtube.com", "youtu.be", "spotify.com"]
+    },
+    "match": {
+      "names": ["si"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "YouTube / Spotify",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.youtube-feature",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": ["youtube.com", "youtu.be"]
+    },
+    "match": {
+      "names": ["feature", "pp"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "YouTube",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.linkedin",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["li_fat_id"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.linkedin-trk",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["linkedin.com"]
+    },
+    "match": {
+      "names": ["trk", "trkcampaign", "trackingid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.pinterest",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["epik"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Pinterest",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.snapchat",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["sccid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Snapchat",
+    "reason": "clean.reason.ad-click"
+  },
+  {
+    "id": "tracking.impact",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["irclickid", "irgwc"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Impact",
+    "reason": "clean.reason.affiliate"
+  },
+  {
+    "id": "tracking.matomo",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["pk_campaign", "pk_kwd", "pk_source", "pk_medium", "pk_content"],
+      "prefixes": ["mtm_"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Matomo",
+    "reason": "clean.reason.campaign"
+  },
+  {
+    "id": "tracking.adobe",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["s_cid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Adobe Analytics",
+    "reason": "clean.reason.campaign"
+  },
+  {
+    "id": "tracking.webtrends",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["wt.mc_id"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Webtrends",
+    "reason": "clean.reason.campaign"
+  },
+  {
+    "id": "tracking.omeda",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["oly_anon_id", "oly_enc_id"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Omeda",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.vero",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["vero_id", "vero_conv"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Vero",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.klaviyo",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["_kx"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Klaviyo",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.convertkit",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["ck_subscriber_id"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Kit (ConvertKit)",
+    "reason": "clean.reason.email"
+  },
+  {
+    "id": "tracking.wicked",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["wickedid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Wicked Reports",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.openstat",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["_openstat"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Openstat",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.branch",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "names": ["_branch_match_id", "_branch_referrer"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Branch",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.alibaba-spm",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["aliexpress.com", "aliexpress.us", "alibaba.com"]
+    },
+    "match": {
+      "names": ["spm", "scm"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Alibaba",
+    "reason": "clean.reason.analytics"
+  }
+]

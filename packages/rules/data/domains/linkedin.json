@@ -1,0 +1,98 @@
+[
+  {
+    "id": "wrapper.linkedin-safety-go",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["www.linkedin.com", "linkedin.com"],
+      "path": "/safety/go*",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "tracking.linkedin-share",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["linkedin.com"]
+    },
+    "match": {
+      "names": [
+        "rcm",
+        "lipi",
+        "lici",
+        "licu",
+        "refid",
+        "ebp",
+        "midtoken",
+        "midsig",
+        "trkemail",
+        "eid",
+        "original_referer"
+      ]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.linkedin-context",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": ["linkedin.com"]
+    },
+    "match": {
+      "names": ["originalsubdomain"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "canonical.linkedin-job",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": ["linkedin.com"]
+    },
+    "match": {
+      "pathPattern": "^/(?:comm/)?jobs/view/(?:[^/]*-)?(\\d+)/?$",
+      "canonicalPath": "/jobs/view/$1/",
+      "query": "drop"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.canonical"
+  },
+  {
+    "id": "canonical.linkedin-email",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": ["linkedin.com"]
+    },
+    "match": {
+      "pathPattern": "^/comm/(.+)$",
+      "canonicalPath": "/$1",
+      "query": "keep"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.canonical"
+  }
+]

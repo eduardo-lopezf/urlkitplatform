@@ -1,0 +1,30 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "url": ["/es/", "/es/clean/", "/es/parse/", "/es/inspect/", "/es/diff/", "/es/explain/"],
+      "numberOfRuns": 1,
+      "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": true,
+          "width": 360,
+          "height": 640,
+          "deviceScaleFactor": 2,
+          "disabled": false
+        },
+        "onlyCategories": ["performance", "accessibility", "best-practices"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "first-contentful-paint": ["error", { "maxNumericValue": 1000 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 1000 }],
+        "total-byte-weight": ["error", { "maxNumericValue": 307200 }]
+      }
+    },
+    "upload": { "target": "filesystem", "outputDir": "./.lighthouseci" }
+  }
+}

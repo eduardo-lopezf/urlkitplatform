@@ -1,0 +1,287 @@
+[
+  {
+    "id": "wrapper.google-url",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": [
+        "www.google.com",
+        "google.com",
+        "www.google.es",
+        "google.es",
+        "www.google.co.uk",
+        "google.co.uk",
+        "www.google.de",
+        "google.de",
+        "www.google.fr",
+        "google.fr",
+        "www.google.it",
+        "google.it",
+        "www.google.com.mx",
+        "google.com.mx",
+        "www.google.com.ar",
+        "google.com.ar",
+        "www.google.com.br",
+        "google.com.br",
+        "www.google.ca",
+        "google.ca",
+        "www.google.co.jp",
+        "google.co.jp",
+        "www.google.nl",
+        "google.nl",
+        "www.google.pt",
+        "google.pt",
+        "www.google.cl",
+        "google.cl",
+        "www.google.com.co",
+        "google.com.co",
+        "www.google.com.pe",
+        "google.com.pe",
+        "www.google.be",
+        "google.be",
+        "www.google.ch",
+        "google.ch",
+        "www.google.at",
+        "google.at",
+        "www.google.ie",
+        "google.ie",
+        "www.google.co.in",
+        "google.co.in",
+        "www.google.com.au",
+        "google.com.au"
+      ],
+      "path": "/url",
+      "params": ["q", "url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.youtube-redirect",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["www.youtube.com", "youtube.com", "m.youtube.com"],
+      "path": "/redirect",
+      "params": ["q"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "YouTube",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.facebook-l",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["l.facebook.com", "lm.facebook.com", "m.facebook.com"],
+      "path": "/l.php",
+      "params": ["u"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Facebook",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.messenger-l",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["l.messenger.com"],
+      "path": "/l.php",
+      "params": ["u"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Messenger",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.instagram-l",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["l.instagram.com"],
+      "path": "/",
+      "params": ["u"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Instagram",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.threads-l",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["l.threads.net", "l.threads.com"],
+      "path": "/",
+      "params": ["u"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Threads",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.outlook-safelinks",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["*.safelinks.protection.outlook.com"],
+      "path": "/*",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Microsoft Outlook (Safe Links)",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.linkedin-redir",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["www.linkedin.com", "linkedin.com"],
+      "path": "/redir/redirect",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "LinkedIn",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.reddit-out",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["out.reddit.com"],
+      "path": "/*",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Reddit",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.duckduckgo",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["duckduckgo.com", "html.duckduckgo.com"],
+      "path": "/l/*",
+      "params": ["uddg"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "DuckDuckGo",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.vk-away",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["vk.com", "m.vk.com"],
+      "path": "/away.php",
+      "params": ["to"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "VK",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.slack-redir",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["slack-redir.net"],
+      "path": "/link",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Slack",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.steam-linkfilter",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["steamcommunity.com"],
+      "path": "/linkfilter/*",
+      "params": ["url", "u"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Steam",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.disqus",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["disq.us"],
+      "path": "/url",
+      "params": ["url"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Disqus",
+    "reason": "clean.reason.wrapper"
+  },
+  {
+    "id": "wrapper.tumblr",
+    "kind": "wrapper",
+    "mode": "safe",
+    "scope": "global",
+    "match": {
+      "hosts": ["t.umblr.com"],
+      "path": "/redirect",
+      "params": ["z"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Tumblr",
+    "reason": "clean.reason.wrapper"
+  }
+]

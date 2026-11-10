@@ -1,0 +1,26 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    # Real Valkey so apps/api/tests/integration/valkey.test.ts runs instead of being skipped.
+    services:
+      redis:
+        image: valkey/valkey:8-alpine
+        ports: ['6379:6379']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm boundaries
+      - run: pnpm test
+        env: { REDIS_URL: 'redis://localhost:6379' }
+      - run: pnpm --filter @urlkit/web exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - run: pnpm build
+      - run: pnpm size
+      - run: pnpm lhci

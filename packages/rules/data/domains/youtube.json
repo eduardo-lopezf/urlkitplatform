@@ -1,0 +1,34 @@
+[
+  {
+    "id": "tracking.youtube-embed-origin",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["youtube.com"]
+    },
+    "match": {
+      "names": ["embeds_referring_euri", "embeds_referring_origin", "embeds_euri", "source_ve_path"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "YouTube",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.youtube-channel-label",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": ["youtube.com"]
+    },
+    "match": {
+      "names": ["ab_channel"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "YouTube",
+    "reason": "clean.reason.analytics"
+  }
+]

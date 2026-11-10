@@ -1,0 +1,36 @@
+{
+  "name": "@urlkit/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit",
+    "test:e2e": "playwright test",
+    "size": "size-limit",
+    "lhci": "lhci autorun",
+    "check:astro": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/vue": "^7.1.2",
+    "@urlkit/contracts": "workspace:*",
+    "@urlkit/core": "workspace:*",
+    "@urlkit/i18n": "workspace:*",
+    "@urlkit/rules": "workspace:*",
+    "@urlkit/ui": "workspace:*",
+    "astro": "^7.4.7",
+    "vue": "^3.5.45"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.14.0",
+    "@lhci/cli": "^0.16.0",
+    "@playwright/test": "^1.65.0",
+    "@size-limit/preset-app": "^14.3.0",
+    "size-limit": "^14.3.0",
+    "typescript": "~6.0.3",
+    "vue-tsc": "^3.3.14"
+  }
+}

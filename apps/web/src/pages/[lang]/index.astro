@@ -1,0 +1,14 @@
+---
+import { t, LANGS, type Lang } from '@urlkit/i18n';
+import HomeIsland from '../../islands/HomeIsland.vue';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+---
+
+<Base lang={lang} page="" title={`URLkit · ${t('ui.site.tagline', lang)}`} description={t('ui.site.tagline', lang)}>
+  <h1>{t('ui.home.title', lang)}</h1>
+  <p class="lede">{t('ui.site.tagline', lang)}</p>
+  <HomeIsland client:load lang={lang} />
+</Base>

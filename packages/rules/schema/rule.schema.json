@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://urlkit.example/schemas/cleaning-rule.json",
+  "title": "CleaningRule",
+  "description": "A Smart Cleaner rule (data-model.md). Versioned with the catalog: adding a rule is MINOR; changing the id, the mode or the meaning of an existing one is MAJOR.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "mode", "scope", "match", "exceptions", "platform", "reason"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)+$",
+      "description": "Stable identifier, never reused for another rule."
+    },
+    "kind": { "enum": ["tracking-param", "wrapper", "domain-rule"] },
+    "mode": { "enum": ["safe", "max"] },
+    "scope": {
+      "oneOf": [
+        { "const": "global" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["domains"],
+          "properties": {
+            "domains": { "type": "array", "$ref": "#/$defs/domainList", "minItems": 1 }
+          }
+        }
+      ]
+    },
+    "match": { "type": "object" },
+    "exceptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domains"],
+      "properties": { "domains": { "$ref": "#/$defs/domainList" } }
+    },
+    "platform": { "type": "string", "minLength": 1 },
+    "reason": { "$ref": "#/$defs/reason" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "tracking-param" } } },
+      "then": {
+        "properties": {
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "names": { "$ref": "#/$defs/paramList" },
+              "prefixes": { "$ref": "#/$defs/paramList" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "wrapper" } } },
+      "then": {
+        "properties": {
+          "scope": { "const": "global" },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["hosts", "path", "params"],
+            "properties": {
+              "hosts": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string", "pattern": "^(\\*\\.)?[a-z0-9.-]+$" },
+                "description": "Exact hosts; a leading `*.` also matches any subdomain."
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^/",
+                "description": "Exact path, or a prefix when it ends in `*`."
+              },
+              "params": { "$ref": "#/$defs/paramList" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "domain-rule" } } },
+      "then": {
+        "properties": {
+          "mode": { "const": "max" },
+          "scope": { "type": "object" },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["pathPattern", "canonicalPath", "query"],
+            "properties": {
+              "pathPattern": { "type": "string", "pattern": "^\\^" },
+              "canonicalPath": { "type": "string", "pattern": "^/" },
+              "query": { "enum": ["drop", "keep"] }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "domainList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9-]+(?:\\.[a-z0-9-]+)+$" }
+    },
+    "paramList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9_.-]+$" }
+    },
+    "reason": {
+      "enum": [
+        "clean.reason.campaign",
+        "clean.reason.ad-click",
+        "clean.reason.email",
+        "clean.reason.analytics",
+        "clean.reason.social",
+        "clean.reason.affiliate",
+        "clean.reason.wrapper",
+        "clean.reason.canonical"
+      ]
+    }
+  }
+}

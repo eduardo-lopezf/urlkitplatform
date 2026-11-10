@@ -1,0 +1,1397 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "URLkit API",
+    "version": "1.0.0",
+    "description": "API v1 del MVP de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional."
+  },
+  "servers": [
+    {
+      "url": "https://api.urlkit.example/v1",
+      "description": "Producción (dominio provisional)"
+    }
+  ],
+  "security": [
+    {},
+    {
+      "apiKey": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "tools"
+    },
+    {
+      "name": "metrics"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "urlkit-api-key",
+        "description": "Clave de API en `Authorization: Bearer <clave>`. Declarada desde la v1 y opcional: sin uso en el MVP. Cuando se active, la clave determinará el sujeto de la cuota (`api-key` u `organization`) y las cabeceras `RateLimit-*` serán las mismas que para el visitante anónimo."
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Clave de API ausente o inválida. Reservada: no se emite en el MVP, donde la clave es opcional.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ToolError"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "CleanResult": {
+        "type": "object",
+        "properties": {
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          },
+          "input": {
+            "type": "string"
+          },
+          "output": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "max"
+            ]
+          },
+          "changed": {
+            "type": "boolean"
+          },
+          "removed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RemovedItem"
+            }
+          },
+          "unwrapped": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxPreview": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "output": {
+                "type": "string"
+              },
+              "extra": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RemovedItem"
+                }
+              }
+            },
+            "required": [
+              "output",
+              "extra"
+            ]
+          }
+        },
+        "required": [
+          "catalogVersion",
+          "input",
+          "output",
+          "mode",
+          "changed",
+          "removed",
+          "unwrapped"
+        ]
+      },
+      "CatalogVersion": {
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$",
+        "description": "Versión del catálogo de reglas aplicada, en versionado semántico. Permite reproducir y auditar un resultado que depende del catálogo.",
+        "example": "1.4.0"
+      },
+      "RemovedItem": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "param",
+              "wrapper",
+              "path"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/MessageRef"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "ruleId",
+          "reason"
+        ]
+      },
+      "MessageRef": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/MessageCode"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "text": {
+            "type": "string",
+            "description": "Solo si se pidió lang"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "MessageCode": {
+        "type": "string",
+        "enum": [
+          "url.invalid",
+          "url.too-long",
+          "url.unsupported-scheme",
+          "inspect.blocked",
+          "inspect.blocked.private-address",
+          "inspect.blocked.scheme",
+          "inspect.blocked.credentials",
+          "inspect.blocked.port",
+          "inspect.blocked.unresolvable",
+          "inspect.timeout",
+          "inspect.tls",
+          "inspect.network",
+          "inspect.invalid-location",
+          "input.multiple-urls",
+          "input.scheme-assumed",
+          "parse.warning.backslash",
+          "parse.warning.control-chars",
+          "parse.warning.numeric-ipv4",
+          "parse.warning.invalid-encoding",
+          "parse.warning.non-special-scheme",
+          "clean.reason.campaign",
+          "clean.reason.ad-click",
+          "clean.reason.email",
+          "clean.reason.analytics",
+          "clean.reason.social",
+          "clean.reason.affiliate",
+          "clean.reason.wrapper",
+          "clean.reason.canonical",
+          "explain.part.scheme.https",
+          "explain.part.scheme.http",
+          "explain.part.scheme.dangerous",
+          "explain.part.scheme.other",
+          "explain.part.userinfo",
+          "explain.part.host",
+          "explain.part.registrable-domain",
+          "explain.part.subdomain",
+          "explain.part.port",
+          "explain.part.path",
+          "explain.part.param.tracking",
+          "explain.part.param.functional",
+          "explain.part.fragment",
+          "explain.signal.userinfo-deception",
+          "explain.signal.ip-host",
+          "explain.signal.homograph",
+          "explain.signal.mixed-scripts",
+          "explain.signal.excessive-encoding",
+          "explain.signal.double-encoding",
+          "explain.signal.dangerous-scheme",
+          "explain.signal.unusual-port",
+          "explain.signal.nested-url",
+          "explain.signal.abuse-tld",
+          "quota.exceeded",
+          "auth.missing",
+          "auth.invalid",
+          "request.invalid",
+          "request.too-large",
+          "internal.error"
+        ],
+        "description": "Stable message code. Part of the public contract: a published code never changes meaning or disappears without deprecation."
+      },
+      "ToolError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "message": {
+            "$ref": "#/components/schemas/MessageRef"
+          },
+          "part": {
+            "type": "string"
+          },
+          "retryAfterSeconds": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "url.invalid",
+          "url.too-long",
+          "url.unsupported-scheme",
+          "quota.exceeded",
+          "auth.missing",
+          "auth.invalid",
+          "request.invalid",
+          "request.too-large",
+          "internal.error"
+        ]
+      },
+      "UrlInput": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32000
+      },
+      "ParsedUrl": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          },
+          "schemeAssumed": {
+            "type": "boolean"
+          },
+          "scheme": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "host": {
+            "type": "object",
+            "properties": {
+              "ascii": {
+                "type": "string"
+              },
+              "unicode": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "domain",
+                  "ipv4",
+                  "ipv6",
+                  "opaque",
+                  "none"
+                ]
+              }
+            },
+            "required": [
+              "ascii",
+              "unicode",
+              "kind"
+            ]
+          },
+          "registrableDomain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subdomain": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "port": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "isDefault": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "value",
+              "isDefault"
+            ]
+          },
+          "path": {
+            "type": "object",
+            "properties": {
+              "raw": {
+                "type": "string"
+              },
+              "decoded": {
+                "type": "string"
+              },
+              "segments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "raw",
+              "decoded",
+              "segments"
+            ]
+          },
+          "query": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryParam"
+            }
+          },
+          "fragment": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageRef"
+            }
+          }
+        },
+        "required": [
+          "input",
+          "href",
+          "scheme",
+          "host",
+          "port",
+          "path",
+          "query",
+          "warnings"
+        ]
+      },
+      "QueryParam": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rawName": {
+            "type": "string"
+          },
+          "rawValue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "encodingValid": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "index",
+          "name",
+          "value",
+          "rawName",
+          "rawValue",
+          "encodingValid"
+        ]
+      },
+      "UrlComparison": {
+        "type": "object",
+        "properties": {
+          "catalogVersion": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CatalogVersion"
+              },
+              {
+                "description": "Presente solo si se aplicó `ignoreTracking`, que usa el catálogo."
+              }
+            ]
+          },
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "ignoreParamOrder": {
+                "type": "boolean"
+              },
+              "ignoreTracking": {
+                "type": "boolean"
+              },
+              "normalize": {
+                "type": "boolean"
+              }
+            }
+          },
+          "equivalent": {
+            "type": "boolean"
+          },
+          "differences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Difference"
+            }
+          },
+          "cosmetic": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Difference"
+            }
+          }
+        },
+        "required": [
+          "a",
+          "b",
+          "options",
+          "equivalent",
+          "differences",
+          "cosmetic"
+        ]
+      },
+      "Difference": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "string",
+            "enum": [
+              "scheme",
+              "userinfo",
+              "host",
+              "port",
+              "path",
+              "query",
+              "fragment"
+            ]
+          },
+          "param": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string",
+            "enum": [
+              "added",
+              "removed",
+              "modified"
+            ]
+          },
+          "before": {
+            "type": "string"
+          },
+          "after": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "component",
+          "change"
+        ]
+      },
+      "Explanation": {
+        "type": "object",
+        "properties": {
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          },
+          "url": {
+            "$ref": "#/components/schemas/ParsedUrl"
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "component": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "message": {
+                  "$ref": "#/components/schemas/MessageRef"
+                },
+                "platform": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "component",
+                "value",
+                "message"
+              ]
+            }
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Signal"
+            }
+          }
+        },
+        "required": [
+          "catalogVersion",
+          "url",
+          "parts",
+          "signals"
+        ]
+      },
+      "Signal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "userinfo-deception",
+              "ip-host",
+              "homograph",
+              "mixed-scripts",
+              "excessive-encoding",
+              "double-encoding",
+              "dangerous-scheme",
+              "unusual-port",
+              "nested-url",
+              "abuse-tld"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "caution"
+            ]
+          },
+          "message": {
+            "$ref": "#/components/schemas/MessageRef"
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "severity",
+          "message",
+          "evidence"
+        ]
+      },
+      "RedirectChain": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "hops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Hop"
+            },
+            "maxItems": 21
+          },
+          "final": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stopReason": {
+            "type": "string",
+            "enum": [
+              "final",
+              "loop",
+              "max-hops",
+              "blocked",
+              "error",
+              "timeout"
+            ]
+          },
+          "totalMs": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "input",
+          "hops",
+          "final",
+          "stopReason",
+          "totalMs"
+        ]
+      },
+      "Hop": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          },
+          "status": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "permanent",
+              "temporary",
+              "meta-refresh",
+              "javascript",
+              "interstitial",
+              "final"
+            ]
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "durationMs": {
+            "type": "integer"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "https-downgrade",
+                "domain-change"
+              ]
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/MessageRef"
+          }
+        },
+        "required": [
+          "index",
+          "url",
+          "status",
+          "type",
+          "durationMs",
+          "flags"
+        ]
+      },
+      "ToolId": {
+        "type": "string",
+        "enum": [
+          "clean",
+          "parse",
+          "inspect",
+          "diff",
+          "explain"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/clean": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "cleanUrl",
+        "summary": "Smart Cleaner",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "safe",
+                      "max"
+                    ],
+                    "default": "safe"
+                  },
+                  "keep": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": []
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado de limpieza",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleanResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parse": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "parseUrl",
+        "summary": "URL Parser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "URL analizada",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParsedUrl"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/diff": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "diffUrls",
+        "summary": "URL Diff",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "a": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  },
+                  "b": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "ignoreParamOrder": {
+                        "type": "boolean",
+                        "default": true
+                      },
+                      "ignoreTracking": {
+                        "type": "boolean",
+                        "default": false
+                      },
+                      "normalize": {
+                        "type": "boolean",
+                        "default": true
+                      }
+                    },
+                    "default": {
+                      "ignoreParamOrder": true,
+                      "ignoreTracking": false,
+                      "normalize": true
+                    }
+                  }
+                },
+                "required": [
+                  "a",
+                  "b"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comparación",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UrlComparison"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/explain": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "explainUrl",
+        "summary": "Explain URL",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Explicación",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Explanation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspect": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "inspectRedirects",
+        "summary": "Redirect Inspector",
+        "description": "Sigue la cadena de redirecciones desde el servidor. Límite sin cuenta: 10 por hora y 50 por día por visitante. Destinos internos o privados se bloquean.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cadena de redirecciones. Bloqueos, bucles, tiempos de espera y errores TLS se informan aquí con stopReason, no como error HTTP.",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectChain"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metrics/events": {
+      "post": {
+        "tags": [
+          "metrics"
+        ],
+        "operationId": "recordEvent",
+        "summary": "Evento de uso anónimo",
+        "description": "Sin cookies ni identificadores. Solo incrementa contadores agregados. Límite de 300 eventos por hora por visitante; la web ignora en silencio las respuestas 429.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tool": {
+                    "$ref": "#/components/schemas/ToolId"
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "enum": [
+                      "success",
+                      "error",
+                      "copied",
+                      "sent-to"
+                    ]
+                  }
+                },
+                "required": [
+                  "tool",
+                  "outcome"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Registrado"
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "getOpenApi",
+        "summary": "Este contrato",
+        "responses": {
+          "200": {
+            "description": "Documento OpenAPI"
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}

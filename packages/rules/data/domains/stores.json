@@ -1,0 +1,97 @@
+[
+  {
+    "id": "canonical.amazon-product",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": [
+        "amazon.com",
+        "amazon.es",
+        "amazon.co.uk",
+        "amazon.de",
+        "amazon.fr",
+        "amazon.it",
+        "amazon.ca",
+        "amazon.com.mx",
+        "amazon.co.jp",
+        "amazon.nl",
+        "amazon.com.br",
+        "amazon.in",
+        "amazon.com.au"
+      ]
+    },
+    "match": {
+      "pathPattern": "^/(?:[^/]+/)?(?:dp|gp/product|gp/aw/d)/([A-Z0-9]{10})(?:[/?]|$)",
+      "canonicalPath": "/dp/$1",
+      "query": "drop"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Amazon",
+    "reason": "clean.reason.canonical"
+  },
+  {
+    "id": "canonical.ebay-item",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": [
+        "ebay.com",
+        "ebay.es",
+        "ebay.co.uk",
+        "ebay.de",
+        "ebay.fr",
+        "ebay.it",
+        "ebay.ca",
+        "ebay.com.au"
+      ]
+    },
+    "match": {
+      "pathPattern": "^/itm/(?:[^/]+/)?(\\d+)(?:[/?]|$)",
+      "canonicalPath": "/itm/$1",
+      "query": "drop"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "eBay",
+    "reason": "clean.reason.canonical"
+  },
+  {
+    "id": "canonical.aliexpress-item",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": ["aliexpress.com", "aliexpress.us"]
+    },
+    "match": {
+      "pathPattern": "^/item/(\\d+)\\.html$",
+      "canonicalPath": "/item/$1.html",
+      "query": "drop"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "AliExpress",
+    "reason": "clean.reason.canonical"
+  },
+  {
+    "id": "canonical.etsy-listing",
+    "kind": "domain-rule",
+    "mode": "max",
+    "scope": {
+      "domains": ["etsy.com"]
+    },
+    "match": {
+      "pathPattern": "^/(?:[a-z]{2}(?:-[a-z]{2})?/)?listing/(\\d+)(?:/|$)",
+      "canonicalPath": "/listing/$1",
+      "query": "drop"
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Etsy",
+    "reason": "clean.reason.canonical"
+  }
+]

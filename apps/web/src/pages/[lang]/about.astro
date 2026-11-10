@@ -1,0 +1,67 @@
+---
+/** Privacy page (T100): no ads, no account, no cookies, and exactly which counters exist. */
+import { LANGS, type Lang } from '@urlkit/i18n';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const es = lang === 'es';
+---
+
+<Base
+  lang={lang}
+  page="about"
+  title={es ? 'Privacidad · URLkit' : 'Privacy · URLkit'}
+  description={es ? 'Qué guarda URLkit y qué no.' : 'What URLkit stores and what it does not.'}
+>
+  {
+    es ? (
+      <article class="prose">
+        <h1>Privacidad</h1>
+        <p class="lede">Las URLs que escribes no se guardan en ningún sitio, y en cuatro de las cinco herramientas no salen siquiera de tu navegador.</p>
+        <h2>Sin publicidad, sin cuenta, sin cookies</h2>
+        <p>URLkit no muestra anuncios, no pide registrarse y no usa cookies de ningún tipo. Por eso no hay banner de consentimiento: no hay nada que consentir.</p>
+        <h2>Dónde se procesa cada herramienta</h2>
+        <ul>
+          <li><strong>Smart Cleaner, URL Parser, URL Diff y Explain URL</strong>: en tu navegador. La URL no se envía a ningún servidor.</li>
+          <li><strong>Redirect Inspector</strong>: en nuestro servidor, porque alguien tiene que seguir los saltos. El destino ve nuestra petición, no tu IP ni tus cookies. La URL no se guarda ni se registra.</li>
+        </ul>
+        <h2>Lo único que se cuenta</h2>
+        <p>Contadores agregados y anónimos: cuántas veces se usa cada herramienta, cuántas fallan y cuánto tardan las inspecciones. Tu navegador envía solo el nombre de la herramienta y el resultado (por ejemplo, «clean, copied»), sin la URL ni ningún identificador.</p>
+        <h2>El límite de Redirect Inspector</h2>
+        <p>Para aplicar el límite gratuito (10 por hora y 50 al día) se usa un seudónimo de tu IP: un hash con una clave que cambia cada día. La IP no se guarda, el seudónimo desaparece al terminar la ventana del contador y nunca se asocia a las URLs que inspeccionas.</p>
+        <h2>Lo que queda en tu navegador</h2>
+        <p>Solo la preferencia de «limpieza máxima», en el almacenamiento local de tu navegador. No se envía a ningún sitio.</p>
+        <h2>Enlaces compartibles</h2>
+        <p>Cuando copias el enlace de una herramienta, la URL viaja en la parte del enlace que va tras <code>#</code>, que el navegador nunca envía al servidor. Quien reciba el enlace sí verá la URL.</p>
+      </article>
+    ) : (
+      <article class="prose">
+        <h1>Privacy</h1>
+        <p class="lede">The URLs you enter are not stored anywhere, and in four of the five tools they never even leave your browser.</p>
+        <h2>No ads, no account, no cookies</h2>
+        <p>URLkit shows no ads, asks for no sign-up and uses no cookies of any kind. That is why there is no consent banner: there is nothing to consent to.</p>
+        <h2>Where each tool runs</h2>
+        <ul>
+          <li><strong>Smart Cleaner, URL Parser, URL Diff and Explain URL</strong>: in your browser. The URL is not sent to any server.</li>
+          <li><strong>Redirect Inspector</strong>: on our server, because someone has to follow the hops. The destination sees our request, not your IP or cookies. The URL is neither stored nor logged.</li>
+        </ul>
+        <h2>The only thing that is counted</h2>
+        <p>Aggregated, anonymous counters: how often each tool is used, how often it fails and how long inspections take. Your browser sends only the tool name and the outcome (for example "clean, copied"), never the URL or any identifier.</p>
+        <h2>The Redirect Inspector limit</h2>
+        <p>To apply the free limit (10 per hour and 50 per day) a pseudonym of your IP is used: a hash with a key that changes every day. The IP is not stored, the pseudonym disappears when the counter window ends and it is never linked to the URLs you inspect.</p>
+        <h2>What stays in your browser</h2>
+        <p>Only the "maximum cleaning" preference, in your browser's local storage. It is not sent anywhere.</p>
+        <h2>Shareable links</h2>
+        <p>When you copy a tool's link, the URL travels in the part after <code>#</code>, which browsers never send to the server. Whoever receives the link will see the URL.</p>
+      </article>
+    )
+  }
+</Base>
+
+<style>
+  .prose h2 {
+    margin-top: var(--space-5);
+    font-size: var(--text-lg);
+  }
+</style>

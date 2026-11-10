@@ -1,0 +1,76 @@
+# Development entry point. The web is static and goes to a CDN, so it is not part of Compose.
+# Cross-service configuration lives in infrastructure/ (see infrastructure/README.md).
+services:
+  redis:
+    image: valkey/valkey:8-alpine
+    # Host ports are bound to loopback only: Valkey has no password, and with the `selfhosted`
+    # profile only Caddy (80/443) may face the outside. Same for the API and monitoring below.
+    ports:
+      - '127.0.0.1:6379:6379'
+    # `default` lets development reach it on localhost:6379; the API reaches it on `internal`.
+    networks: [default, internal]
+
+  api:
+    profiles: [full]
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    environment:
+      REDIS_URL: redis://redis:6379
+      # `:?` would break `docker compose up -d` for Valkey alone: Compose interpolates every service.
+      # Without a secret of 32+ characters the API refuses to start (NODE_ENV=production).
+      QUOTA_SECRET: ${QUOTA_SECRET:-}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:4321}
+    ports:
+      - '127.0.0.1:8787:8787'
+    depends_on: [redis]
+    # Outbound traffic of the inspector leaves only through the egress network, whose internal
+    # ranges are dropped by egress-guard. Second barrier: never a substitute for IP validation.
+    networks: [internal, egress]
+
+  # Applies the egress firewall to the egress network on the Docker host (Linux only).
+  egress-guard:
+    profiles: [full]
+    image: alpine:3.22
+    network_mode: host
+    cap_add: [NET_ADMIN]
+    volumes:
+      - ./infrastructure/egress/apply-rules.sh:/apply-rules.sh:ro
+    command: ['sh', '/apply-rules.sh', '172.30.0.0/24']
+    restart: 'no'
+
+  caddy:
+    profiles: [selfhosted]
+    image: caddy:2-alpine
+    ports: ['80:80', '443:443']
+    volumes:
+      - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on: [api]
+    # Caddy needs inbound ports and outbound ACME, so it shares the egress network with the API.
+    networks: [egress]
+
+  prometheus:
+    profiles: [monitoring]
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ['127.0.0.1:9090:9090']
+    networks: [internal]
+
+  otel-collector:
+    profiles: [monitoring]
+    image: otel/opentelemetry-collector:0.130.0
+    volumes:
+      - ./infrastructure/monitoring/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports: ['127.0.0.1:4318:4318']
+    networks: [internal]
+
+networks:
+  default: {}
+  # No route to the outside world: Valkey and internal services only.
+  internal:
+    internal: true
+  # The only network with outbound access. Fixed subnet so egress-guard can target it.
+  egress:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

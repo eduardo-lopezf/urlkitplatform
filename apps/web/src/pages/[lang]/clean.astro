@@ -1,0 +1,16 @@
+---
+import { t, LANGS, type Lang } from '@urlkit/i18n';
+import CleanerIsland from '../../islands/CleanerIsland.vue';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const name = t('ui.tool.clean.name', lang);
+const summary = t('ui.tool.clean.summary', lang);
+---
+
+<Base lang={lang} page="clean" title={`${name} · URLkit`} description={summary}>
+  <h1>{name}</h1>
+  <p class="lede">{summary}</p>
+  <CleanerIsland client:load lang={lang} />
+</Base>

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "tracking.tiktok-share",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["tiktok.com"]
+    },
+    "match": {
+      "names": [
+        "_d",
+        "_r",
+        "_t",
+        "is_from_webapp",
+        "sender_device",
+        "sender_web_id",
+        "web_id",
+        "checksum",
+        "preview_pb",
+        "sec_user_id",
+        "user_id",
+        "u_code",
+        "share_app_id",
+        "share_app_name",
+        "share_iid",
+        "share_item_id",
+        "share_link_id",
+        "share_author_id",
+        "source",
+        "timestamp",
+        "tt_from",
+        "social_sharing",
+        "is_copy_url",
+        "enter_from",
+        "enter_method",
+        "refer",
+        "referer_url",
+        "referer_video_id"
+      ]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "TikTok",
+    "reason": "clean.reason.social"
+  }
+]

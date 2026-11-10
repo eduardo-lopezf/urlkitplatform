@@ -1,0 +1,12 @@
+node_modules/
+**/node_modules/
+.git/
+Dockerfile*
+.dockerignore
+*.log*
+.env*
+coverage/
+apps/web/
+specs/
+.specify/
+.claude/

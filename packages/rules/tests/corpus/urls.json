@@ -1,0 +1,2658 @@
+{
+ "description": "Corpus de SC-002. Bases reales de sitios conocidos más parámetros de seguimiento reales añadidos (la salida esperada es la base, sin depender del limpiador), envoltorios reales y casos especiales escritos a mano. Cada regla del catálogo tiene al menos un caso.",
+ "cases": [
+  {
+   "id": "plain-000",
+   "url": "https://www.elpais.com/espana/2026-11-05/noticia.html?utm_source=newsletter&utm_medium=email&utm_campaign=otono-2026",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "plain-001",
+   "url": "https://www.elpais.com/espana/2026-11-05/noticia.html?fbclid=IwAR2xYzAbCdEfGhIjKlMnOp",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "plain-002",
+   "url": "https://www.elpais.com/espana/2026-11-05/noticia.html?gclid=Cj0KCQiA7aSsBhCiARIsALFvovw",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-003",
+   "url": "https://www.elpais.com/espana/2026-11-05/noticia.html?mc_cid=a1b2c3d4e5&mc_eid=f6g7h8i9j0",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "mc_cid",
+    "mc_eid"
+   ]
+  },
+  {
+   "id": "plain-004",
+   "url": "https://www.elpais.com/espana/2026-11-05/noticia.html?_hsenc=p2ANqtz-8xYz&_hsmi=281234567",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "plain-005",
+   "url": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html?igshid=MzRlODBiNWFlZA%3D%3D",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "igshid"
+   ]
+  },
+  {
+   "id": "plain-006",
+   "url": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html?msclkid=7f3c2a1b9e8d4c6a",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "msclkid"
+   ]
+  },
+  {
+   "id": "plain-007",
+   "url": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html?utm_source=twitter&utm_medium=social&utm_content=hilo",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "plain-008",
+   "url": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html?ttclid=E.C.P.CsYBabc",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "ttclid"
+   ]
+  },
+  {
+   "id": "plain-009",
+   "url": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html?mkt_tok=NzAxLUZZWS0wMjIAAAGP",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "mkt_tok"
+   ]
+  },
+  {
+   "id": "plain-010",
+   "url": "https://www.bbc.com/news/world-europe-12345678?yclid=1234567890123456789",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "plain-011",
+   "url": "https://www.bbc.com/news/world-europe-12345678?gbraid=0AAAAADnAbC&wbraid=CjkKCAiAabc",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "gbraid",
+    "wbraid"
+   ]
+  },
+  {
+   "id": "plain-012",
+   "url": "https://www.bbc.com/news/world-europe-12345678?dclid=CJ7n9aHd8ZECFQ",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "dclid"
+   ]
+  },
+  {
+   "id": "plain-013",
+   "url": "https://www.bbc.com/news/world-europe-12345678?twclid=2-7abc123def",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "plain-014",
+   "url": "https://www.bbc.com/news/world-europe-12345678?_ga=2.123456789.987654321&_gl=1%2Aabc%2A_ga%2AMTIz",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "_ga",
+    "_gl"
+   ]
+  },
+  {
+   "id": "plain-015",
+   "url": "https://www.theguardian.com/world/2026/nov/05/article-title?srsltid=AfmBOoqXyZ123",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "srsltid"
+   ]
+  },
+  {
+   "id": "plain-016",
+   "url": "https://www.theguardian.com/world/2026/nov/05/article-title?gad_source=1&gclid=EAIaIQobChMI",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-017",
+   "url": "https://www.theguardian.com/world/2026/nov/05/article-title?li_fat_id=3a5b7c9d-1234",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "li_fat_id"
+   ]
+  },
+  {
+   "id": "plain-018",
+   "url": "https://www.theguardian.com/world/2026/nov/05/article-title?epik=dj0yJnU9YWJj",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "epik"
+   ]
+  },
+  {
+   "id": "plain-019",
+   "url": "https://www.theguardian.com/world/2026/nov/05/article-title?utm_id=123&utm_term=zapatillas",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "plain-020",
+   "url": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html?__hstc=123.abc.1700000000&__hssc=123.1.1700000000&__hsfp=987654",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "__hstc",
+    "__hssc",
+    "__hsfp"
+   ]
+  },
+  {
+   "id": "plain-021",
+   "url": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html?oly_enc_id=1234A5678B&oly_anon_id=abc",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "oly_enc_id",
+    "oly_anon_id"
+   ]
+  },
+  {
+   "id": "plain-022",
+   "url": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html?vero_id=42&vero_conv=xyz",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "plain-023",
+   "url": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html?_kx=abc123.XYZ",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "_kx"
+   ]
+  },
+  {
+   "id": "plain-024",
+   "url": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html?ck_subscriber_id=123456789",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "ck_subscriber_id"
+   ]
+  },
+  {
+   "id": "plain-025",
+   "url": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03&irclickid=Sx8abcDEF&irgwc=1",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "plain-026",
+   "url": "https://www.booking.com/hotel/es/ejemplo.es.html?mtm_campaign=otono&mtm_source=boletin&checkin=2026-12-01&checkout=2026-12-03",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "mtm_campaign",
+    "mtm_source"
+   ]
+  },
+  {
+   "id": "plain-027",
+   "url": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03&pk_campaign=otono&pk_kwd=enlace",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "pk_campaign",
+    "pk_kwd"
+   ]
+  },
+  {
+   "id": "plain-028",
+   "url": "https://www.booking.com/hotel/es/ejemplo.es.html?s_cid=em_2026_otono&checkin=2026-12-01&checkout=2026-12-03",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "plain-029",
+   "url": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03&wt.mc_id=email_otono",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "wt.mc_id"
+   ]
+  },
+  {
+   "id": "plain-030",
+   "url": "https://www.zalando.es/zapatillas-mujer/?order=activation_date&sccid=abc-123",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "sccid"
+   ]
+  },
+  {
+   "id": "plain-031",
+   "url": "https://www.zalando.es/zapatillas-mujer/?wickedid=abc123&order=activation_date",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "plain-032",
+   "url": "https://www.zalando.es/zapatillas-mujer/?order=activation_date&_openstat=dGVzdDsxOzE7",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "_openstat"
+   ]
+  },
+  {
+   "id": "plain-033",
+   "url": "https://www.zalando.es/zapatillas-mujer/?_branch_match_id=1234567890&_branch_referrer=H4sIAAAA&order=activation_date",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "_branch_match_id",
+    "_branch_referrer"
+   ]
+  },
+  {
+   "id": "plain-034",
+   "url": "https://www.zalando.es/zapatillas-mujer/?order=activation_date&hsa_acc=123&hsa_cam=456&hsa_grp=789",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "hsa_acc",
+    "hsa_cam",
+    "hsa_grp"
+   ]
+  },
+  {
+   "id": "plain-035",
+   "url": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/?fb_action_ids=123&fb_action_types=og.likes&fb_source=feed",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "fb_action_ids",
+    "fb_action_types",
+    "fb_source"
+   ]
+  },
+  {
+   "id": "plain-036",
+   "url": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/?igsh=MTc4MmM1",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "igsh"
+   ]
+  },
+  {
+   "id": "plain-037",
+   "url": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/?gclsrc=aw.ds",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "gclsrc"
+   ]
+  },
+  {
+   "id": "plain-038",
+   "url": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/?UTM_SOURCE=Mayusculas&Utm_Medium=Mixto",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "UTM_SOURCE",
+    "Utm_Medium"
+   ]
+  },
+  {
+   "id": "plain-039",
+   "url": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/?utm_source=newsletter&utm_medium=email&utm_campaign=otono-2026",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "plain-040",
+   "url": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234&fbclid=IwAR2xYzAbCdEfGhIjKlMnOp",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "plain-041",
+   "url": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?gclid=Cj0KCQiA7aSsBhCiARIsALFvovw&mc=8551234",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-042",
+   "url": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234&mc_cid=a1b2c3d4e5&mc_eid=f6g7h8i9j0",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "mc_cid",
+    "mc_eid"
+   ]
+  },
+  {
+   "id": "plain-043",
+   "url": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?_hsenc=p2ANqtz-8xYz&_hsmi=281234567&mc=8551234",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "plain-044",
+   "url": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234&igshid=MzRlODBiNWFlZA%3D%3D",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "igshid"
+   ]
+  },
+  {
+   "id": "plain-045",
+   "url": "https://medium.com/@autora/como-limpiar-urls-abc123def456?msclkid=7f3c2a1b9e8d4c6a",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "msclkid"
+   ]
+  },
+  {
+   "id": "plain-046",
+   "url": "https://medium.com/@autora/como-limpiar-urls-abc123def456?utm_source=twitter&utm_medium=social&utm_content=hilo",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "plain-047",
+   "url": "https://medium.com/@autora/como-limpiar-urls-abc123def456?ttclid=E.C.P.CsYBabc",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "ttclid"
+   ]
+  },
+  {
+   "id": "plain-048",
+   "url": "https://medium.com/@autora/como-limpiar-urls-abc123def456?mkt_tok=NzAxLUZZWS0wMjIAAAGP",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "mkt_tok"
+   ]
+  },
+  {
+   "id": "plain-049",
+   "url": "https://medium.com/@autora/como-limpiar-urls-abc123def456?yclid=1234567890123456789",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "plain-050",
+   "url": "https://shop.example.com/products/camiseta?variant=42&gbraid=0AAAAADnAbC&wbraid=CjkKCAiAabc",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "gbraid",
+    "wbraid"
+   ]
+  },
+  {
+   "id": "plain-051",
+   "url": "https://shop.example.com/products/camiseta?dclid=CJ7n9aHd8ZECFQ&variant=42",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "dclid"
+   ]
+  },
+  {
+   "id": "plain-052",
+   "url": "https://shop.example.com/products/camiseta?variant=42&twclid=2-7abc123def",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "plain-053",
+   "url": "https://shop.example.com/products/camiseta?_ga=2.123456789.987654321&_gl=1%2Aabc%2A_ga%2AMTIz&variant=42",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "_ga",
+    "_gl"
+   ]
+  },
+  {
+   "id": "plain-054",
+   "url": "https://shop.example.com/products/camiseta?variant=42&srsltid=AfmBOoqXyZ123",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "srsltid"
+   ]
+  },
+  {
+   "id": "plain-055",
+   "url": "https://docs.python.org/3/library/urllib.parse.html?gad_source=1&gclid=EAIaIQobChMI#module-urllib.parse",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-056",
+   "url": "https://docs.python.org/3/library/urllib.parse.html?li_fat_id=3a5b7c9d-1234#module-urllib.parse",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "li_fat_id"
+   ]
+  },
+  {
+   "id": "plain-057",
+   "url": "https://docs.python.org/3/library/urllib.parse.html?epik=dj0yJnU9YWJj#module-urllib.parse",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "epik"
+   ]
+  },
+  {
+   "id": "plain-058",
+   "url": "https://docs.python.org/3/library/urllib.parse.html?utm_id=123&utm_term=zapatillas#module-urllib.parse",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "plain-059",
+   "url": "https://docs.python.org/3/library/urllib.parse.html?__hstc=123.abc.1700000000&__hssc=123.1.1700000000&__hsfp=987654#module-urllib.parse",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "__hstc",
+    "__hssc",
+    "__hsfp"
+   ]
+  },
+  {
+   "id": "plain-060",
+   "url": "https://www.google.com/search?q=limpiar+urls&hl=es&oly_enc_id=1234A5678B&oly_anon_id=abc",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "oly_enc_id",
+    "oly_anon_id"
+   ]
+  },
+  {
+   "id": "plain-061",
+   "url": "https://www.google.com/search?vero_id=42&vero_conv=xyz&q=limpiar+urls&hl=es",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "plain-062",
+   "url": "https://www.google.com/search?q=limpiar+urls&hl=es&_kx=abc123.XYZ",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "_kx"
+   ]
+  },
+  {
+   "id": "plain-063",
+   "url": "https://www.google.com/search?ck_subscriber_id=123456789&q=limpiar+urls&hl=es",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "ck_subscriber_id"
+   ]
+  },
+  {
+   "id": "plain-064",
+   "url": "https://www.google.com/search?q=limpiar+urls&hl=es&irclickid=Sx8abcDEF&irgwc=1",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "plain-065",
+   "url": "https://news.ycombinator.com/item?id=41234567&mtm_campaign=otono&mtm_source=boletin",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "mtm_campaign",
+    "mtm_source"
+   ]
+  },
+  {
+   "id": "plain-066",
+   "url": "https://news.ycombinator.com/item?pk_campaign=otono&pk_kwd=enlace&id=41234567",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "pk_campaign",
+    "pk_kwd"
+   ]
+  },
+  {
+   "id": "plain-067",
+   "url": "https://news.ycombinator.com/item?id=41234567&s_cid=em_2026_otono",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "plain-068",
+   "url": "https://news.ycombinator.com/item?wt.mc_id=email_otono&id=41234567",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "wt.mc_id"
+   ]
+  },
+  {
+   "id": "plain-069",
+   "url": "https://news.ycombinator.com/item?id=41234567&sccid=abc-123",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "sccid"
+   ]
+  },
+  {
+   "id": "plain-070",
+   "url": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme?wickedid=abc123",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "plain-071",
+   "url": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme?_openstat=dGVzdDsxOzE7",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "_openstat"
+   ]
+  },
+  {
+   "id": "plain-072",
+   "url": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme?_branch_match_id=1234567890&_branch_referrer=H4sIAAAA",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "_branch_match_id",
+    "_branch_referrer"
+   ]
+  },
+  {
+   "id": "plain-073",
+   "url": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme?hsa_acc=123&hsa_cam=456&hsa_grp=789",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "hsa_acc",
+    "hsa_cam",
+    "hsa_grp"
+   ]
+  },
+  {
+   "id": "plain-074",
+   "url": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme?fb_action_ids=123&fb_action_types=og.likes&fb_source=feed",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "fb_action_ids",
+    "fb_action_types",
+    "fb_source"
+   ]
+  },
+  {
+   "id": "plain-075",
+   "url": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/?igsh=MTc4MmM1",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "igsh"
+   ]
+  },
+  {
+   "id": "plain-076",
+   "url": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/?gclsrc=aw.ds",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "gclsrc"
+   ]
+  },
+  {
+   "id": "plain-077",
+   "url": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/?UTM_SOURCE=Mayusculas&Utm_Medium=Mixto",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "UTM_SOURCE",
+    "Utm_Medium"
+   ]
+  },
+  {
+   "id": "plain-078",
+   "url": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/?utm_source=newsletter&utm_medium=email&utm_campaign=otono-2026",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "plain-079",
+   "url": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/?fbclid=IwAR2xYzAbCdEfGhIjKlMnOp",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "plain-080",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?gclid=Cj0KCQiA7aSsBhCiARIsALFvovw",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-081",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?mc_cid=a1b2c3d4e5&mc_eid=f6g7h8i9j0",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "mc_cid",
+    "mc_eid"
+   ]
+  },
+  {
+   "id": "plain-082",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?_hsenc=p2ANqtz-8xYz&_hsmi=281234567",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "plain-083",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?igshid=MzRlODBiNWFlZA%3D%3D",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "igshid"
+   ]
+  },
+  {
+   "id": "plain-084",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?msclkid=7f3c2a1b9e8d4c6a",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "msclkid"
+   ]
+  },
+  {
+   "id": "plain-085",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?utm_source=twitter&utm_medium=social&utm_content=hilo",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "plain-086",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?ttclid=E.C.P.CsYBabc",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "ttclid"
+   ]
+  },
+  {
+   "id": "plain-087",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?mkt_tok=NzAxLUZZWS0wMjIAAAGP",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "mkt_tok"
+   ]
+  },
+  {
+   "id": "plain-088",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?yclid=1234567890123456789",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "plain-089",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?gbraid=0AAAAADnAbC&wbraid=CjkKCAiAabc",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "gbraid",
+    "wbraid"
+   ]
+  },
+  {
+   "id": "plain-090",
+   "url": "https://www.facebook.com/events/123456789012345/?dclid=CJ7n9aHd8ZECFQ",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "dclid"
+   ]
+  },
+  {
+   "id": "plain-091",
+   "url": "https://www.facebook.com/events/123456789012345/?twclid=2-7abc123def",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "plain-092",
+   "url": "https://www.facebook.com/events/123456789012345/?_ga=2.123456789.987654321&_gl=1%2Aabc%2A_ga%2AMTIz",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "_ga",
+    "_gl"
+   ]
+  },
+  {
+   "id": "plain-093",
+   "url": "https://www.facebook.com/events/123456789012345/?srsltid=AfmBOoqXyZ123",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "srsltid"
+   ]
+  },
+  {
+   "id": "plain-094",
+   "url": "https://www.facebook.com/events/123456789012345/?gad_source=1&gclid=EAIaIQobChMI",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-095",
+   "url": "https://store.steampowered.com/app/1091500/?li_fat_id=3a5b7c9d-1234",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "li_fat_id"
+   ]
+  },
+  {
+   "id": "plain-096",
+   "url": "https://store.steampowered.com/app/1091500/?epik=dj0yJnU9YWJj",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "epik"
+   ]
+  },
+  {
+   "id": "plain-097",
+   "url": "https://store.steampowered.com/app/1091500/?utm_id=123&utm_term=zapatillas",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "plain-098",
+   "url": "https://store.steampowered.com/app/1091500/?__hstc=123.abc.1700000000&__hssc=123.1.1700000000&__hsfp=987654",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "__hstc",
+    "__hssc",
+    "__hsfp"
+   ]
+  },
+  {
+   "id": "plain-099",
+   "url": "https://store.steampowered.com/app/1091500/?oly_enc_id=1234A5678B&oly_anon_id=abc",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "oly_enc_id",
+    "oly_anon_id"
+   ]
+  },
+  {
+   "id": "plain-100",
+   "url": "https://www.mercadolibre.com.mx/producto/p/MLM12345678?vero_id=42&vero_conv=xyz",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "plain-101",
+   "url": "https://www.mercadolibre.com.mx/producto/p/MLM12345678?_kx=abc123.XYZ",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "_kx"
+   ]
+  },
+  {
+   "id": "plain-102",
+   "url": "https://www.mercadolibre.com.mx/producto/p/MLM12345678?ck_subscriber_id=123456789",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "ck_subscriber_id"
+   ]
+  },
+  {
+   "id": "plain-103",
+   "url": "https://www.mercadolibre.com.mx/producto/p/MLM12345678?irclickid=Sx8abcDEF&irgwc=1",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "plain-104",
+   "url": "https://www.mercadolibre.com.mx/producto/p/MLM12345678?mtm_campaign=otono&mtm_source=boletin",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "mtm_campaign",
+    "mtm_source"
+   ]
+  },
+  {
+   "id": "plain-105",
+   "url": "https://www.imdb.com/title/tt0111161/?pk_campaign=otono&pk_kwd=enlace",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "pk_campaign",
+    "pk_kwd"
+   ]
+  },
+  {
+   "id": "plain-106",
+   "url": "https://www.imdb.com/title/tt0111161/?s_cid=em_2026_otono",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "plain-107",
+   "url": "https://www.imdb.com/title/tt0111161/?wt.mc_id=email_otono",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "wt.mc_id"
+   ]
+  },
+  {
+   "id": "plain-108",
+   "url": "https://www.imdb.com/title/tt0111161/?sccid=abc-123",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "sccid"
+   ]
+  },
+  {
+   "id": "plain-109",
+   "url": "https://www.imdb.com/title/tt0111161/?wickedid=abc123",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "plain-110",
+   "url": "https://www.spotify.com/es/premium/?_openstat=dGVzdDsxOzE7",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "_openstat"
+   ]
+  },
+  {
+   "id": "plain-111",
+   "url": "https://www.spotify.com/es/premium/?_branch_match_id=1234567890&_branch_referrer=H4sIAAAA",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "_branch_match_id",
+    "_branch_referrer"
+   ]
+  },
+  {
+   "id": "plain-112",
+   "url": "https://www.spotify.com/es/premium/?hsa_acc=123&hsa_cam=456&hsa_grp=789",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "hsa_acc",
+    "hsa_cam",
+    "hsa_grp"
+   ]
+  },
+  {
+   "id": "plain-113",
+   "url": "https://www.spotify.com/es/premium/?fb_action_ids=123&fb_action_types=og.likes&fb_source=feed",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "fb_action_ids",
+    "fb_action_types",
+    "fb_source"
+   ]
+  },
+  {
+   "id": "plain-114",
+   "url": "https://www.spotify.com/es/premium/?igsh=MTc4MmM1",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "igsh"
+   ]
+  },
+  {
+   "id": "plain-115",
+   "url": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002?gclsrc=aw.ds",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "gclsrc"
+   ]
+  },
+  {
+   "id": "plain-116",
+   "url": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002?UTM_SOURCE=Mayusculas&Utm_Medium=Mixto",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "UTM_SOURCE",
+    "Utm_Medium"
+   ]
+  },
+  {
+   "id": "plain-117",
+   "url": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002?utm_source=newsletter&utm_medium=email&utm_campaign=otono-2026",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "plain-118",
+   "url": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002?fbclid=IwAR2xYzAbCdEfGhIjKlMnOp",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "plain-119",
+   "url": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002?gclid=Cj0KCQiA7aSsBhCiARIsALFvovw",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-120",
+   "url": "https://www.netflix.com/title/80057281?mc_cid=a1b2c3d4e5&mc_eid=f6g7h8i9j0",
+   "mode": "safe",
+   "expected": "https://www.netflix.com/title/80057281",
+   "trackingParams": [
+    "mc_cid",
+    "mc_eid"
+   ]
+  },
+  {
+   "id": "plain-121",
+   "url": "https://www.netflix.com/title/80057281?_hsenc=p2ANqtz-8xYz&_hsmi=281234567",
+   "mode": "safe",
+   "expected": "https://www.netflix.com/title/80057281",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "plain-122",
+   "url": "https://www.netflix.com/title/80057281?igshid=MzRlODBiNWFlZA%3D%3D",
+   "mode": "safe",
+   "expected": "https://www.netflix.com/title/80057281",
+   "trackingParams": [
+    "igshid"
+   ]
+  },
+  {
+   "id": "plain-123",
+   "url": "https://www.netflix.com/title/80057281?msclkid=7f3c2a1b9e8d4c6a",
+   "mode": "safe",
+   "expected": "https://www.netflix.com/title/80057281",
+   "trackingParams": [
+    "msclkid"
+   ]
+  },
+  {
+   "id": "plain-124",
+   "url": "https://www.netflix.com/title/80057281?utm_source=twitter&utm_medium=social&utm_content=hilo",
+   "mode": "safe",
+   "expected": "https://www.netflix.com/title/80057281",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "plain-125",
+   "url": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es&ttclid=E.C.P.CsYBabc",
+   "mode": "safe",
+   "expected": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es",
+   "trackingParams": [
+    "ttclid"
+   ]
+  },
+  {
+   "id": "plain-126",
+   "url": "https://www.eventbrite.es/e/concierto-tickets-123456789?mkt_tok=NzAxLUZZWS0wMjIAAAGP&aff=ebdssbdestsearch&lang=es",
+   "mode": "safe",
+   "expected": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es",
+   "trackingParams": [
+    "mkt_tok"
+   ]
+  },
+  {
+   "id": "plain-127",
+   "url": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es&yclid=1234567890123456789",
+   "mode": "safe",
+   "expected": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "plain-128",
+   "url": "https://www.eventbrite.es/e/concierto-tickets-123456789?gbraid=0AAAAADnAbC&wbraid=CjkKCAiAabc&aff=ebdssbdestsearch&lang=es",
+   "mode": "safe",
+   "expected": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es",
+   "trackingParams": [
+    "gbraid",
+    "wbraid"
+   ]
+  },
+  {
+   "id": "plain-129",
+   "url": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es&dclid=CJ7n9aHd8ZECFQ",
+   "mode": "safe",
+   "expected": "https://www.eventbrite.es/e/concierto-tickets-123456789?aff=ebdssbdestsearch&lang=es",
+   "trackingParams": [
+    "dclid"
+   ]
+  },
+  {
+   "id": "plain-130",
+   "url": "https://www.coursera.org/learn/machine-learning?action=enroll&twclid=2-7abc123def",
+   "mode": "safe",
+   "expected": "https://www.coursera.org/learn/machine-learning?action=enroll",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "plain-131",
+   "url": "https://www.coursera.org/learn/machine-learning?_ga=2.123456789.987654321&_gl=1%2Aabc%2A_ga%2AMTIz&action=enroll",
+   "mode": "safe",
+   "expected": "https://www.coursera.org/learn/machine-learning?action=enroll",
+   "trackingParams": [
+    "_ga",
+    "_gl"
+   ]
+  },
+  {
+   "id": "plain-132",
+   "url": "https://www.coursera.org/learn/machine-learning?action=enroll&srsltid=AfmBOoqXyZ123",
+   "mode": "safe",
+   "expected": "https://www.coursera.org/learn/machine-learning?action=enroll",
+   "trackingParams": [
+    "srsltid"
+   ]
+  },
+  {
+   "id": "plain-133",
+   "url": "https://www.coursera.org/learn/machine-learning?gad_source=1&gclid=EAIaIQobChMI&action=enroll",
+   "mode": "safe",
+   "expected": "https://www.coursera.org/learn/machine-learning?action=enroll",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-134",
+   "url": "https://www.coursera.org/learn/machine-learning?action=enroll&li_fat_id=3a5b7c9d-1234",
+   "mode": "safe",
+   "expected": "https://www.coursera.org/learn/machine-learning?action=enroll",
+   "trackingParams": [
+    "li_fat_id"
+   ]
+  },
+  {
+   "id": "plain-135",
+   "url": "https://www.marca.com/futbol/2026/11/05/noticia.html?epik=dj0yJnU9YWJj",
+   "mode": "safe",
+   "expected": "https://www.marca.com/futbol/2026/11/05/noticia.html",
+   "trackingParams": [
+    "epik"
+   ]
+  },
+  {
+   "id": "plain-136",
+   "url": "https://www.marca.com/futbol/2026/11/05/noticia.html?utm_id=123&utm_term=zapatillas",
+   "mode": "safe",
+   "expected": "https://www.marca.com/futbol/2026/11/05/noticia.html",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "plain-137",
+   "url": "https://www.marca.com/futbol/2026/11/05/noticia.html?__hstc=123.abc.1700000000&__hssc=123.1.1700000000&__hsfp=987654",
+   "mode": "safe",
+   "expected": "https://www.marca.com/futbol/2026/11/05/noticia.html",
+   "trackingParams": [
+    "__hstc",
+    "__hssc",
+    "__hsfp"
+   ]
+  },
+  {
+   "id": "plain-138",
+   "url": "https://www.marca.com/futbol/2026/11/05/noticia.html?oly_enc_id=1234A5678B&oly_anon_id=abc",
+   "mode": "safe",
+   "expected": "https://www.marca.com/futbol/2026/11/05/noticia.html",
+   "trackingParams": [
+    "oly_enc_id",
+    "oly_anon_id"
+   ]
+  },
+  {
+   "id": "plain-139",
+   "url": "https://www.marca.com/futbol/2026/11/05/noticia.html?vero_id=42&vero_conv=xyz",
+   "mode": "safe",
+   "expected": "https://www.marca.com/futbol/2026/11/05/noticia.html",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "plain-140",
+   "url": "https://www.apple.com/es/iphone/?_kx=abc123.XYZ",
+   "mode": "safe",
+   "expected": "https://www.apple.com/es/iphone/",
+   "trackingParams": [
+    "_kx"
+   ]
+  },
+  {
+   "id": "plain-141",
+   "url": "https://www.apple.com/es/iphone/?ck_subscriber_id=123456789",
+   "mode": "safe",
+   "expected": "https://www.apple.com/es/iphone/",
+   "trackingParams": [
+    "ck_subscriber_id"
+   ]
+  },
+  {
+   "id": "plain-142",
+   "url": "https://www.apple.com/es/iphone/?irclickid=Sx8abcDEF&irgwc=1",
+   "mode": "safe",
+   "expected": "https://www.apple.com/es/iphone/",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "plain-143",
+   "url": "https://www.apple.com/es/iphone/?mtm_campaign=otono&mtm_source=boletin",
+   "mode": "safe",
+   "expected": "https://www.apple.com/es/iphone/",
+   "trackingParams": [
+    "mtm_campaign",
+    "mtm_source"
+   ]
+  },
+  {
+   "id": "plain-144",
+   "url": "https://www.apple.com/es/iphone/?pk_campaign=otono&pk_kwd=enlace",
+   "mode": "safe",
+   "expected": "https://www.apple.com/es/iphone/",
+   "trackingParams": [
+    "pk_campaign",
+    "pk_kwd"
+   ]
+  },
+  {
+   "id": "plain-145",
+   "url": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab&s_cid=em_2026_otono",
+   "mode": "safe",
+   "expected": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "plain-146",
+   "url": "https://www.microsoft.com/es-es/microsoft-365/word?wt.mc_id=email_otono&activetab=pivot%3aoverviewtab",
+   "mode": "safe",
+   "expected": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab",
+   "trackingParams": [
+    "wt.mc_id"
+   ]
+  },
+  {
+   "id": "plain-147",
+   "url": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab&sccid=abc-123",
+   "mode": "safe",
+   "expected": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab",
+   "trackingParams": [
+    "sccid"
+   ]
+  },
+  {
+   "id": "plain-148",
+   "url": "https://www.microsoft.com/es-es/microsoft-365/word?wickedid=abc123&activetab=pivot%3aoverviewtab",
+   "mode": "safe",
+   "expected": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "plain-149",
+   "url": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab&_openstat=dGVzdDsxOzE7",
+   "mode": "safe",
+   "expected": "https://www.microsoft.com/es-es/microsoft-365/word?activetab=pivot%3aoverviewtab",
+   "trackingParams": [
+    "_openstat"
+   ]
+  },
+  {
+   "id": "plain-150",
+   "url": "https://substack.com/@autor/p/titulo-del-articulo?_branch_match_id=1234567890&_branch_referrer=H4sIAAAA",
+   "mode": "safe",
+   "expected": "https://substack.com/@autor/p/titulo-del-articulo",
+   "trackingParams": [
+    "_branch_match_id",
+    "_branch_referrer"
+   ]
+  },
+  {
+   "id": "plain-151",
+   "url": "https://substack.com/@autor/p/titulo-del-articulo?hsa_acc=123&hsa_cam=456&hsa_grp=789",
+   "mode": "safe",
+   "expected": "https://substack.com/@autor/p/titulo-del-articulo",
+   "trackingParams": [
+    "hsa_acc",
+    "hsa_cam",
+    "hsa_grp"
+   ]
+  },
+  {
+   "id": "plain-152",
+   "url": "https://substack.com/@autor/p/titulo-del-articulo?fb_action_ids=123&fb_action_types=og.likes&fb_source=feed",
+   "mode": "safe",
+   "expected": "https://substack.com/@autor/p/titulo-del-articulo",
+   "trackingParams": [
+    "fb_action_ids",
+    "fb_action_types",
+    "fb_source"
+   ]
+  },
+  {
+   "id": "plain-153",
+   "url": "https://substack.com/@autor/p/titulo-del-articulo?igsh=MTc4MmM1",
+   "mode": "safe",
+   "expected": "https://substack.com/@autor/p/titulo-del-articulo",
+   "trackingParams": [
+    "igsh"
+   ]
+  },
+  {
+   "id": "plain-154",
+   "url": "https://substack.com/@autor/p/titulo-del-articulo?gclsrc=aw.ds",
+   "mode": "safe",
+   "expected": "https://substack.com/@autor/p/titulo-del-articulo",
+   "trackingParams": [
+    "gclsrc"
+   ]
+  },
+  {
+   "id": "plain-155",
+   "url": "https://www.20minutos.es/noticia/5123456/0/titular/?UTM_SOURCE=Mayusculas&Utm_Medium=Mixto",
+   "mode": "safe",
+   "expected": "https://www.20minutos.es/noticia/5123456/0/titular/",
+   "trackingParams": [
+    "UTM_SOURCE",
+    "Utm_Medium"
+   ]
+  },
+  {
+   "id": "plain-156",
+   "url": "https://www.20minutos.es/noticia/5123456/0/titular/?utm_source=newsletter&utm_medium=email&utm_campaign=otono-2026",
+   "mode": "safe",
+   "expected": "https://www.20minutos.es/noticia/5123456/0/titular/",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "plain-157",
+   "url": "https://www.20minutos.es/noticia/5123456/0/titular/?fbclid=IwAR2xYzAbCdEfGhIjKlMnOp",
+   "mode": "safe",
+   "expected": "https://www.20minutos.es/noticia/5123456/0/titular/",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "plain-158",
+   "url": "https://www.20minutos.es/noticia/5123456/0/titular/?gclid=Cj0KCQiA7aSsBhCiARIsALFvovw",
+   "mode": "safe",
+   "expected": "https://www.20minutos.es/noticia/5123456/0/titular/",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-159",
+   "url": "https://www.20minutos.es/noticia/5123456/0/titular/?mc_cid=a1b2c3d4e5&mc_eid=f6g7h8i9j0",
+   "mode": "safe",
+   "expected": "https://www.20minutos.es/noticia/5123456/0/titular/",
+   "trackingParams": [
+    "mc_cid",
+    "mc_eid"
+   ]
+  },
+  {
+   "id": "plain-160",
+   "url": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789&_hsenc=p2ANqtz-8xYz&_hsmi=281234567",
+   "mode": "safe",
+   "expected": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "plain-161",
+   "url": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?igshid=MzRlODBiNWFlZA%3D%3D&v1=123456789",
+   "mode": "safe",
+   "expected": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789",
+   "trackingParams": [
+    "igshid"
+   ]
+  },
+  {
+   "id": "plain-162",
+   "url": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789&msclkid=7f3c2a1b9e8d4c6a",
+   "mode": "safe",
+   "expected": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789",
+   "trackingParams": [
+    "msclkid"
+   ]
+  },
+  {
+   "id": "plain-163",
+   "url": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?utm_source=twitter&utm_medium=social&utm_content=hilo&v1=123456789",
+   "mode": "safe",
+   "expected": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "plain-164",
+   "url": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789&ttclid=E.C.P.CsYBabc",
+   "mode": "safe",
+   "expected": "https://www.zara.com/es/es/abrigo-lana-p01234567.html?v1=123456789",
+   "trackingParams": [
+    "ttclid"
+   ]
+  },
+  {
+   "id": "plain-165",
+   "url": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas?mkt_tok=NzAxLUZZWS0wMjIAAAGP",
+   "mode": "safe",
+   "expected": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas",
+   "trackingParams": [
+    "mkt_tok"
+   ]
+  },
+  {
+   "id": "plain-166",
+   "url": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas?yclid=1234567890123456789",
+   "mode": "safe",
+   "expected": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "plain-167",
+   "url": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas?gbraid=0AAAAADnAbC&wbraid=CjkKCAiAabc",
+   "mode": "safe",
+   "expected": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas",
+   "trackingParams": [
+    "gbraid",
+    "wbraid"
+   ]
+  },
+  {
+   "id": "plain-168",
+   "url": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas?dclid=CJ7n9aHd8ZECFQ",
+   "mode": "safe",
+   "expected": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas",
+   "trackingParams": [
+    "dclid"
+   ]
+  },
+  {
+   "id": "plain-169",
+   "url": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas?twclid=2-7abc123def",
+   "mode": "safe",
+   "expected": "https://www.pccomponentes.com/portatil-ejemplo-15-pulgadas",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "plain-170",
+   "url": "https://www.ted.com/talks/ponente_titulo?language=es&_ga=2.123456789.987654321&_gl=1%2Aabc%2A_ga%2AMTIz",
+   "mode": "safe",
+   "expected": "https://www.ted.com/talks/ponente_titulo?language=es",
+   "trackingParams": [
+    "_ga",
+    "_gl"
+   ]
+  },
+  {
+   "id": "plain-171",
+   "url": "https://www.ted.com/talks/ponente_titulo?srsltid=AfmBOoqXyZ123&language=es",
+   "mode": "safe",
+   "expected": "https://www.ted.com/talks/ponente_titulo?language=es",
+   "trackingParams": [
+    "srsltid"
+   ]
+  },
+  {
+   "id": "plain-172",
+   "url": "https://www.ted.com/talks/ponente_titulo?language=es&gad_source=1&gclid=EAIaIQobChMI",
+   "mode": "safe",
+   "expected": "https://www.ted.com/talks/ponente_titulo?language=es",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "plain-173",
+   "url": "https://www.ted.com/talks/ponente_titulo?li_fat_id=3a5b7c9d-1234&language=es",
+   "mode": "safe",
+   "expected": "https://www.ted.com/talks/ponente_titulo?language=es",
+   "trackingParams": [
+    "li_fat_id"
+   ]
+  },
+  {
+   "id": "plain-174",
+   "url": "https://www.ted.com/talks/ponente_titulo?language=es&epik=dj0yJnU9YWJj",
+   "mode": "safe",
+   "expected": "https://www.ted.com/talks/ponente_titulo?language=es",
+   "trackingParams": [
+    "epik"
+   ]
+  },
+  {
+   "id": "google-wrapper-00",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.elpais.com%2Fespana%2F2026-11-05%2Fnoticia.html%3Ffbclid%3DIwAR2xYzAbCdEfGhIjKlMnOp&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.elpais.com/espana/2026-11-05/noticia.html",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-01",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.nytimes.com%2F2026%2F11%2F05%2Ftechnology%2Fai-regulation.html%3F_hsenc%3Dp2ANqtz-8xYz%26_hsmi%3D281234567&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.nytimes.com/2026/11/05/technology/ai-regulation.html",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "google-wrapper-02",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.bbc.com%2Fnews%2Fworld-europe-12345678%3Futm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_content%3Dhilo&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.bbc.com/news/world-europe-12345678",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "google-wrapper-03",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.theguardian.com%2Fworld%2F2026%2Fnov%2F05%2Farticle-title%3Fyclid%3D1234567890123456789&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.theguardian.com/world/2026/nov/05/article-title",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-04",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.lavanguardia.com%2Fvida%2F20261105%2F1234567%2Fnoticia.html%3Ftwclid%3D2-7abc123def&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.lavanguardia.com/vida/20261105/1234567/noticia.html",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-05",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.booking.com%2Fhotel%2Fes%2Fejemplo.es.html%3Fcheckin%3D2026-12-01%26checkout%3D2026-12-03%26gad_source%3D1%26gclid%3DEAIaIQobChMI&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.booking.com/hotel/es/ejemplo.es.html?checkin=2026-12-01&checkout=2026-12-03",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-06",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.zalando.es%2Fzapatillas-mujer%2F%3Forder%3Dactivation_date%26utm_id%3D123%26utm_term%3Dzapatillas&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.zalando.es/zapatillas-mujer/?order=activation_date",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "google-wrapper-07",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.ikea.com%2Fes%2Fes%2Fp%2Fbilly-estanteria-blanco-00263850%2F%3Fvero_id%3D42%26vero_conv%3Dxyz&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.ikea.com/es/es/p/billy-estanteria-blanco-00263850/",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "google-wrapper-08",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.decathlon.es%2Fes%2Fp%2Fzapatillas-running%2F_%2FR-p-123456%3Fmc%3D8551234%26irclickid%3DSx8abcDEF%26irgwc%3D1&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.decathlon.es/es/p/zapatillas-running/_/R-p-123456?mc=8551234",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "google-wrapper-09",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fmedium.com%2F%40autora%2Fcomo-limpiar-urls-abc123def456%3Fs_cid%3Dem_2026_otono&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://medium.com/@autora/como-limpiar-urls-abc123def456",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "google-wrapper-10",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fshop.example.com%2Fproducts%2Fcamiseta%3Fvariant%3D42%26wickedid%3Dabc123&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://shop.example.com/products/camiseta?variant=42",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "google-wrapper-11",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fdocs.python.org%2F3%2Flibrary%2Furllib.parse.html%3Fhsa_acc%3D123%26hsa_cam%3D456%26hsa_grp%3D789%23module-urllib.parse&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://docs.python.org/3/library/urllib.parse.html#module-urllib.parse",
+   "trackingParams": [
+    "hsa_acc",
+    "hsa_cam",
+    "hsa_grp"
+   ]
+  },
+  {
+   "id": "google-wrapper-12",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dlimpiar%2Burls%26hl%3Des%26gclsrc%3Daw.ds&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&hl=es",
+   "trackingParams": [
+    "gclsrc"
+   ]
+  },
+  {
+   "id": "google-wrapper-13",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fnews.ycombinator.com%2Fitem%3Fid%3D41234567%26fbclid%3DIwAR2xYzAbCdEfGhIjKlMnOp&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://news.ycombinator.com/item?id=41234567",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-14",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fes.wikipedia.org%2Fwiki%2FLocalizador_de_recursos_uniforme%3F_hsenc%3Dp2ANqtz-8xYz%26_hsmi%3D281234567&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme",
+   "trackingParams": [
+    "_hsenc",
+    "_hsmi"
+   ]
+  },
+  {
+   "id": "google-wrapper-15",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.reddit.com%2Fr%2Fprogramming%2Fcomments%2Fabc123%2Ftitulo_del_post%2F%3Futm_source%3Dtwitter%26utm_medium%3Dsocial%26utm_content%3Dhilo&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.reddit.com/r/programming/comments/abc123/titulo_del_post/",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_content"
+   ]
+  },
+  {
+   "id": "google-wrapper-16",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.instagram.com%2Fp%2FC0abcDEFghi%2F%3Fyclid%3D1234567890123456789&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/",
+   "trackingParams": [
+    "yclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-17",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.tiktok.com%2F%40usuario%2Fvideo%2F7300000000000000000%3Ftwclid%3D2-7abc123def&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "twclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-18",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.facebook.com%2Fevents%2F123456789012345%2F%3Fgad_source%3D1%26gclid%3DEAIaIQobChMI&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "gad_source",
+    "gclid"
+   ]
+  },
+  {
+   "id": "google-wrapper-19",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F1091500%2F%3Futm_id%3D123%26utm_term%3Dzapatillas&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://store.steampowered.com/app/1091500/",
+   "trackingParams": [
+    "utm_id",
+    "utm_term"
+   ]
+  },
+  {
+   "id": "google-wrapper-20",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.mercadolibre.com.mx%2Fproducto%2Fp%2FMLM12345678%3Fvero_id%3D42%26vero_conv%3Dxyz&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.mercadolibre.com.mx/producto/p/MLM12345678",
+   "trackingParams": [
+    "vero_id",
+    "vero_conv"
+   ]
+  },
+  {
+   "id": "google-wrapper-21",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.imdb.com%2Ftitle%2Ftt0111161%2F%3Firclickid%3DSx8abcDEF%26irgwc%3D1&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.imdb.com/title/tt0111161/",
+   "trackingParams": [
+    "irclickid",
+    "irgwc"
+   ]
+  },
+  {
+   "id": "google-wrapper-22",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.spotify.com%2Fes%2Fpremium%2F%3Fs_cid%3Dem_2026_otono&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.spotify.com/es/premium/",
+   "trackingParams": [
+    "s_cid"
+   ]
+  },
+  {
+   "id": "google-wrapper-23",
+   "url": "https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&url=https%3A%2F%2Fwww.nike.com%2Fes%2Ft%2Fair-max-90-zapatillas-abc123%2FCN8490-002%3Fwickedid%3Dabc123&usg=AOvVaw0abc",
+   "mode": "safe",
+   "expected": "https://www.nike.com/es/t/air-max-90-zapatillas-abc123/CN8490-002",
+   "trackingParams": [
+    "wickedid"
+   ]
+  },
+  {
+   "id": "wrapper-google-q",
+   "url": "https://www.google.es/url?q=https%3A%2F%2Fwww.ejemplo.com%2Farticulo%3Futm_source%3Dgoogle&sa=U&ved=2ahUKE",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.com/articulo",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "wrapper-youtube-redirect",
+   "url": "https://www.youtube.com/redirect?event=video_description&redir_token=QUFF&q=https%3A%2F%2Fejemplo.com%2Fcurso%3Fref%3Dyt&v=dQw4w9WgXcQ",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/curso?ref=yt",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-facebook-l",
+   "url": "https://l.facebook.com/l.php?u=https%3A%2F%2Fejemplo.com%2Farticulo%3Ffbclid%3DIwAR0abc&h=AT0xyz",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/articulo",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "wrapper-facebook-lm",
+   "url": "https://lm.facebook.com/l.php?u=https%3A%2F%2Fwww.ejemplo.org%2F&h=AT1",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.org/",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-messenger-l",
+   "url": "https://l.messenger.com/l.php?u=https%3A%2F%2Fejemplo.com%2Fp%2F1%3Futm_medium%3Dmessenger&h=AT2",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/p/1",
+   "trackingParams": [
+    "utm_medium"
+   ]
+  },
+  {
+   "id": "wrapper-instagram-l",
+   "url": "https://l.instagram.com/?u=https%3A%2F%2Ftienda.ejemplo.com%2F%3Futm_source%3Dig%26utm_medium%3Dsocial&e=ATP",
+   "mode": "safe",
+   "expected": "https://tienda.ejemplo.com/",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium"
+   ]
+  },
+  {
+   "id": "wrapper-threads-l",
+   "url": "https://l.threads.net/?u=https%3A%2F%2Fejemplo.com%2Fhilo&e=AT3",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/hilo",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-outlook-safelinks",
+   "url": "https://eur03.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.ejemplo.com%2F%3Futm_source%3Dmail%26id%3D7&data=05%7C01%7C&sdata=abc%3D&reserved=0",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.com/?id=7",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "wrapper-linkedin-redir",
+   "url": "https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fejemplo.com%2Foferta%3Ftrk%3Dabc&urlhash=Xyz",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/oferta?trk=abc",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-reddit-out",
+   "url": "https://out.reddit.com/t3_abc?url=https%3A%2F%2Fejemplo.com%2Fnoticia%3Futm_source%3Dreddit&token=AQAA&app_name=web",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/noticia",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "wrapper-duckduckgo",
+   "url": "https://duckduckgo.com/l/?uddg=https%3A%2F%2Fejemplo.com%2Fpagina&rut=abc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/pagina",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-vk-away",
+   "url": "https://vk.com/away.php?to=https%3A%2F%2Fejemplo.com%2F%3Ffbclid%3D1&cc_key=",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "wrapper-slack-redir",
+   "url": "https://slack-redir.net/link?url=https%3A%2F%2Fejemplo.com%2Fdoc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/doc",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-steam-linkfilter",
+   "url": "https://steamcommunity.com/linkfilter/?url=https%3A%2F%2Fejemplo.com%2Fmod",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/mod",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-disqus",
+   "url": "https://disq.us/url?url=https%3A%2F%2Fejemplo.com%2Fcomentario%3Futm_campaign%3Ddisqus%3Aabc&cuid=123",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/comentario",
+   "trackingParams": [
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "wrapper-tumblr",
+   "url": "https://t.umblr.com/redirect?z=https%3A%2F%2Fejemplo.com%2Fpost&t=abc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/post",
+   "trackingParams": []
+  },
+  {
+   "id": "wrapper-nested-safelinks-google",
+   "url": "https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.google.com%2Furl%3Fq%3Dhttps%253A%252F%252Fdestino.ejemplo.com%252Fa%253Fgclid%253DCj0abc%2526x%253D1&data=05",
+   "mode": "safe",
+   "expected": "https://destino.ejemplo.com/a?x=1",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "special-youtube-si",
+   "url": "https://youtu.be/dQw4w9WgXcQ?si=AbCdEfGhIjKl",
+   "mode": "safe",
+   "expected": "https://youtu.be/dQw4w9WgXcQ",
+   "trackingParams": [
+    "si"
+   ]
+  },
+  {
+   "id": "special-youtube-watch-si",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&si=AbCdEf&t=42",
+   "mode": "safe",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42",
+   "trackingParams": [
+    "si"
+   ]
+  },
+  {
+   "id": "special-spotify-si",
+   "url": "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC?si=9f8e7d6c5b4a",
+   "mode": "safe",
+   "expected": "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC",
+   "trackingParams": [
+    "si"
+   ]
+  },
+  {
+   "id": "special-si-other-site-kept",
+   "url": "https://www.ejemplo.com/buscar?si=1&q=hola",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.com/buscar?si=1&q=hola",
+   "trackingParams": []
+  },
+  {
+   "id": "special-youtube-feature-safe",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&feature=shared",
+   "mode": "safe",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&feature=shared",
+   "trackingParams": []
+  },
+  {
+   "id": "special-youtube-feature-max",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&feature=shared&pp=ygUEdGVzdA%3D%3D",
+   "mode": "max",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+   "trackingParams": [
+    "feature",
+    "pp"
+   ]
+  },
+  {
+   "id": "special-twitter-ref-src",
+   "url": "https://twitter.com/usuario/status/1700000000000000000?ref_src=twsrc%5Etfw&ref_url=https%3A%2F%2Fejemplo.com",
+   "mode": "safe",
+   "expected": "https://twitter.com/usuario/status/1700000000000000000",
+   "trackingParams": [
+    "ref_src",
+    "ref_url"
+   ]
+  },
+  {
+   "id": "special-x-ref-src",
+   "url": "https://x.com/usuario/status/1700000000000000000?ref_src=twsrc%5Etfw",
+   "mode": "safe",
+   "expected": "https://x.com/usuario/status/1700000000000000000",
+   "trackingParams": [
+    "ref_src"
+   ]
+  },
+  {
+   "id": "special-linkedin-trk",
+   "url": "https://www.linkedin.com/jobs/view/1234567890/?trk=public_jobs_topcard&trackingId=abc%3D%3D",
+   "mode": "safe",
+   "expected": "https://www.linkedin.com/jobs/view/1234567890/",
+   "trackingParams": [
+    "trk",
+    "trackingId"
+   ]
+  },
+  {
+   "id": "special-aliexpress-spm",
+   "url": "https://www.aliexpress.com/item/1005001234567890.html?spm=a2g0o.productlist.0.0.abc&scm=1007.abc&pdp_npi=4",
+   "mode": "safe",
+   "expected": "https://www.aliexpress.com/item/1005001234567890.html?pdp_npi=4",
+   "trackingParams": [
+    "spm",
+    "scm"
+   ]
+  },
+  {
+   "id": "special-ref-kept-in-safe",
+   "url": "https://www.ejemplo.com/landing?ref=producthunt",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.com/landing?ref=producthunt",
+   "trackingParams": []
+  },
+  {
+   "id": "special-ref-removed-in-max",
+   "url": "https://www.ejemplo.com/landing?ref=producthunt&plan=pro",
+   "mode": "max",
+   "expected": "https://www.ejemplo.com/landing?plan=pro",
+   "trackingParams": [
+    "ref"
+   ]
+  },
+  {
+   "id": "special-ref-github-kept-in-max",
+   "url": "https://github.com/withastro/astro/tree/main?ref=main",
+   "mode": "max",
+   "expected": "https://github.com/withastro/astro/tree/main?ref=main",
+   "trackingParams": []
+  },
+  {
+   "id": "special-ref-gitlab-kept-in-max",
+   "url": "https://gitlab.com/grupo/proyecto/-/blob/main/README.md?ref_type=heads&ref=v1",
+   "mode": "max",
+   "expected": "https://gitlab.com/grupo/proyecto/-/blob/main/README.md?ref_type=heads&ref=v1",
+   "trackingParams": []
+  },
+  {
+   "id": "special-amazon-max",
+   "url": "https://www.amazon.es/Altavoz-Inteligente-Alexa/dp/B08N5WRWNW/ref=sr_1_3?crid=2XYZ&keywords=altavoz&qid=1730000000&sr=8-3",
+   "mode": "max",
+   "expected": "https://www.amazon.es/dp/B08N5WRWNW",
+   "trackingParams": [
+    "crid",
+    "qid",
+    "sr"
+   ]
+  },
+  {
+   "id": "special-amazon-safe-keeps-path",
+   "url": "https://www.amazon.es/Altavoz-Inteligente-Alexa/dp/B08N5WRWNW/?utm_source=blog&th=1",
+   "mode": "safe",
+   "expected": "https://www.amazon.es/Altavoz-Inteligente-Alexa/dp/B08N5WRWNW/?th=1",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "special-amazon-gp-product-max",
+   "url": "https://www.amazon.com/gp/product/B07FZ8S74R?pf_rd_r=ABC&pd_rd_w=xyz",
+   "mode": "max",
+   "expected": "https://www.amazon.com/dp/B07FZ8S74R",
+   "trackingParams": [
+    "pf_rd_r",
+    "pd_rd_w"
+   ]
+  },
+  {
+   "id": "special-ebay-max",
+   "url": "https://www.ebay.es/itm/Auriculares-Bluetooth/123456789012?hash=item1cbe&_trkparms=abc",
+   "mode": "max",
+   "expected": "https://www.ebay.es/itm/123456789012",
+   "trackingParams": [
+    "_trkparms"
+   ]
+  },
+  {
+   "id": "special-aliexpress-max",
+   "url": "https://www.aliexpress.com/item/1005001234567890.html?spm=a2g0o&gatewayAdapt=glo2esp",
+   "mode": "max",
+   "expected": "https://www.aliexpress.com/item/1005001234567890.html",
+   "trackingParams": [
+    "spm"
+   ]
+  },
+  {
+   "id": "special-etsy-max",
+   "url": "https://www.etsy.com/es/listing/123456789/taza-ceramica-hecha-a-mano?ga_order=most_relevant&ref=sr_gallery-1-1",
+   "mode": "max",
+   "expected": "https://www.etsy.com/listing/123456789",
+   "trackingParams": [
+    "ga_order",
+    "ref"
+   ]
+  },
+  {
+   "id": "special-already-clean",
+   "url": "https://www.ejemplo.com/ruta/articulo?id=42&pagina=2",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.com/ruta/articulo?id=42&pagina=2",
+   "trackingParams": []
+  },
+  {
+   "id": "special-already-clean-fragment",
+   "url": "https://developer.mozilla.org/es/docs/Web/API/URL#ejemplos",
+   "mode": "safe",
+   "expected": "https://developer.mozilla.org/es/docs/Web/API/URL#ejemplos",
+   "trackingParams": []
+  },
+  {
+   "id": "special-fragment-kept",
+   "url": "https://ejemplo.com/guia?utm_source=x#seccion-2",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/guia#seccion-2",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "special-encoding-preserved",
+   "url": "https://ejemplo.com/buscar?q=caf%C3%A9+con+leche&utm_source=x&orden=asc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/buscar?q=caf%C3%A9+con+leche&orden=asc",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "special-repeated-params-preserved",
+   "url": "https://ejemplo.com/filtro?talla=m&talla=l&fbclid=abc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/filtro?talla=m&talla=l",
+   "trackingParams": [
+    "fbclid"
+   ]
+  },
+  {
+   "id": "special-empty-value-preserved",
+   "url": "https://ejemplo.com/?debug&modo=&gclid=abc",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/?debug&modo=",
+   "trackingParams": [
+    "gclid"
+   ]
+  },
+  {
+   "id": "special-no-scheme",
+   "url": "ejemplo.com/oferta?utm_source=whatsapp",
+   "mode": "safe",
+   "expected": "https://ejemplo.com/oferta",
+   "trackingParams": [
+    "utm_source"
+   ]
+  },
+  {
+   "id": "special-google-search",
+   "url": "https://www.google.com/search?q=limpiar+urls&oq=limpiar+u&gs_lcrp=EgZjaHJvbWUqBwgAEAAYgAQ&sourceid=chrome&ie=UTF-8&ei=Zx8tZ5aBC4Kc&ved=0ahUKEwiW&sxsrf=AE3TifN4abc&uact=5",
+   "mode": "safe",
+   "expected": "https://www.google.com/search?q=limpiar+urls&sourceid=chrome&ie=UTF-8",
+   "trackingParams": [
+    "oq",
+    "gs_lcrp",
+    "ei",
+    "ved",
+    "sxsrf",
+    "uact"
+   ]
+  },
+  {
+   "id": "special-google-search-cctld-max",
+   "url": "https://www.google.com.mx/search?q=vacantes+devops&sca_esv=a1b2c3&client=firefox-b-d&biw=1440&bih=789&dpr=2&hl=es-419",
+   "mode": "max",
+   "expected": "https://www.google.com.mx/search?q=vacantes+devops&hl=es-419",
+   "trackingParams": [
+    "sca_esv",
+    "client",
+    "biw",
+    "bih",
+    "dpr"
+   ]
+  },
+  {
+   "id": "special-google-search-functional-kept",
+   "url": "https://www.google.es/search?q=gatos&udm=2&tbm=isch&start=10&tbs=qdr%3Aw&safe=active&iflsig=AOw8s4I&gs_lp=Egdnd3Mtd2l6",
+   "mode": "max",
+   "expected": "https://www.google.es/search?q=gatos&udm=2&tbm=isch&start=10&tbs=qdr%3Aw&safe=active",
+   "trackingParams": [
+    "iflsig",
+    "gs_lp"
+   ]
+  },
+  {
+   "id": "special-google-play",
+   "url": "https://play.google.com/store/apps/details?id=com.spotify.music&hl=es&pcampaignid=web_share",
+   "mode": "safe",
+   "expected": "https://play.google.com/store/apps/details?id=com.spotify.music&hl=es",
+   "trackingParams": [
+    "pcampaignid"
+   ]
+  },
+  {
+   "id": "special-google-docs-usp-max",
+   "url": "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit?usp=sharing",
+   "mode": "max",
+   "expected": "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit",
+   "trackingParams": [
+    "usp"
+   ]
+  },
+  {
+   "id": "special-google-docs-usp-safe-keeps",
+   "url": "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit?usp=sharing",
+   "mode": "safe",
+   "expected": "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit?usp=sharing",
+   "trackingParams": []
+  },
+  {
+   "id": "special-ved-other-site",
+   "url": "https://tienda.example/buscar?q=zapatos&ved=3&ei=2",
+   "mode": "max",
+   "expected": "https://tienda.example/buscar?q=zapatos&ved=3&ei=2",
+   "trackingParams": []
+  },
+  {
+   "id": "special-facebook-share-mibextid",
+   "url": "https://www.facebook.com/share/p/1AbCdEfGhI/?mibextid=wwXIfr",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/share/p/1AbCdEfGhI/",
+   "trackingParams": [
+    "mibextid"
+   ]
+  },
+  {
+   "id": "special-facebook-rdid-share-url",
+   "url": "https://www.facebook.com/usuario/posts/pfbid02AbCdEfGh?rdid=Xy12AbCd34&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fp%2F1AbCdEfGhI%2F",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/usuario/posts/pfbid02AbCdEfGh",
+   "trackingParams": [
+    "rdid",
+    "share_url"
+   ]
+  },
+  {
+   "id": "special-facebook-cft-tn",
+   "url": "https://www.facebook.com/groups/123456789/posts/987654321/?__cft__%5B0%5D=AZXyz123AbC&__tn__=%2CO%2CP-R",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/groups/123456789/posts/987654321/",
+   "trackingParams": [
+    "__cft__[0]",
+    "__tn__"
+   ]
+  },
+  {
+   "id": "special-facebook-notif-ref",
+   "url": "https://www.facebook.com/events/123456789012345/?ref=notif&notif_id=1699999999123456&notif_t=event_reminder",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/events/123456789012345/",
+   "trackingParams": [
+    "ref",
+    "notif_id",
+    "notif_t"
+   ]
+  },
+  {
+   "id": "special-facebook-profile-hc",
+   "url": "https://www.facebook.com/marca.ejemplo?fref=nf&hc_ref=ARQabc123&hc_location=ufi&eav=AfbXyZ&paipv=0",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/marca.ejemplo",
+   "trackingParams": [
+    "fref",
+    "hc_ref",
+    "hc_location",
+    "eav",
+    "paipv"
+   ]
+  },
+  {
+   "id": "special-facebook-whatsapp-share",
+   "url": "https://m.facebook.com/story.php?story_fbid=pfbid0AbC&id=100000000000001&sfnsn=wiwspwa&extid=WA-UNK-UNK-UNK-AN_GK0T-GK1C&comment_tracking=%7B%22tn%22%3A%22O%22%7D",
+   "mode": "safe",
+   "expected": "https://m.facebook.com/story.php?story_fbid=pfbid0AbC&id=100000000000001",
+   "trackingParams": [
+    "sfnsn",
+    "extid",
+    "comment_tracking"
+   ]
+  },
+  {
+   "id": "special-facebook-functional-kept",
+   "url": "https://www.facebook.com/photo/?fbid=1234567890&set=a.987654321&comment_id=5551234&mibextid=Nif5oz",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/photo/?fbid=1234567890&set=a.987654321&comment_id=5551234",
+   "trackingParams": [
+    "mibextid"
+   ]
+  },
+  {
+   "id": "special-facebook-context-max",
+   "url": "https://www.facebook.com/groups/123456789/?idorvanity=123456789&acontext=%7B%22source%22%3A%2229%22%7D",
+   "mode": "max",
+   "expected": "https://www.facebook.com/groups/123456789/",
+   "trackingParams": [
+    "idorvanity",
+    "acontext"
+   ]
+  },
+  {
+   "id": "special-facebook-context-safe-keeps",
+   "url": "https://www.facebook.com/groups/123456789/?idorvanity=123456789",
+   "mode": "safe",
+   "expected": "https://www.facebook.com/groups/123456789/?idorvanity=123456789",
+   "trackingParams": []
+  },
+  {
+   "id": "special-instagram-reel-copy-link",
+   "url": "https://www.instagram.com/reel/C9AbCdEfGhI/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/reel/C9AbCdEfGhI/",
+   "trackingParams": [
+    "utm_source",
+    "igsh"
+   ]
+  },
+  {
+   "id": "special-instagram-img-index-kept",
+   "url": "https://www.instagram.com/p/C0abcDEFghi/?img_index=3&igsh=NTc4MTIwNjQ2YQ==",
+   "mode": "safe",
+   "expected": "https://www.instagram.com/p/C0abcDEFghi/?img_index=3",
+   "trackingParams": [
+    "igsh"
+   ]
+  },
+  {
+   "id": "special-tiktok-webapp",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?is_from_webapp=1&sender_device=pc&web_id=7301234567890123456",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "is_from_webapp",
+    "sender_device",
+    "web_id"
+   ]
+  },
+  {
+   "id": "special-tiktok-mobile-share",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?_r=1&_t=8kXyZ12AbCd",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000",
+   "trackingParams": [
+    "_r",
+    "_t"
+   ]
+  },
+  {
+   "id": "special-tiktok-app-share-legacy",
+   "url": "https://www.tiktok.com/@usuario/video/7300000000000000000?_d=secCgYIASAHKAE&checksum=a1b2c3&language=es&preview_pb=0&sec_user_id=MS4wLjABAAAAxyz&share_app_id=1233&share_item_id=7300000000000000000&share_link_id=A1B2C3D4&source=h5_m&timestamp=1699999999&tt_from=copy&u_code=d9abc&user_id=6800000000000000000&utm_campaign=client_share&utm_medium=android&utm_source=copy&_r=1",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/@usuario/video/7300000000000000000?language=es",
+   "trackingParams": [
+    "_d",
+    "checksum",
+    "preview_pb",
+    "sec_user_id",
+    "share_app_id",
+    "share_item_id",
+    "share_link_id",
+    "source",
+    "timestamp",
+    "tt_from",
+    "u_code",
+    "user_id",
+    "utm_campaign",
+    "utm_medium",
+    "utm_source",
+    "_r"
+   ]
+  },
+  {
+   "id": "special-tiktok-search-kept",
+   "url": "https://www.tiktok.com/search?q=recetas&t=1699999999999",
+   "mode": "safe",
+   "expected": "https://www.tiktok.com/search?q=recetas&t=1699999999999",
+   "trackingParams": []
+  },
+  {
+   "id": "special-linkedin-safety-go",
+   "url": "https://www.linkedin.com/safety/go/?url=https%3A%2F%2Fdivulgavagas.com.br%2Fempleo-mx%2Fkms-technology-senior-infrastructure-engineer-1863032%3Futm_source%3Dlinkedin%26utm_medium%3Dxml%26utm_campaign%3Dbigjob-mx&urlhash=WoOE&trk=flagship-messaging-web&lipi=urn%3Ali%3Apage%3Ad_flagship3_messaging%3BAbCd",
+   "mode": "safe",
+   "expected": "https://divulgavagas.com.br/empleo-mx/kms-technology-senior-infrastructure-engineer-1863032",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign"
+   ]
+  },
+  {
+   "id": "special-linkedin-safety-go-no-slash",
+   "url": "https://www.linkedin.com/safety/go?url=https%3A%2F%2Fwww.ejemplo.org%2Fblog%2F&trk=public_post",
+   "mode": "safe",
+   "expected": "https://www.ejemplo.org/blog/",
+   "trackingParams": []
+  },
+  {
+   "id": "special-linkedin-post-share",
+   "url": "https://www.linkedin.com/posts/usuario_titulo-activity-7250000000000000000-AbCd?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAbCdEfGh",
+   "mode": "safe",
+   "expected": "https://www.linkedin.com/posts/usuario_titulo-activity-7250000000000000000-AbCd",
+   "trackingParams": [
+    "utm_source",
+    "utm_medium",
+    "rcm"
+   ]
+  },
+  {
+   "id": "special-linkedin-job-search-result",
+   "url": "https://www.linkedin.com/jobs/view/3686040692/?eBP=JOB_SEARCH_ORGANIC&refId=BD11h3GsoMZv5OFNsfAiCg%3D%3D&trackingId=AaqRryw6Mst49Fpnc5v3TA%3D%3D&trk=flagship3_search_srp_jobs&lipi=urn%3Ali%3Apage%3Ad_flagship3_search_srp_jobs%3BYcGt",
+   "mode": "safe",
+   "expected": "https://www.linkedin.com/jobs/view/3686040692/",
+   "trackingParams": [
+    "eBP",
+    "refId",
+    "trackingId",
+    "trk",
+    "lipi"
+   ]
+  },
+  {
+   "id": "special-linkedin-email-job-safe",
+   "url": "https://www.linkedin.com/comm/jobs/view/3686040692/?trackingId=AbC&refId=XyZ&lipi=urn%3Ali%3Apage%3Aemail_jobs%3BAbC&midToken=AQHabc&midSig=0aBcDeF&trk=eml-email_job_alert&trkEmail=eml-email_job_alert-null-0-null&eid=xyz123&otpToken=MTAwMDAw",
+   "mode": "safe",
+   "expected": "https://www.linkedin.com/comm/jobs/view/3686040692/?otpToken=MTAwMDAw",
+   "trackingParams": [
+    "trackingId",
+    "refId",
+    "lipi",
+    "midToken",
+    "midSig",
+    "trk",
+    "trkEmail",
+    "eid"
+   ]
+  },
+  {
+   "id": "special-linkedin-email-job-max",
+   "url": "https://www.linkedin.com/comm/jobs/view/3686040692/?midToken=AQHabc&trk=eml-email_job_alert&otpToken=MTAwMDAw",
+   "mode": "max",
+   "expected": "https://www.linkedin.com/jobs/view/3686040692/",
+   "trackingParams": [
+    "midToken",
+    "trk"
+   ]
+  },
+  {
+   "id": "special-linkedin-job-slug-max",
+   "url": "https://www.linkedin.com/jobs/view/senior-infrastructure-engineer-at-kms-technology-3686040692?position=1&pageNum=0",
+   "mode": "max",
+   "expected": "https://www.linkedin.com/jobs/view/3686040692/",
+   "trackingParams": []
+  },
+  {
+   "id": "special-linkedin-email-profile-max",
+   "url": "https://www.linkedin.com/comm/in/usuario-ejemplo?midToken=AQHabc&midSig=0aBc&trk=eml-email_m2m_invite",
+   "mode": "max",
+   "expected": "https://www.linkedin.com/in/usuario-ejemplo",
+   "trackingParams": [
+    "midToken",
+    "midSig",
+    "trk"
+   ]
+  },
+  {
+   "id": "special-linkedin-original-subdomain-max",
+   "url": "https://www.linkedin.com/in/usuario-ejemplo?originalSubdomain=mx",
+   "mode": "max",
+   "expected": "https://www.linkedin.com/in/usuario-ejemplo",
+   "trackingParams": [
+    "originalSubdomain"
+   ]
+  },
+  {
+   "id": "special-linkedin-job-search-kept",
+   "url": "https://www.linkedin.com/jobs/search/?currentJobId=3686040692&keywords=devops&location=M%C3%A9xico&trk=public_jobs_jobs-search-bar_search-submit",
+   "mode": "safe",
+   "expected": "https://www.linkedin.com/jobs/search/?currentJobId=3686040692&keywords=devops&location=M%C3%A9xico",
+   "trackingParams": [
+    "trk"
+   ]
+  },
+  {
+   "id": "special-youtube-embed-origin",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&embeds_referring_euri=https%3A%2F%2Fblog.ejemplo.com%2F&embeds_referring_origin=https%3A%2F%2Fblog.ejemplo.com&source_ve_path=MjM4NTE",
+   "mode": "safe",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+   "trackingParams": [
+    "embeds_referring_euri",
+    "embeds_referring_origin",
+    "source_ve_path"
+   ]
+  },
+  {
+   "id": "special-youtube-ab-channel-max",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley",
+   "mode": "max",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+   "trackingParams": [
+    "ab_channel"
+   ]
+  },
+  {
+   "id": "special-youtube-ab-channel-safe-keeps",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley",
+   "mode": "safe",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley",
+   "trackingParams": []
+  },
+  {
+   "id": "special-youtube-functional-kept",
+   "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PL1234567890AbCd&index=4&t=42s&lc=UgxAbCdEf&si=AbCdEfGh123",
+   "mode": "safe",
+   "expected": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=PL1234567890AbCd&index=4&t=42s&lc=UgxAbCdEf",
+   "trackingParams": [
+    "si"
+   ]
+  }
+ ]
+}

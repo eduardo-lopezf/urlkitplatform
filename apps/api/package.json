@@ -1,0 +1,32 @@
+{
+  "name": "@urlkit/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.ts",
+    "start": "node src/server.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.6",
+    "@hono/zod-openapi": "^1.6.3",
+    "@opentelemetry/api": "^1.10.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.301.0",
+    "@opentelemetry/resources": "^2.12.0",
+    "@opentelemetry/sdk-trace-node": "^2.12.0",
+    "@sentry/node": "^11.11.0",
+    "@urlkit/contracts": "workspace:*",
+    "@urlkit/core": "workspace:*",
+    "@urlkit/i18n": "workspace:*",
+    "@urlkit/rules": "workspace:*",
+    "hono": "^4.13.16",
+    "ioredis": "^6.0.0",
+    "undici": "^8.12.4",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "yaml": "^2.9.1"
+  }
+}

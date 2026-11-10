@@ -1,0 +1,209 @@
+/*
+ * URLkit design tokens (Principio III). Every tool inherits the same look through these
+ * variables. Contrast pairs meet WCAG 2.2 AA in both themes (text ≥ 4.5:1, UI ≥ 3:1).
+ * Theme: follows prefers-color-scheme; [data-theme="light"|"dark"] on <html> overrides it.
+ */
+:root {
+  color-scheme: light dark;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --leading: 1.5;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --content-width: 46rem;
+  --focus-ring: 0 0 0 3px var(--color-focus);
+
+  /* Light */
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f9;
+  --color-surface-strong: #eceef2;
+  --color-border: #c9ced8;
+  --color-text: #1b1f27;
+  --color-muted: #545c6b;
+  --color-accent: #1d4ed8;
+  --color-accent-text: #ffffff;
+  --color-accent-soft: #e8eefc;
+  --color-focus: #6b9bff;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-caution: #8a4b00;
+  --color-caution-soft: #fff4e0;
+  --color-success: #126b38;
+  --color-success-soft: #e7f6ec;
+  --color-mark: #fff2a8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg: #11141a;
+    --color-surface: #1a1e26;
+    --color-surface-strong: #252a35;
+    --color-border: #3d4452;
+    --color-text: #e8eaef;
+    --color-muted: #a7aebb;
+    --color-accent: #8ab4ff;
+    --color-accent-text: #0b1530;
+    --color-accent-soft: #1d2a47;
+    --color-focus: #8ab4ff;
+    --color-danger: #ff9b8f;
+    --color-danger-soft: #3a1b18;
+    --color-caution: #ffc46b;
+    --color-caution-soft: #3a2a12;
+    --color-success: #7ddc9f;
+    --color-success-soft: #14301f;
+    --color-mark: #5a4b00;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #11141a;
+  --color-surface: #1a1e26;
+  --color-surface-strong: #252a35;
+  --color-border: #3d4452;
+  --color-text: #e8eaef;
+  --color-muted: #a7aebb;
+  --color-accent: #8ab4ff;
+  --color-accent-text: #0b1530;
+  --color-accent-soft: #1d2a47;
+  --color-focus: #8ab4ff;
+  --color-danger: #ff9b8f;
+  --color-danger-soft: #3a1b18;
+  --color-caution: #ffc46b;
+  --color-caution-soft: #3a2a12;
+  --color-success: #7ddc9f;
+  --color-success-soft: #14301f;
+  --color-mark: #5a4b00;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--text-base) / var(--leading) var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+a {
+  color: var(--color-accent);
+  text-underline-offset: 0.15em;
+}
+
+code,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  overflow-wrap: anywhere;
+}
+
+.uk-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  cursor: pointer;
+}
+.uk-button:hover {
+  background: var(--color-surface-strong);
+}
+.uk-button[data-variant='primary'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+.uk-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.uk-field {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--text-base) / var(--leading) var(--font-mono);
+}
+
+.uk-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.uk-muted {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.uk-card {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.uk-stack > * + * {
+  margin-top: var(--space-4);
+}
+
+.uk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.uk-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

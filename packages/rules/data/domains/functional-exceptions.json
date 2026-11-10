@@ -1,0 +1,23 @@
+[
+  {
+    "id": "tracking.ref",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": "global",
+    "match": {
+      "names": ["ref", "ref_"]
+    },
+    "exceptions": {
+      "domains": [
+        "github.com",
+        "gitlab.com",
+        "bitbucket.org",
+        "codeberg.org",
+        "npmjs.com",
+        "gitea.com"
+      ]
+    },
+    "platform": "Varias (referencia)",
+    "reason": "clean.reason.affiliate"
+  }
+]

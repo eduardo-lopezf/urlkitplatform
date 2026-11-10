@@ -1,0 +1,883 @@
+{
+  "version": 1,
+  "description": "Language-neutral SSRF vectors (Principio V). Every service that makes outbound requests, in any language, must pass all of them. See README.md.",
+  "vectors": [
+    {
+      "id": "ipv4-loopback",
+      "url": "http://127.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-loopback-range",
+      "url": "http://127.1.2.3/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-private-10",
+      "url": "http://10.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-private-172-16",
+      "url": "http://172.16.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-private-172-31",
+      "url": "http://172.31.255.255/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-private-192-168",
+      "url": "http://192.168.1.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-metadata",
+      "url": "http://169.254.169.254/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-link-local",
+      "url": "http://169.254.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-cgnat-low",
+      "url": "http://100.64.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-cgnat-high",
+      "url": "http://100.127.255.255/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-multicast",
+      "url": "http://224.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-multicast-ssdp",
+      "url": "http://239.255.255.250/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-reserved",
+      "url": "http://240.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-broadcast",
+      "url": "http://255.255.255.255/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-unspecified",
+      "url": "http://0.0.0.0/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-this-network",
+      "url": "http://0.1.2.3/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-ietf-protocol",
+      "url": "http://192.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-test-net-1",
+      "url": "http://192.0.2.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-benchmarking",
+      "url": "http://198.18.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-test-net-2",
+      "url": "http://198.51.100.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-test-net-3",
+      "url": "http://203.0.113.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv4-public-allowed",
+      "url": "http://93.184.216.34/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-public-dns-allowed",
+      "url": "http://8.8.8.8/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-below-172-16-allowed",
+      "url": "http://172.15.255.255/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-above-172-31-allowed",
+      "url": "http://172.32.0.1/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-below-cgnat-allowed",
+      "url": "http://100.63.255.255/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-above-cgnat-allowed",
+      "url": "http://100.128.0.1/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-above-10-allowed",
+      "url": "http://11.0.0.1/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv4-numeric-decimal",
+      "url": "http://2130706433/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "WHATWG reads it as 127.0.0.1"
+    },
+    {
+      "id": "ipv4-numeric-hex",
+      "url": "http://0x7f000001/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "WHATWG reads it as 127.0.0.1"
+    },
+    {
+      "id": "ipv4-numeric-octal",
+      "url": "http://0177.0.0.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "WHATWG reads it as 127.0.0.1"
+    },
+    {
+      "id": "ipv4-numeric-short",
+      "url": "http://127.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "WHATWG reads it as 127.0.0.1"
+    },
+    {
+      "id": "ipv4-numeric-mixed",
+      "url": "http://0x7f.1/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "WHATWG reads it as 127.0.0.1"
+    },
+    {
+      "id": "ipv6-loopback",
+      "url": "http://[::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-unspecified",
+      "url": "http://[::]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-unique-local-fc",
+      "url": "http://[fc00::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-unique-local-fd",
+      "url": "http://[fd12:3456::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-link-local",
+      "url": "http://[fe80::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-mapped-loopback",
+      "url": "http://[::ffff:127.0.0.1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-mapped-loopback-hex",
+      "url": "http://[::ffff:7f00:1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-mapped-metadata",
+      "url": "http://[::ffff:169.254.169.254]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-mapped-private",
+      "url": "http://[::ffff:10.0.0.1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-multicast",
+      "url": "http://[ff02::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-documentation",
+      "url": "http://[2001:db8::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-nat64-loopback",
+      "url": "http://[64:ff9b::7f00:1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-6to4-loopback",
+      "url": "http://[2002:7f00:1::1]/",
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "ipv6-public-allowed",
+      "url": "http://[2606:4700:4700::1111]/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "ipv6-mapped-public-allowed",
+      "url": "http://[::ffff:93.184.216.34]/",
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "dns-to-loopback",
+      "url": "http://evil.example/",
+      "dns": {
+        "evil.example": [["127.0.0.1"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-to-metadata",
+      "url": "http://meta.example/",
+      "dns": {
+        "meta.example": [["169.254.169.254"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-to-ipv6-loopback",
+      "url": "http://v6.example/",
+      "dns": {
+        "v6.example": [["::1"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-any-private-blocks",
+      "url": "http://mixed.example/",
+      "dns": {
+        "mixed.example": [["93.184.216.34", "10.0.0.5"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      },
+      "note": "Every resolved address is validated, not only the first"
+    },
+    {
+      "id": "dns-localhost",
+      "url": "http://localhost/",
+      "dns": {
+        "localhost": [["127.0.0.1", "::1"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-trailing-dot",
+      "url": "http://localhost./",
+      "dns": {
+        "localhost.": [["127.0.0.1"]],
+        "localhost": [["127.0.0.1"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-wildcard-service",
+      "url": "http://127.0.0.1.nip.example/",
+      "dns": {
+        "127.0.0.1.nip.example": [["127.0.0.1"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-unresolvable",
+      "url": "http://nothing.example/",
+      "dns": {
+        "nothing.example": [[]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "unresolvable",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "dns-public-allowed",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "dns-rebinding-public-then-private",
+      "url": "http://rebind.example/",
+      "dns": {
+        "rebind.example": [["93.184.216.34"], ["127.0.0.1"]]
+      },
+      "expect": {
+        "verdict": "allow",
+        "neverConnectTo": ["127.0.0.1"]
+      },
+      "note": "Resolve once, validate, connect to the validated address. A second resolution must never be used to connect"
+    },
+    {
+      "id": "dns-rebinding-private-then-public",
+      "url": "http://rebind2.example/",
+      "dns": {
+        "rebind2.example": [["127.0.0.1"], ["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 0,
+        "neverConnectTo": ["127.0.0.1"]
+      }
+    },
+    {
+      "id": "scheme-ftp",
+      "url": "ftp://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "scheme-file",
+      "url": "file:///etc/passwd",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "scheme-gopher",
+      "url": "gopher://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "scheme-ws",
+      "url": "ws://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "scheme-javascript",
+      "url": "javascript:alert(1)",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "scheme-data",
+      "url": "data:text/html,hi",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "credentials-user-pass",
+      "url": "http://user:pass@public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "credentials",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "credentials-user-only",
+      "url": "http://user@public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "credentials",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-22",
+      "url": "http://public.example:22/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-25",
+      "url": "http://public.example:25/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-6379",
+      "url": "http://public.example:6379/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-8000",
+      "url": "http://public.example:8000/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-9200",
+      "url": "http://public.example:9200/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-11211",
+      "url": "http://public.example:11211/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-0",
+      "url": "http://public.example:0/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 0
+      }
+    },
+    {
+      "id": "port-80-allowed",
+      "url": "http://public.example:80/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "port-443-allowed",
+      "url": "https://public.example:443/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "port-8080-allowed",
+      "url": "http://public.example:8080/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "port-8443-allowed",
+      "url": "https://public.example:8443/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    },
+    {
+      "id": "redirect-to-metadata",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "redirects": {
+        "http://public.example/": "http://169.254.169.254/latest/meta-data/"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-to-localhost-name",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]],
+        "localhost": [["127.0.0.1"]]
+      },
+      "redirects": {
+        "http://public.example/": "http://localhost:8080/admin"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-to-dns-private",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]],
+        "internal.example": [["10.1.2.3"]]
+      },
+      "redirects": {
+        "http://public.example/": "https://internal.example/"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "private-address",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-to-file",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "redirects": {
+        "http://public.example/": "file:///etc/passwd"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "scheme",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-to-credentials",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "redirects": {
+        "http://public.example/": "https://admin:x@public.example/"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "credentials",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-to-port",
+      "url": "http://public.example/",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "redirects": {
+        "http://public.example/": "http://public.example:6379/"
+      },
+      "expect": {
+        "verdict": "block",
+        "reason": "port",
+        "atHop": 1
+      }
+    },
+    {
+      "id": "redirect-relative-stays-public",
+      "url": "http://public.example/a",
+      "dns": {
+        "public.example": [["93.184.216.34"]]
+      },
+      "redirects": {
+        "http://public.example/a": "/b"
+      },
+      "expect": {
+        "verdict": "allow"
+      }
+    }
+  ]
+}

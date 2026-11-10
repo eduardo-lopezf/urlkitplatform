@@ -1,0 +1,13 @@
+# Only for self-hosted deployments. With a managed provider TLS is terminated there.
+{$API_DOMAIN:api.urlkit.example} {
+	encode zstd gzip
+	# Operational endpoints stay internal.
+	@internal path /internal/*
+	respond @internal 404
+	reverse_proxy api:8787
+	# No access log: request lines would contain nothing sensitive (POST bodies are not logged),
+	# but the client IP would be. Principio V.
+	log {
+		output discard
+	}
+}

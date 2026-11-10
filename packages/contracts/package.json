@@ -1,0 +1,23 @@
+{
+  "name": "@urlkit/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./openapi.json": "./openapi.json"
+  },
+  "scripts": {
+    "build": "node build/generate.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^9.1.0",
+    "@urlkit/core": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "yaml": "^2.9.1"
+  }
+}

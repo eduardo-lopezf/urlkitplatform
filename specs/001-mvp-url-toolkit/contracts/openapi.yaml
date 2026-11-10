@@ -1,0 +1,435 @@
+openapi: 3.1.0
+info:
+  title: URLkit API
+  version: 1.0.0
+  description: >
+    API v1 del MVP de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada.
+    Las URLs enviadas no se almacenan ni se registran.
+
+    Autenticación: el esquema `apiKey` está **declarado desde esta versión y es opcional**. En el
+    MVP ninguna petición lo necesita y solo existe el plan anónimo. La versión 3 activará las
+    claves y las cuotas por organización sobre este mismo contrato, de forma aditiva: los
+    clientes anónimos seguirán funcionando en `/v1` sin versión nueva ni deprecación.
+servers:
+  - url: https://api.urlkit.example/v1
+    description: Producción (dominio provisional)
+
+# Lista vacía incluida a propósito: la clave es opcional en todos los endpoints. Activarla en la
+# versión 3 consiste en retirar `{}` de los endpoints que pasen a exigirla, lo que es aditivo.
+security:
+  - {}
+  - apiKey: []
+tags:
+  - name: tools
+  - name: metrics
+
+paths:
+  /clean:
+    post:
+      tags: [tools]
+      operationId: cleanUrl
+      summary: Smart Cleaner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { $ref: '#/components/schemas/UrlInput' }
+                mode: { type: string, enum: [safe, max], default: safe }
+                keep: { type: array, items: { type: string }, default: [] }
+      responses:
+        '200':
+          description: Resultado de limpieza
+          headers: { $ref: '#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CleanResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /parse:
+    post:
+      tags: [tools]
+      operationId: parseUrl
+      summary: URL Parser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { $ref: '#/components/schemas/UrlInput' }
+      responses:
+        '200':
+          description: URL analizada
+          headers: { $ref: '#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ParsedUrl' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /diff:
+    post:
+      tags: [tools]
+      operationId: diffUrls
+      summary: URL Diff
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [a, b]
+              properties:
+                a: { $ref: '#/components/schemas/UrlInput' }
+                b: { $ref: '#/components/schemas/UrlInput' }
+                options:
+                  type: object
+                  properties:
+                    ignoreParamOrder: { type: boolean, default: true }
+                    ignoreTracking: { type: boolean, default: false }
+                    normalize: { type: boolean, default: true }
+      responses:
+        '200':
+          description: Comparación
+          headers: { $ref: '#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UrlComparison' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /explain:
+    post:
+      tags: [tools]
+      operationId: explainUrl
+      summary: Explain URL
+      parameters:
+        - name: lang
+          in: query
+          description: Si se indica, cada MessageRef incluye también el texto traducido.
+          schema: { type: string, enum: [es, en] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { $ref: '#/components/schemas/UrlInput' }
+      responses:
+        '200':
+          description: Explicación
+          headers: { $ref: '#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Explanation' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /inspect:
+    post:
+      tags: [tools]
+      operationId: inspectRedirects
+      summary: Redirect Inspector
+      description: >
+        Sigue la cadena de redirecciones desde el servidor. Límite sin cuenta: 10 por hora y
+        50 por día por visitante. Destinos internos o privados se bloquean.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url: { $ref: '#/components/schemas/UrlInput' }
+      responses:
+        '200':
+          description: >
+            Cadena de redirecciones. Bloqueos, bucles, tiempos de espera y errores TLS se
+            informan aquí con stopReason, no como error HTTP.
+          headers: { $ref: '#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RedirectChain' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /metrics/events:
+    post:
+      tags: [metrics]
+      operationId: recordEvent
+      summary: Evento de uso anónimo
+      description: >
+        Sin cookies ni identificadores. Solo incrementa contadores agregados. Límite de 300
+        eventos por hora por visitante; la web ignora en silencio las respuestas 429.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [tool, outcome]
+              properties:
+                tool: { $ref: '#/components/schemas/ToolId' }
+                outcome: { type: string, enum: [success, error, copied, sent-to] }
+      responses:
+        '204': { description: Registrado }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/QuotaExceeded' }
+
+  /openapi.json:
+    get:
+      operationId: getOpenApi
+      summary: Este contrato
+      responses:
+        '200': { description: Documento OpenAPI }
+
+components:
+  securitySchemes:
+    apiKey:
+      type: http
+      scheme: bearer
+      bearerFormat: urlkit-api-key
+      description: >
+        Clave de API en `Authorization: Bearer <clave>`. Declarada desde la v1 y **opcional**:
+        sin uso en el MVP. Cuando se active, la clave determinará el sujeto de la cuota
+        (`api-key` u `organization`) y las cabeceras `RateLimit-*` serán las mismas que para el
+        visitante anónimo.
+
+  headers:
+    RateLimitSet:
+      description: >
+        Se envían RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset (segundos) de la
+        ventana más restrictiva. Las mismas cabeceras se usan para cualquier tipo de sujeto
+        (visitante anónimo en el MVP; clave de API u organización desde la v3).
+      schema: { type: string }
+
+  responses:
+    BadRequest:
+      description: Entrada inválida
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ToolError' }
+    Unauthorized:
+      description: >
+        Clave de API ausente o inválida. Reservada: no se emite en el MVP, donde la clave es
+        opcional. Se documenta aquí para que activar la autenticación en la v3 no cambie la forma
+        de las respuestas de error.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ToolError' }
+    QuotaExceeded:
+      description: Límite de uso alcanzado
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ToolError' }
+
+  schemas:
+    ToolId:
+      type: string
+      enum: [clean, parse, inspect, diff, explain]
+
+    UrlInput:
+      type: string
+      minLength: 1
+      maxLength: 32000
+
+    MessageRef:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string }
+        params:
+          type: object
+          additionalProperties: { type: [string, number] }
+        text: { type: string, description: Solo si se pidió lang }
+
+    ToolError:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples: [url.invalid, url.too-long, url.unsupported-scheme, quota.exceeded]
+        message: { $ref: '#/components/schemas/MessageRef' }
+        part: { type: string }
+        retryAfterSeconds: { type: integer }
+
+    QueryParam:
+      type: object
+      required: [index, name, value, rawName, rawValue, encodingValid]
+      properties:
+        index: { type: integer }
+        name: { type: string }
+        value: { type: [string, 'null'] }
+        rawName: { type: string }
+        rawValue: { type: [string, 'null'] }
+        encodingValid: { type: boolean }
+
+    ParsedUrl:
+      type: object
+      required: [input, href, scheme, host, port, path, query, warnings]
+      properties:
+        input: { type: string }
+        href: { type: string }
+        schemeAssumed: { type: boolean }
+        scheme: { type: string }
+        username: { type: string }
+        password: { type: string }
+        host:
+          type: object
+          required: [ascii, unicode, kind]
+          properties:
+            ascii: { type: string }
+            unicode: { type: string }
+            kind: { type: string, enum: [domain, ipv4, ipv6, opaque, none] }
+        registrableDomain: { type: [string, 'null'] }
+        subdomain: { type: [string, 'null'] }
+        port:
+          type: object
+          properties:
+            value: { type: [integer, 'null'] }
+            isDefault: { type: boolean }
+        path:
+          type: object
+          properties:
+            raw: { type: string }
+            decoded: { type: string }
+            segments: { type: array, items: { type: string } }
+        query: { type: array, items: { $ref: '#/components/schemas/QueryParam' } }
+        fragment: { type: [string, 'null'] }
+        warnings: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+
+    RemovedItem:
+      type: object
+      required: [kind, name, ruleId, reason]
+      properties:
+        kind: { type: string, enum: [param, wrapper, path] }
+        name: { type: string }
+        value: { type: string }
+        ruleId: { type: string }
+        platform: { type: string }
+        reason: { $ref: '#/components/schemas/MessageRef' }
+
+    CatalogVersion:
+      type: string
+      description: >
+        Versión del catálogo de reglas aplicada, en versionado semántico. Permite reproducir y
+        auditar un resultado que depende del catálogo.
+      example: '1.4.0'
+
+    CleanResult:
+      type: object
+      required: [input, output, mode, changed, removed, unwrapped, catalogVersion]
+      properties:
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }
+        input: { type: string }
+        output: { type: string }
+        mode: { type: string, enum: [safe, max] }
+        changed: { type: boolean }
+        removed: { type: array, items: { $ref: '#/components/schemas/RemovedItem' } }
+        unwrapped: { type: array, items: { type: string } }
+        maxPreview:
+          type: [object, 'null']
+          properties:
+            output: { type: string }
+            extra: { type: array, items: { $ref: '#/components/schemas/RemovedItem' } }
+
+    Hop:
+      type: object
+      required: [index, url, status, type, durationMs, flags]
+      properties:
+        index: { type: integer }
+        url: { type: string }
+        status: { type: [integer, 'null'] }
+        type: { type: string, enum: [permanent, temporary, meta-refresh, javascript, interstitial, final] }
+        location: { type: [string, 'null'] }
+        durationMs: { type: integer }
+        flags:
+          type: array
+          items: { type: string, enum: [https-downgrade, domain-change] }
+        error: { $ref: '#/components/schemas/MessageRef' }
+
+    RedirectChain:
+      type: object
+      required: [input, hops, final, stopReason, totalMs]
+      properties:
+        input: { type: string }
+        hops: { type: array, maxItems: 21, items: { $ref: '#/components/schemas/Hop' } }
+        final: { type: [string, 'null'] }
+        stopReason: { type: string, enum: [final, loop, max-hops, blocked, error, timeout] }
+        totalMs: { type: integer }
+
+    Difference:
+      type: object
+      required: [component, change]
+      properties:
+        component:
+          type: string
+          enum: [scheme, userinfo, host, port, path, query, fragment]
+        param: { type: string }
+        change: { type: string, enum: [added, removed, modified] }
+        before: { type: string }
+        after: { type: string }
+
+    UrlComparison:
+      type: object
+      required: [a, b, options, equivalent, differences, cosmetic]
+      properties:
+        catalogVersion:
+          allOf: [{ $ref: '#/components/schemas/CatalogVersion' }]
+          description: Presente solo si se aplicó `ignoreTracking`, que usa el catálogo.
+        a: { type: string }
+        b: { type: string }
+        options:
+          type: object
+          properties:
+            ignoreParamOrder: { type: boolean }
+            ignoreTracking: { type: boolean }
+            normalize: { type: boolean }
+        equivalent: { type: boolean }
+        differences: { type: array, items: { $ref: '#/components/schemas/Difference' } }
+        cosmetic: { type: array, items: { $ref: '#/components/schemas/Difference' } }
+
+    Signal:
+      type: object
+      required: [id, severity, message, evidence]
+      properties:
+        id:
+          type: string
+          enum: [userinfo-deception, ip-host, homograph, mixed-scripts, excessive-encoding,
+                 double-encoding, dangerous-scheme, unusual-port, nested-url, abuse-tld]
+        severity: { type: string, enum: [info, caution] }
+        message: { $ref: '#/components/schemas/MessageRef' }
+        evidence: { type: string }
+
+    Explanation:
+      type: object
+      required: [url, parts, signals, catalogVersion]
+      properties:
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }
+        url: { $ref: '#/components/schemas/ParsedUrl' }
+        parts:
+          type: array
+          items:
+            type: object
+            required: [component, value, message]
+            properties:
+              component: { type: string }
+              value: { type: string }
+              message: { $ref: '#/components/schemas/MessageRef' }
+              platform: { type: string }
+        signals: { type: array, items: { $ref: '#/components/schemas/Signal' } }

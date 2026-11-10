@@ -1,0 +1,37 @@
+{
+  "name": "urlkit-platform",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "postinstall": "pnpm build:data",
+    "build:data": "pnpm --filter @urlkit/rules build",
+    "build:contracts": "pnpm --filter @urlkit/contracts build",
+    "dev": "pnpm build:data && pnpm --parallel --filter @urlkit/web --filter @urlkit/api dev",
+    "dev:container": "pnpm build:data && QUOTA_SECRET=${QUOTA_SECRET:-$(openssl rand -hex 32)} docker compose --profile full up -d --build api && pnpm --filter @urlkit/web dev",
+    "build": "pnpm build:data && pnpm -r build",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm build:data && pnpm -r typecheck",
+    "test": "pnpm build:data && vitest run",
+    "test:e2e": "pnpm --filter @urlkit/web test:e2e",
+    "size": "pnpm --filter @urlkit/web size",
+    "lhci": "pnpm --filter @urlkit/web lhci",
+    "boundaries": "depcruise packages apps --config .dependency-cruiser.cjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "@types/node": "^26.6.6",
+    "dependency-cruiser": "^18.7.2",
+    "eslint": "^10.14.0",
+    "eslint-plugin-vue": "^10.0.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  }
+}

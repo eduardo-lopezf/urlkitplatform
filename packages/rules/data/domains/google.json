@@ -1,0 +1,129 @@
+[
+  {
+    "id": "tracking.google-search",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": [
+        "google.com",
+        "google.es",
+        "google.co.uk",
+        "google.de",
+        "google.fr",
+        "google.it",
+        "google.com.mx",
+        "google.com.ar",
+        "google.com.br",
+        "google.ca",
+        "google.co.jp",
+        "google.nl",
+        "google.pt",
+        "google.cl",
+        "google.com.co",
+        "google.com.pe",
+        "google.be",
+        "google.ch",
+        "google.at",
+        "google.ie",
+        "google.co.in",
+        "google.com.au"
+      ]
+    },
+    "match": {
+      "names": [
+        "ei",
+        "ved",
+        "sxsrf",
+        "sca_esv",
+        "sca_upv",
+        "uact",
+        "iflsig",
+        "oq",
+        "aqs",
+        "gs_lp",
+        "gs_lcp",
+        "gs_lcrp",
+        "gs_ssp",
+        "rlz",
+        "fbs",
+        "sclient"
+      ]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Search",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.google-search-context",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": [
+        "google.com",
+        "google.es",
+        "google.co.uk",
+        "google.de",
+        "google.fr",
+        "google.it",
+        "google.com.mx",
+        "google.com.ar",
+        "google.com.br",
+        "google.ca",
+        "google.co.jp",
+        "google.nl",
+        "google.pt",
+        "google.cl",
+        "google.com.co",
+        "google.com.pe",
+        "google.be",
+        "google.ch",
+        "google.at",
+        "google.ie",
+        "google.co.in",
+        "google.com.au"
+      ]
+    },
+    "match": {
+      "names": ["client", "biw", "bih", "dpr"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Search",
+    "reason": "clean.reason.analytics"
+  },
+  {
+    "id": "tracking.google-play",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["google.com"]
+    },
+    "match": {
+      "names": ["pcampaignid"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Play",
+    "reason": "clean.reason.campaign"
+  },
+  {
+    "id": "tracking.google-docs-share",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": ["google.com"]
+    },
+    "match": {
+      "names": ["usp"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Google Docs / Drive",
+    "reason": "clean.reason.social"
+  }
+]

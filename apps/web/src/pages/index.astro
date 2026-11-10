@@ -1,0 +1,29 @@
+---
+/**
+ * Root (T035): sends the visitor to /es/ or /en/ by browser language. Without JavaScript the
+ * meta refresh and the links still work.
+ */
+import '@urlkit/ui/tokens.css';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="refresh" content="2; url=/es/" />
+    <title>URLkit</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <main>
+      <h1>URLkit</h1>
+      <p><a href="/es/" hreflang="es" lang="es">Español</a> · <a href="/en/" hreflang="en" lang="en">English</a></p>
+    </main>
+    <script>
+      const preferred = (navigator.languages?.[0] ?? navigator.language ?? 'es').toLowerCase();
+      location.replace(`/${preferred.startsWith('es') ? 'es' : 'en'}/${location.hash}`);
+    </script>
+  </body>
+</html>

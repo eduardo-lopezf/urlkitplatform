@@ -1,0 +1,57 @@
+[
+  {
+    "id": "tracking.facebook-share",
+    "kind": "tracking-param",
+    "mode": "safe",
+    "scope": {
+      "domains": ["facebook.com"]
+    },
+    "match": {
+      "names": [
+        "mibextid",
+        "rdid",
+        "share_url",
+        "sfnsn",
+        "extid",
+        "wtsid",
+        "eav",
+        "paipv",
+        "__tn__",
+        "comment_tracking",
+        "hc_ref",
+        "hc_location",
+        "ref",
+        "fref",
+        "refid",
+        "refsrc",
+        "notif_id",
+        "notif_t",
+        "rdc",
+        "rdr",
+        "_rdr"
+      ],
+      "prefixes": ["__cft__", "__xts__"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Facebook",
+    "reason": "clean.reason.social"
+  },
+  {
+    "id": "tracking.facebook-context",
+    "kind": "tracking-param",
+    "mode": "max",
+    "scope": {
+      "domains": ["facebook.com"]
+    },
+    "match": {
+      "names": ["idorvanity", "acontext"]
+    },
+    "exceptions": {
+      "domains": []
+    },
+    "platform": "Facebook",
+    "reason": "clean.reason.analytics"
+  }
+]

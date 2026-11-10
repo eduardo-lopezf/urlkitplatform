@@ -1,0 +1,20 @@
+node_modules/
+dist/
+build-output/
+.astro/
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+# Claude Code local settings may contain credentials
+.claude/settings.local.json

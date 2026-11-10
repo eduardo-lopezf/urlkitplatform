@@ -1,0 +1,8 @@
+[
+  {
+    "name": "JS de todas las páginas juntas (cota superior del JS inicial de cada página): < 150 KB comprimido",
+    "path": "dist/_astro/*.js",
+    "limit": "150 KB",
+    "gzip": true
+  }
+]
