@@ -25,8 +25,47 @@ describe('quota limiter', () => {
   it('uses the anonymous plan from the spec', () => {
     expect(ANONYMOUS_PLAN).toEqual({
       id: 'anonymous',
-      limits: { inspect: { hour: 10, day: 50 }, local: { hour: 600 }, metrics: { hour: 300 } },
+      limits: {
+        inspect: { hour: 10, day: 50 },
+        local: { hour: 600 },
+        metrics: { hour: 300 },
+        // v2 network tools (002/T012, research R9)
+        headers: { hour: 10, day: 50 },
+        metadata: { hour: 10, day: 50 },
+        tls: { hour: 10, day: 50 },
+        dns: { hour: 10, day: 50 },
+        security: { hour: 10, day: 50 },
+      },
     });
+  });
+
+  it('refunds one use in every window, never below zero (002/T072)', async () => {
+    const now = T0;
+    const limiter = createLimiter({ store: new MemoryStore(() => now), now: () => now });
+    await limiter.consume(anon, 'dns');
+    await limiter.consume(anon, 'dns');
+    await limiter.refund(anon, 'dns');
+    expect(await limiter.consume(anon, 'dns')).toMatchObject({ remaining: 8 });
+    await limiter.refund(anon, 'tls'); // nothing consumed: stays at zero
+    expect(await limiter.consume(anon, 'tls')).toMatchObject({ remaining: 9 });
+  });
+
+  it('keeps every v2 network tool in its own bucket (FR-005)', async () => {
+    const now = T0;
+    const limiter = createLimiter({ store: new MemoryStore(() => now), now: () => now });
+    for (let i = 1; i <= 10; i++)
+      expect(await limiter.consume(anon, 'headers')).toMatchObject({ allowed: true });
+    expect(await limiter.consume(anon, 'headers')).toMatchObject({ allowed: false });
+    for (const bucket of ['inspect', 'metadata', 'tls', 'dns', 'security'] as const) {
+      const decision = await limiter.consume(anon, bucket);
+      expect(decision).toMatchObject({ allowed: true, limit: 10, remaining: 9 });
+      expect(Object.keys(decision).sort()).toEqual([
+        'allowed',
+        'limit',
+        'remaining',
+        'resetSeconds',
+      ]);
+    }
   });
 
   it('counts in fixed hour and day windows with a TTL equal to the remaining window', async () => {

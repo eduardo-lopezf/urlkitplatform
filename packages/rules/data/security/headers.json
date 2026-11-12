@@ -1,0 +1,20 @@
+{
+  "source": "Recomendaciones de OWASP Secure Headers Project y MDN Web Docs para cada cabecera. Umbral de HSTS: el mínimo que exige la lista de precarga de hstspreload.org.",
+  "reviewed": "2026-11-11",
+  "hsts": { "minMaxAge": 31536000 },
+  "csp": { "unsafeScriptSources": ["'unsafe-inline'", "'unsafe-eval'", "*", "data:", "http:"] },
+  "frameOptions": { "valid": ["DENY", "SAMEORIGIN"] },
+  "referrerPolicy": {
+    "valid": [
+      "no-referrer",
+      "no-referrer-when-downgrade",
+      "origin",
+      "origin-when-cross-origin",
+      "same-origin",
+      "strict-origin",
+      "strict-origin-when-cross-origin",
+      "unsafe-url"
+    ],
+    "unsafe": ["unsafe-url"]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "source": "Orden que siguen los rastreadores de vistas previas: el protocolo Open Graph primero, después las tarjetas de redes y por último las etiquetas básicas de HTML.",
+  "reviewed": "2026-11-11",
+  "precedence": {
+    "title": ["openGraph", "twitter", "basic"],
+    "description": ["openGraph", "twitter", "basic"],
+    "image": ["openGraph", "twitter"],
+    "url": ["openGraph", "basic"],
+    "siteName": ["openGraph"],
+    "type": ["openGraph"]
+  }
+}

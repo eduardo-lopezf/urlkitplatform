@@ -20,3 +20,6 @@ Thumbs.db
 .claude/settings.local.json
 # Seeded fixture for the boundaries test (T013a), not a build output
 !tooling/boundaries/fixtures/packages/rules/dist/
+
+# Snapshots and review CSVs of apps/api/scripts/reference-check.ts (third-party pages)
+apps/api/scripts/out/

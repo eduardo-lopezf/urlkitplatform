@@ -1,6 +1,6 @@
 # Arquitectura de URLkit Platform
 
-**Estado**: vigente | **Versión**: 1.2.0 | **Fecha**: 2026-11-06
+**Estado**: vigente | **Versión**: 1.4.0 | **Fecha**: 2026-11-11
 
 Este documento describe la arquitectura de todo el producto y su evolución por etapas. La
 [constitución](../.specify/memory/constitution.md) prevalece sobre él; cada plan de feature
@@ -61,16 +61,18 @@ tecnología.
 
 | Componente | Tecnología | Responsabilidad |
 |---|---|---|
-| Servicio de sondas | Python + FastAPI | DNS, TLS, cabeceras HTTP, metadatos y análisis de seguridad |
-| Contratos del servicio | Pydantic v2 | Validación y OpenAPI propio del servicio |
-| DNS | dnspython | Consultas, EDNS, DNSSEC, resolvers personalizados |
-| TLS | `ssl` + `cryptography` | Cadena de certificados, extensiones X.509, transparencia |
-| HTTP (sondas) | HTTPX async | Cabeceras y metadatos de página |
+| Sondas de red | Node, dentro de `apps/api` (`src/probes/`) | Observar la red; el núcleo interpreta lo observado |
+| HTTP (cabeceras y metadatos) | `undici` con `rawHeaders` sobre el cliente seguro del inspector | Cabeceras en orden y cuerpo del documento final |
+| HTML | `parse5` (en el núcleo) | Metadatos de página según el estándar HTML |
+| TLS | `node:tls` + `crypto.X509Certificate` + `@peculiar/asn1-x509` | Cadena de certificados, confianza, extensiones X.509 y SCT incrustadas |
+| DNS | DNS sobre HTTPS (RFC 8484) con `dns-packet`, a resolutores validadores fijos | Registros con TTL, EDNS, estado DNSSEC y EDE |
 
-El servicio de sondas es un proceso separado detrás del mismo gateway, con su propio contrato.
-**No comparte código con el núcleo** y no contiene lógica de URLs: cuando necesita interpretar una
-URL, recibe ya sus componentes del adaptador que lo invoca. Los límites exactos de lo que puede y
-no puede hacer están en la sección 11, y son la condición para que el servicio exista.
+La versión 2 **no abre la frontera de Python**: la condición de la sección 11 se evaluó al
+planificarla y Node resuelve el alcance real (comparación en la sección 11 y en
+`specs/002-v2-network-analysis/research.md`, R1). Las sondas siguen la misma división que
+Redirect Inspector: observan la red con la misma protección SSRF y no contienen reglas de
+producto. Si una versión posterior necesitara un servicio de sondas aparte, sus límites son los
+de la sección 11.
 
 ### Versión 3 — plataforma
 
@@ -96,7 +98,7 @@ isla Vue  ──► núcleo TS            adaptador API (Hono)
                                      │ mide
                                      ├─► núcleo TS  (herramientas de URL)
                                      ├─► cliente HTTP seguro  (Redirect Inspector)
-                                     └─► servicio de sondas  (v2, por contrato)
+                                     └─► sondas de red  (v2, en el mismo proceso)
 ```
 
 - **Núcleo**: funciones puras. Sin red, sin DOM, sin reloj, sin almacenamiento, sin texto para
@@ -153,7 +155,7 @@ El sistema habla TypeScript, Python y SQL. Ningún tipo cruza una frontera sin c
 | Isla Vue ↔ núcleo | Tipos del paquete | TypeScript | Semántico del paquete | Unitarias del núcleo |
 | Navegador ↔ API | `/v1` | OpenAPI generado desde Zod | Mayor en la ruta (`/v1`, `/v2`) | Contrato en ambos lados |
 | Cliente externo ↔ API | `/v1` | OpenAPI publicado en `/v1/openapi.json` | Mayor en la ruta + deprecación anunciada | Contrato + ejemplos |
-| API ↔ servicio de sondas (v2) | Contrato interno del servicio | OpenAPI generado desde Pydantic | Mayor en la ruta interna | Contrato en ambos lados |
+| API ↔ servicio de sondas (solo si se reabre la sección 11) | Contrato interno del servicio | OpenAPI generado desde Pydantic | Mayor en la ruta interna | Contrato en ambos lados |
 | Núcleo ↔ catálogo de reglas | Esquema del catálogo | JSON Schema | Semántico propio (sección 6) | Validación en CI + corpus |
 | Adaptadores ↔ catálogo de mensajes | Lista de códigos | Códigos + parámetros | Deprecación anunciada (sección 7) | Paridad de claves entre idiomas |
 | Servicio ↔ Valkey | Convención de claves | Prefijo con versión | Prefijo nuevo al cambiar formato | Integración |
@@ -222,14 +224,15 @@ despliegue o dos lenguajes:
 
 - `tests/ssrf-vectors/` **existe desde el MVP**: son datos, no código, y los ejecuta la suite de
   TypeScript; cuando aparezca el servicio en Python ejecutará los mismos (sección 9).
-- Las suites de contrato entre la API y el servicio de sondas llegan con la versión 2.
+- Las suites de contrato entre la API y un servicio de sondas solo llegarían si se reabre la
+  sección 11; la versión 2 no las necesita.
 
 ### Lo que no se crea todavía
 
 | Directorio | Etapa | Por qué no antes |
 |---|---|---|
-| `services/probes/` | v2 | Principio VII: no hay funcionalidad que lo necesite (sección 11) |
-| Suites en `tests/` de la raíz | v2 | En el MVP no hay suite que cruce despliegues; `tests/ssrf-vectors/` sí existe desde el MVP, porque son datos compartidos entre lenguajes |
+| `services/probes/` | Sin etapa | La versión 2 se resolvió en Node (sección 11); solo se crea si una necesidad futura reabre esa sección |
+| Suites en `tests/` de la raíz | Sin etapa | En el MVP no hay suite que cruce despliegues; `tests/ssrf-vectors/` sí existe desde el MVP, porque son datos compartidos entre lenguajes |
 | `packages/sdk/` | v3 | La web no llama a la API para las herramientas locales; hasta que haya consumidores externos no hay a quién dar soporte. Cuando exista será **generado** desde `openapi.json`, con verificación en CI de que está al día: el Principio IX prohíbe mantener a mano una segunda definición de los tipos |
 
 ## 7. Catálogo de reglas: versionado y compatibilidad
@@ -300,7 +303,7 @@ cliente HTTP: protege de un fallo en el código, no al revés.
 
 ### Vectores compartidos entre lenguajes
 
-El servicio de sondas de la versión 2 hará peticiones salientes en Python, y esa validación no se
+Si algún día existe un servicio de sondas en Python (sección 11), hará peticiones salientes, y esa validación no se
 puede delegar: ocurre en el momento de conectar, dentro del proceso que conecta. Es **la única
 duplicación de lógica admitida en el producto**, y precisamente por eso no se sostiene sobre la
 confianza.
@@ -373,6 +376,24 @@ justifique. Si Node resuelve el alcance real, el sistema se queda en un solo len
 sección se cierra sin abrir la frontera.
 
 Mientras no se cumpla la condición, el repositorio no contiene código Python de producción.
+
+### Evaluación para la versión 2 (2026-11-11)
+
+Evaluada al planificar la versión 2 (`specs/002-v2-network-analysis/research.md`, R1), sobre
+Node 26.5, OpenSSL 3.6 y undici 8.12. **Resultado: la condición no se cumple y la frontera queda
+cerrada.**
+
+| Capacidad | Node | Python | ¿Diferencia que importe? |
+|---|---|---|---|
+| Cabeceras en orden y repetidas | `undici.dispatch` + `rawHeaders` | HTTPX | No |
+| Redirecciones con SSRF completa | Ya existe y pasa los vectores | Habría que reimplementarla | Sí, a favor de Node |
+| Cadena de certificados y confianza | `tls.connect` + `getPeerCertificate(true)` + `X509Certificate` | `ssl` + `cryptography` | No |
+| Transparencia de certificados | SCT incrustadas con `@peculiar/asn1-x509` | `cryptography` | No: ninguno lee las SCT de la extensión TLS ni del OCSP |
+| Registros DNS con TTL y DNSSEC | DoH con `dns-packet`, bit DO, AD y EDE | dnspython | No, con DoH (`node:dns` sí se queda corto: sin TTL fuera de A/AAAA ni bit AD) |
+| Metadatos de página | `parse5` | BeautifulSoup / html5lib | No |
+
+Motivos para reevaluar en el futuro: validar DNSSEC en nuestro propio proceso hasta la raíz, o
+sondas que ninguna spec contempla hoy.
 
 ### Lo que el servicio de sondas no puede hacer
 
@@ -450,3 +471,4 @@ lugar de confiar en los logs.
 | 1.1.0 | 2026-11-06 | Estructura del repositorio revisada: paquete `contracts`, fronteras internas verificadas en CI, catálogo inyectado en el núcleo, ubicación y aplazamiento de `services/probes`, `tests/` y `sdk` |
 | 1.2.0 | 2026-11-06 | Superficie SSRF completa desde el MVP con vectores compartidos entre lenguajes; contratos preparados para claves de API, cuotas por organización y persistencia futura; límites estrictos del servicio de sondas |
 | 1.3.0 | 2026-11-10 | Despliegue del MVP en un VPS autogestionado con Compose; proveedor gestionado con autoescalado y Valkey gestionado cuando el tráfico lo pida |
+| 1.4.0 | 2026-11-11 | Versión 2 en Node dentro de `apps/api`: condición de la sección 11 evaluada y frontera de Python cerrada; pila de la versión 2 sustituida; `services/probes/` sin etapa |

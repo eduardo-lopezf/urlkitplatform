@@ -32,6 +32,34 @@ export function testApp(overrides: Partial<AppDeps> = {}) {
       html: null,
       durationMs: 5,
     }),
+    chainFetcher: () => async (url) => ({
+      ok: true,
+      value: {
+        chain: {
+          input: url,
+          hops: [
+            { index: 0, url, status: 200, type: 'final', location: null, durationMs: 5, flags: [] },
+          ],
+          final: url,
+          stopReason: 'final',
+          totalMs: 5,
+        },
+        finalResponse: {
+          status: 200,
+          rawHeaders: [['Content-Type', 'text/html']],
+          contentType: 'text/html',
+          body: null,
+          bodyTruncated: false,
+        },
+      },
+    }),
+    tlsProber: () => async () => ({ kind: 'error', code: 'tls.refused' }),
+    dnsQuerier: () => async () => ({ kind: 'unavailable' }),
+    securityAdapters: () => ({
+      fetchChain: deps.chainFetcher(),
+      probeTls: deps.tlsProber(),
+      queryDns: deps.dnsQuerier(),
+    }),
     clientIp: (c) => c.req.header('x-test-ip') ?? '203.0.113.7',
     ...overrides,
   };

@@ -8,7 +8,9 @@ export {
   hostToUnicode,
   type ParseOptions,
 } from './url/parse.ts';
+export { analyzeHost, isSpecialUseName, type HostInfo } from './url/host.ts';
 export type * from './tools/clean/catalog.ts';
+export type * from './tools/headers/types.ts';
 export * from './url/serialize.ts';
 export * from './url/normalize.ts';
 export { splitRaw, type RawParts } from './url/raw.ts';
@@ -59,3 +61,54 @@ export {
   type SignalId,
 } from './tools/explain/index.ts';
 export { suggestTool, SHORTENER_HOSTS } from './tools/suggest.ts';
+export {
+  analyzeHeaders,
+  headersTool,
+  OMITTED,
+  type CookieCheck,
+  type HeaderCheck,
+  type HeadersAnalysis,
+  type HeaderState,
+} from './tools/headers/index.ts';
+export {
+  decodeDocument,
+  extractMetadata,
+  metadataTool,
+  sniffEncoding,
+  type EffectiveValue,
+  type EncodingChoice,
+  type HtmlNode,
+  type MetadataSources,
+  type PageMetadata,
+  type ParseHtml,
+} from './tools/metadata/index.ts';
+export { analyzeTls, tlsTool, type Certificate, type TlsAnalysis } from './tools/tls/index.ts';
+export type * from './tools/tls/types.ts';
+export {
+  analyzeDns,
+  dnsNames,
+  dnsTool,
+  RECORD_TYPES,
+  type DnsAnswer,
+  type DnsLookup,
+  type DnsName,
+  type DnsObservation,
+  type DnsRecordData,
+  type DnsRecordSet,
+  type DnsResolverId,
+  type DnsScope,
+  type QueryDns,
+  type RecordType,
+} from './tools/dns/index.ts';
+export {
+  review,
+  reviewTargets,
+  securityTool,
+  type Finding,
+  type FindingTool,
+  type Part,
+  type PartName,
+  type ReviewParts,
+  type ReviewTargets,
+  type SecurityReview,
+} from './tools/security/index.ts';

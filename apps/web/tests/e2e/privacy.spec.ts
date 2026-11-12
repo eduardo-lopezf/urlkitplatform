@@ -7,6 +7,11 @@ const PAGES = [
   '/es/inspect',
   '/es/diff',
   '/es/explain',
+  '/es/headers',
+  '/es/metadata',
+  '/es/tls',
+  '/es/dns',
+  '/es/security',
   '/es/about',
   '/es/api',
   '/en/',
@@ -58,4 +63,78 @@ test('every page carries a strict CSP and no referrer', async ({ page }) => {
     expect(csp, path).not.toContain('unsafe-inline');
     await expect(page.locator('meta[name="referrer"]')).toHaveAttribute('content', 'no-referrer');
   }
+});
+
+// 002/T091: each network analysis makes exactly one request, a POST to the API with the input in
+// the body. Nothing goes to third parties, not even the preview image or the icons of Metadata.
+test('network tools make one POST each, with the input only in the body', async ({
+  page,
+  context,
+  requests,
+  baseURL,
+}) => {
+  const secret = 'privado-456';
+  const url = `https://ejemplo.com/${secret}`;
+  const image = 'https://cdn.third-party.example/og.png';
+  await page.route('**/v1/metadata', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({
+        input: url,
+        finalUrl: url,
+        hops: 0,
+        stopReason: 'final',
+        contentType: 'text/html',
+        truncated: false,
+        sources: {
+          basic: {},
+          openGraph: { image: [image] },
+          twitter: {},
+          links: { icon: [image] },
+        },
+        effective: { image: { value: image, from: 'openGraph' } },
+        warnings: [],
+        catalogVersion: '1.3.0',
+      }),
+    }),
+  );
+  for (const tool of ['headers', 'tls', 'dns', 'security'])
+    await page.route(`**/v1/${tool}`, (route) =>
+      route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ code: 'url.invalid', message: { code: 'url.invalid' } }),
+      }),
+    );
+  const runs: Array<[string, string, string]> = [
+    ['/es/headers', 'URL', 'Analizar'],
+    ['/es/metadata', 'URL', 'Analizar'],
+    ['/es/tls', 'Sitio', 'Analizar'],
+    ['/es/dns', 'Dominio', 'Consultar'],
+    ['/es/security', 'URL', 'Analizar'],
+  ];
+  for (const [path, label, button] of runs) {
+    await page.goto(path);
+    await fill(page, label, url);
+    await page.getByRole('button', { name: button }).click();
+    await page.waitForTimeout(300);
+  }
+  const api = requests.filter((r) => /\/v1\/(headers|metadata|tls|dns|security)$/.test(r.url()));
+  expect(api.map((r) => `${r.method()} ${new URL(r.url()).pathname}`)).toEqual([
+    'POST /v1/headers',
+    'POST /v1/metadata',
+    'POST /v1/tls',
+    'POST /v1/dns',
+    'POST /v1/security',
+  ]);
+  for (const r of api) expect(r.postData()).toContain(secret);
+  for (const r of requests) expect(r.url()).not.toContain(secret);
+  const thirdParty = requests.filter(
+    (r) => !r.url().startsWith(baseURL ?? '') && !/\/v1\//.test(r.url()),
+  );
+  expect(thirdParty.map((r) => r.url())).toEqual([]);
+  expect(await context.cookies()).toEqual([]);
 });

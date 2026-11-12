@@ -8,14 +8,41 @@ export { z };
 
 export const MessageCodeSchema = z.enum(MESSAGE_CODES).openapi('MessageCode', {
   description:
-    'Stable message code. Part of the public contract: a published code never changes meaning or disappears without deprecation.',
+    'Stable message code. Part of the public contract: a published code never changes meaning or disappears without deprecation. New codes are added in minor versions: clients MUST accept values they do not know.',
 });
 
 export const ErrorCodeSchema = z.enum(TOOL_ERROR_CODES).openapi('ErrorCode');
 
 export const ToolIdSchema = z
-  .enum(['clean', 'parse', 'inspect', 'diff', 'explain'])
-  .openapi('ToolId');
+  .enum([
+    'clean',
+    'parse',
+    'inspect',
+    'diff',
+    'explain',
+    'headers',
+    'metadata',
+    'tls',
+    'dns',
+    'security',
+  ])
+  .openapi('ToolId', {
+    description:
+      'Tool identifier. New tools are added in minor versions: clients MUST accept values they do not know.',
+  });
+
+/** Severity of a Security Analysis finding (002 data-model.md). */
+export const SeveritySchema = z.enum(['high', 'medium', 'low', 'info']).openapi('Severity');
+
+/** Why a redirect chain stopped. Shared by inspect and the v2 tools that follow chains. */
+export const StopReasonSchema = z.enum([
+  'final',
+  'loop',
+  'max-hops',
+  'blocked',
+  'error',
+  'timeout',
+]);
 
 export const UrlInputSchema = z.string().min(1).max(32_000).openapi('UrlInput');
 

@@ -2,7 +2,19 @@
   "ci": {
     "collect": {
       "staticDistDir": "./dist",
-      "url": ["/es/", "/es/clean/", "/es/parse/", "/es/inspect/", "/es/diff/", "/es/explain/"],
+      "url": [
+        "/es/",
+        "/es/clean/",
+        "/es/parse/",
+        "/es/inspect/",
+        "/es/diff/",
+        "/es/explain/",
+        "/es/headers/",
+        "/es/metadata/",
+        "/es/tls/",
+        "/es/dns/",
+        "/es/security/"
+      ],
       "numberOfRuns": 1,
       "settings": {
         "formFactor": "mobile",

@@ -8,8 +8,13 @@ export type Subject =
   | { type: 'api-key'; keyId: string; organizationId: string }
   | { type: 'organization'; organizationId: string };
 
-/** `local` = API endpoints of the tools that run in the browser; the web never calls them. */
-export type QuotaBucket = 'inspect' | 'local' | 'metrics';
+/**
+ * `local` = API endpoints of the tools that run in the browser; the web never calls them.
+ * The v2 network tools each have their own bucket, so exhausting one never blocks another
+ * (002 FR-005, research R9).
+ */
+export type QuotaBucket =
+  'inspect' | 'local' | 'metrics' | 'headers' | 'metadata' | 'tls' | 'dns' | 'security';
 
 export type QuotaWindow = 'hour' | 'day';
 

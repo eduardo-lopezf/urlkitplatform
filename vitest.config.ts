@@ -8,6 +8,7 @@ export default defineConfig({
       'packages/rules',
       'packages/i18n',
       'apps/api',
+      'apps/web',
       'tooling/boundaries',
     ],
   },

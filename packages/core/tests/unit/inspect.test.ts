@@ -92,6 +92,47 @@ describe('hop interpretation', () => {
       literal: true,
     });
   });
+
+  // Found validating 002 against ubuntu.com: an HTML attribute is not JavaScript.
+  it('only looks for JavaScript redirects inside <script> elements', () => {
+    expect(
+      detectJsRedirect(
+        '<div id="contact-form-container" data-form-location="/shared/forms/form-template"></div>',
+      ),
+    ).toBeNull();
+    expect(detectJsRedirect('<x-map location="/places"></x-map>')).toBeNull();
+    expect(detectJsRedirect('<p>Set location = "/here" in the settings.</p>')).toBeNull();
+    expect(
+      detectJsRedirect(
+        '<div data-form-location="/form"></div><script type="text/javascript">location.href="/real"</script>',
+      ),
+    ).toEqual({ url: '/real', literal: true });
+  });
+
+  // Found validating 002 against duckduckgo.com.
+  it('decodes HTML entities in the meta refresh content', () => {
+    expect(
+      parseMetaRefresh(
+        '<meta http-equiv="refresh" content="0; url=&quot;https://html.duckduckgo.com/html&quot;"/>',
+      ),
+    ).toBe('https://html.duckduckgo.com/html');
+    expect(parseMetaRefresh('<meta http-equiv="refresh" content="0;url=/next?a=1&amp;b=2">')).toBe(
+      '/next?a=1&b=2',
+    );
+  });
+
+  it('ignores a meta refresh inside <noscript>, which a browser with scripts never applies', () => {
+    expect(
+      parseMetaRefresh(
+        '<noscript><meta http-equiv="refresh" content="0; url=/html"/></noscript><p>home</p>',
+      ),
+    ).toBeNull();
+    expect(
+      parseMetaRefresh(
+        '<noscript><style>body{}</style></noscript><meta http-equiv="refresh" content="0;url=/go">',
+      ),
+    ).toBe('/go');
+  });
 });
 
 describe('inspect', () => {

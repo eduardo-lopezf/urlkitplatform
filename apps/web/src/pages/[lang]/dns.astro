@@ -1,0 +1,16 @@
+---
+import { t, LANGS, type Lang } from '@urlkit/i18n';
+import DnsIsland from '../../islands/DnsIsland.vue';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const name = t('ui.tool.dns.name', lang);
+const summary = t('ui.tool.dns.summary', lang);
+---
+
+<Base lang={lang} page="dns" title={`${name} · URLkit`} description={summary}>
+  <h1>{name}</h1>
+  <p class="lede">{summary}</p>
+  <DnsIsland client:load lang={lang} />
+</Base>

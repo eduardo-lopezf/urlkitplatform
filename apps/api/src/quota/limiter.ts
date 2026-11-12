@@ -16,6 +16,8 @@ import {
 
 export interface Limiter {
   consume(subject: Subject, bucket: QuotaBucket): Promise<QuotaDecision>;
+  /** Gives back one use that the service could not provide (DNS `503`, 002/T072). */
+  refund(subject: Subject, bucket: QuotaBucket): Promise<void>;
 }
 
 export function createLimiter({
@@ -25,7 +27,18 @@ export function createLimiter({
   store: QuotaStore;
   now?: () => number;
 }): Limiter {
+  const keys = (subject: Subject, bucket: QuotaBucket) => {
+    const nowSeconds = now() / 1000;
+    return (Object.keys(planFor(subject).limits[bucket]) as QuotaWindow[]).map((window) => {
+      const size = WINDOW_SECONDS[window];
+      const start = Math.floor(nowSeconds / size) * size;
+      return `quota:${bucket}:${window}:${start}:${subjectKey(subject)}`;
+    });
+  };
   return {
+    async refund(subject, bucket) {
+      for (const key of keys(subject, bucket)) await store.decrement?.(key);
+    },
     async consume(subject, bucket) {
       const nowSeconds = now() / 1000;
       const windows = Object.entries(planFor(subject).limits[bucket]) as Array<

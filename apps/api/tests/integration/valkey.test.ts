@@ -45,6 +45,23 @@ describe.skipIf(!REDIS_URL)('privacy with a real Valkey', () => {
     await new Promise<void>((resolve) => server.close(() => resolve()));
   });
 
+  it('decrements a counter without creating keys or touching the TTL (002/T072)', async () => {
+    const store = new RedisStore(redis);
+    const key = `quota:test-refund:${randomBytes(8).toString('hex')}`;
+    touched.add(key);
+    await store.increment(key, 120);
+    await store.increment(key, 120);
+    await store.decrement(key);
+    expect(await redis.get(key)).toBe('1');
+    expect(await redis.ttl(key)).toBeGreaterThan(0);
+    await store.decrement(key);
+    await store.decrement(key); // never below zero
+    expect(await redis.get(key)).toBe('0');
+    const missing = `quota:test-refund:${randomBytes(8).toString('hex')}`;
+    await store.decrement(missing);
+    expect(await redis.exists(missing)).toBe(0);
+  });
+
   it('replays scenarios 5–7 without leaking URLs or IPs to logs or Valkey', async () => {
     const real = new RedisStore(redis);
     const store: QuotaStore = {

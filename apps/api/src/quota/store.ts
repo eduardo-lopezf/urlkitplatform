@@ -7,6 +7,8 @@ import type { Redis } from 'ioredis';
 export interface QuotaStore {
   /** Increments `key`, sets its TTL on first use, returns the new count. */
   increment(key: string, ttlSeconds: number): Promise<number>;
+  /** Undoes one increment (002/T072). Never goes below zero and never extends the TTL. */
+  decrement?(key: string): Promise<void>;
 }
 
 export class MemoryStore implements QuotaStore {
@@ -27,6 +29,11 @@ export class MemoryStore implements QuotaStore {
     }
     entry.count += 1;
     return entry.count;
+  }
+
+  async decrement(key: string): Promise<void> {
+    const entry = this.counters.get(key);
+    if (entry && entry.expiresAt > this.now() && entry.count > 0) entry.count -= 1;
   }
 
   private sweep(now: number): void {
@@ -50,5 +57,14 @@ export class RedisStore implements QuotaStore {
     const count = result?.[0]?.[1];
     if (typeof count !== 'number') throw new Error('quota store: unexpected Valkey reply');
     return count;
+  }
+
+  /** DECR only if the key still exists and is positive, so it never creates a key without TTL. */
+  async decrement(key: string): Promise<void> {
+    await this.redis.eval(
+      "if (tonumber(redis.call('GET', KEYS[1]) or '0') > 0) then return redis.call('DECR', KEYS[1]) end return 0",
+      1,
+      key,
+    );
   }
 }

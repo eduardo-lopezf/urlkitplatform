@@ -4,11 +4,12 @@
  * a known short link suggests Redirect Inspector. The decision comes from the core.
  */
 import { computed, ref } from 'vue';
-import { suggestTool, TOOL_IDS, type ToolId } from '@urlkit/core';
+import { suggestTool, type ToolId } from '@urlkit/core';
 import UrlInput from '@urlkit/ui/components/UrlInput.vue';
 import ToolIcon from '@urlkit/ui/components/ToolIcon.vue';
 import { useText, type Lang } from '../lib/i18n.ts';
 import { toolHref } from '../lib/share.ts';
+import { ANALYSIS_TOOLS, MVP_TOOLS } from '../lib/tools.ts';
 
 const props = defineProps<{ lang: Lang }>();
 const { text } = useText(props.lang);
@@ -28,7 +29,7 @@ function open() {
   if (suggestion.value) window.location.assign(href(suggestion.value.tool));
 }
 
-const others = computed(() => TOOL_IDS.filter((id) => id !== suggestion.value?.tool));
+const others = computed(() => MVP_TOOLS.filter((id) => id !== suggestion.value?.tool));
 </script>
 
 <template>
@@ -57,8 +58,22 @@ const others = computed(() => TOOL_IDS.filter((id) => id !== suggestion.value?.t
     <section aria-labelledby="home-tools">
       <h2 id="home-tools" class="uk-label">{{ text('ui.home.tools') }}</h2>
       <ul class="tools">
-        <li v-for="id in suggestion ? others : TOOL_IDS" :key="id">
+        <li v-for="id in suggestion ? others : MVP_TOOLS" :key="id">
           <a :href="href(id)">
+            <ToolIcon :tool="id" />
+            <strong>{{ text(`ui.tool.${id}.name`) }}</strong>
+            <span class="tip" role="tooltip">{{ text(`ui.tool.${id}.summary`) }}</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section v-if="ANALYSIS_TOOLS.length > 0" aria-labelledby="home-analysis">
+      <h2 id="home-analysis" class="uk-label">{{ text('ui.home.analysis') }}</h2>
+      <ul class="tools">
+        <li v-for="id in ANALYSIS_TOOLS" :key="id">
+          <!-- Network tools never receive the input from home: they need an explicit action. -->
+          <a :href="toolHref(props.lang, id)">
             <ToolIcon :tool="id" />
             <strong>{{ text(`ui.tool.${id}.name`) }}</strong>
             <span class="tip" role="tooltip">{{ text(`ui.tool.${id}.summary`) }}</span>

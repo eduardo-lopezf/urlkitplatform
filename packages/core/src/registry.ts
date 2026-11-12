@@ -3,12 +3,38 @@
  * Adding a tool never modifies the existing ones.
  */
 import type { RuleCatalog } from './tools/clean/catalog.ts';
+import type { QueryDns } from './tools/dns/types.ts';
+import type { FetchChain } from './tools/headers/types.ts';
+import type { ParseHtml } from './tools/metadata/types.ts';
 import type { FetchHop } from './tools/inspect/types.ts';
+import type { ProbeTls } from './tools/tls/types.ts';
 import type { Result } from './types.ts';
 
-export type ToolId = 'clean' | 'parse' | 'inspect' | 'diff' | 'explain';
+export type ToolId =
+  | 'clean'
+  | 'parse'
+  | 'inspect'
+  | 'diff'
+  | 'explain'
+  // v2: network tools, all `runsOn: 'server'` (002 contracts/tool-registry.md)
+  | 'headers'
+  | 'metadata'
+  | 'tls'
+  | 'dns'
+  | 'security';
 
-export const TOOL_IDS: readonly ToolId[] = ['clean', 'parse', 'inspect', 'diff', 'explain'];
+export const TOOL_IDS: readonly ToolId[] = [
+  'clean',
+  'parse',
+  'inspect',
+  'diff',
+  'explain',
+  'headers',
+  'metadata',
+  'tls',
+  'dns',
+  'security',
+];
 
 /**
  * Minimal structural schema. Zod schemas satisfy it, but the core does not depend on Zod: the
@@ -23,6 +49,12 @@ export interface ToolContext {
   catalog?: RuleCatalog;
   /** Network adapter for `inspect`; the core knows nothing about the network. */
   fetchHop?: FetchHop;
+  /** v2 network adapters (002 research R2). They observe; the core interprets. */
+  fetchChain?: FetchChain;
+  probeTls?: ProbeTls;
+  queryDns?: QueryDns;
+  /** HTML parser of Metadata, injected from `@urlkit/core/html` so the web never bundles it. */
+  parseHtml?: ParseHtml;
 }
 
 export interface ToolDefinition<I = unknown, O = unknown> {

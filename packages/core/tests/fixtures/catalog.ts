@@ -1,5 +1,11 @@
 /** Synthetic catalogs written for each test: the core never imports the real one. */
-import type { DomainRule, ParamRule, RuleCatalog, WrapperRule } from '../../src/index.ts';
+import type {
+  DomainRule,
+  ParamRule,
+  RuleCatalog,
+  SecurityCriteria,
+  WrapperRule,
+} from '../../src/index.ts';
 
 export function param(id: string, overrides: Partial<ParamRule> = {}): ParamRule {
   return {
@@ -51,5 +57,23 @@ export function catalog(parts: Partial<RuleCatalog> = {}): RuleCatalog {
     domains: {},
     abuseTlds: [],
     ...parts,
+  };
+}
+
+/** Synthetic v2 criteria (002 research R8). Values are deliberately not the real ones. */
+export function criteria(overrides: Partial<SecurityCriteria> = {}): SecurityCriteria {
+  return {
+    headers: {
+      hsts: { minMaxAge: 1000 },
+      csp: { unsafeScriptSources: ["'unsafe-inline'", "'unsafe-eval'", '*', 'data:'] },
+      frameOptions: { valid: ['DENY', 'SAMEORIGIN'] },
+      referrerPolicy: {
+        valid: ['no-referrer', 'strict-origin-when-cross-origin', 'unsafe-url'],
+        unsafe: ['unsafe-url'],
+      },
+    },
+    tls: { expiringSoonDays: 10, weakSignatures: ['sha1'], legacyProtocols: ['TLSv1.1'] },
+    severities: {},
+    ...overrides,
   };
 }

@@ -1,0 +1,16 @@
+---
+import { t, LANGS, type Lang } from '@urlkit/i18n';
+import MetadataIsland from '../../islands/MetadataIsland.vue';
+import Base from '../../layouts/Base.astro';
+
+export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
+const lang = Astro.params.lang as Lang;
+const name = t('ui.tool.metadata.name', lang);
+const summary = t('ui.tool.metadata.summary', lang);
+---
+
+<Base lang={lang} page="metadata" title={`${name} · URLkit`} description={summary}>
+  <h1>{name}</h1>
+  <p class="lede">{summary}</p>
+  <MetadataIsland client:load lang={lang} />
+</Base>

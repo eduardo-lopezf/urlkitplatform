@@ -1,0 +1,643 @@
+{
+  "description": "Reference sets of 002 SC-003 to SC-006, checked against the real network by reference-check.ts. Not part of CI.",
+  "headers": [
+    "https://www.google.com/",
+    "https://www.wikipedia.org/",
+    "https://github.com/",
+    "https://www.mozilla.org/",
+    "https://www.apple.com/",
+    "https://www.microsoft.com/",
+    "https://www.cloudflare.com/",
+    "https://www.amazon.com/",
+    "https://www.bbc.co.uk/",
+    "https://www.nytimes.com/",
+    "https://elpais.com/",
+    "https://www.rtve.es/",
+    "https://www.gov.uk/",
+    "https://european-union.europa.eu/",
+    "https://www.w3.org/",
+    "https://www.ietf.org/",
+    "https://www.python.org/",
+    "https://nodejs.org/",
+    "https://www.npmjs.com/",
+    "https://stackoverflow.com/",
+    "https://www.reddit.com/",
+    "https://duckduckgo.com/",
+    "https://www.bing.com/",
+    "https://www.yahoo.com/",
+    "https://www.linkedin.com/",
+    "https://x.com/",
+    "https://www.facebook.com/",
+    "https://www.instagram.com/",
+    "https://www.youtube.com/",
+    "https://www.netflix.com/",
+    "https://open.spotify.com/",
+    "https://www.paypal.com/",
+    "https://stripe.com/",
+    "https://www.shopify.com/",
+    "https://wordpress.org/",
+    "https://www.debian.org/",
+    "https://ubuntu.com/",
+    "https://archlinux.org/",
+    "https://www.kernel.org/",
+    "https://www.gnu.org/",
+    "https://letsencrypt.org/",
+    "https://www.eff.org/",
+    "https://www.theguardian.com/",
+    "https://www.lemonde.fr/",
+    "https://www.spiegel.de/",
+    "https://edition.cnn.com/",
+    "https://www.reuters.com/",
+    "https://apnews.com/",
+    "https://www.bloomberg.com/",
+    "https://www.dropbox.com/"
+  ],
+  "metadata": {
+    "note": "SC-004: 50 páginas elegidas por los casos que cubren (campo `case`), clasificadas el 2026-11-12 con el extractor real. No se encontró en páginas reales ninguna con varias og:image ni con og:image relativa; las pruebas unitarias cubren ambos casos, y conviene añadir páginas reales si aparecen. `expected` puede omitirse: la ejecución genera sc004-review.csv, donde una persona rellena el valor esperado a partir de la instantánea guardada, y `--score` calcula el resultado. Campos: title, description, image, canonical. Usa \"—\" para «la página no declara nada». Las páginas cambian: si una deja de responder o cambia de tipo, sustitúyela por otra del mismo caso. Valores esperados del 2026-11-12, sobre las instantáneas de ese día: los obtuvo un extractor independiente (Python, html.parser, sin código compartido con URLkit) aplicando la regla documentada; Claude revisó a mano las discrepancias con URLkit (5 canónicas sin barra final, resueltas a favor de la serialización del estándar URL) y los casos de codificación, marcos, AMP, proxy y truncado. No es una revisión humana: conviene que una persona revise una muestra antes de dar SC-004 por cumplido. Si una página cambia, su valor esperado deja de valer.",
+    "pages": [
+      {
+        "url": "https://github.com/nodejs/node",
+        "case": "open-graph: repositorio",
+        "expected": {
+          "title": "GitHub - nodejs/node: Node.js JavaScript runtime ✨🐢🚀✨",
+          "description": "Node.js JavaScript runtime ✨🐢🚀✨. Contribute to nodejs/node development by creating an account on GitHub.",
+          "image": "https://opengraph.githubassets.com/75dc22a80954788052185f69166be5aefa8b6508c03a2e61a762f94de6768ebc/nodejs/node",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy",
+        "case": "open-graph: documentación, canónica en otra ruta del mismo sitio",
+        "expected": {
+          "title": "Content-Security-Policy (CSP) header - HTTP | MDN",
+          "description": "The HTTP Content-Security-Policy response header allows website administrators to control resources the user agent is allowed to load for a given page. With a few exceptions, policies mostly involve specifying server origins and script endpoints. This helps guard against cross-site scripting attacks.",
+          "image": "https://developer.mozilla.org/mdn-social-image.46ac2375.png",
+          "canonical": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy"
+        }
+      },
+      {
+        "url": "https://www.python.org/",
+        "case": "open-graph: portada",
+        "expected": {
+          "title": "Welcome to Python.org",
+          "description": "The official home of the Python Programming Language",
+          "image": "https://www.python.org/static/opengraph-icon-200x200.png",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.theguardian.com/international",
+        "case": "open-graph: prensa",
+        "expected": {
+          "title": "Latest news, sport and opinion from the Guardian",
+          "description": "Latest international news, sport and comment from the Guardian",
+          "image": "—",
+          "canonical": "https://www.theguardian.com/"
+        }
+      },
+      {
+        "url": "https://store.steampowered.com/app/620/Portal_2/",
+        "case": "open-graph: ficha de producto",
+        "expected": {
+          "title": "Portal 2 on Steam",
+          "description": "The &quot;Perpetual Testing Initiative&quot; has been expanded to allow you to design co-op puzzles for you and your friends!",
+          "image": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/620/02b755eb0cf5f41c1838a99c9a353ebce32a88cd/capsule_616x353.jpg?t=1790187113",
+          "canonical": "https://store.steampowered.com/app/620/Portal_2/"
+        }
+      },
+      {
+        "url": "https://www.apple.com/iphone/",
+        "case": "open-graph: ficha de producto",
+        "expected": {
+          "title": "iPhone",
+          "description": "Designed for Apple Intelligence. Discover iPhone Duo, iPhone 18 Pro, iPhone Air, iPhone 17, and iPhone 17e.",
+          "image": "https://www.apple.com/v/iphone/home/cl/images/meta/iphone__sgu02z38g362_og.png?202611041552",
+          "canonical": "https://www.apple.com/iphone/"
+        }
+      },
+      {
+        "url": "https://www.allbirds.com/products/mens-tree-runners",
+        "case": "open-graph: tienda Shopify",
+        "expected": {
+          "title": "Men's Tree Runner - Jet Black (White Sole)",
+          "description": "The Allbirds Tree Runner is a breathable and lightweight sneaker made with responsibly sourced eucalyptus tree fiber that feels silky smooth and cool on your skin. These shoes are perfect for everyday casual wear, walking, and warmer weather.",
+          "image": "http://www.allbirds.com/cdn/shop/files/TR3MJBW080_SHOE_LEFT_GLOBAL_MENS_TREE_RUNNER_JET_BLACK_WHITE.png?v=1751165486",
+          "canonical": "https://www.allbirds.com/products/mens-tree-runners"
+        }
+      },
+      {
+        "url": "https://blog.cloudflare.com/",
+        "case": "open-graph: blog",
+        "expected": {
+          "title": "Cloudflare Blog",
+          "description": "Technical deep dives, product updates, and insights from the teams that are helping to build a better Internet.",
+          "image": "https://blog.cloudflare.com/_emdash/api/media/file/01KXJHDG7CJT3B3133XAY31N4V.png",
+          "canonical": "https://blog.cloudflare.com/"
+        }
+      },
+      {
+        "url": "https://martinfowler.com/articles/microservices.html",
+        "case": "open-graph: artículo",
+        "expected": {
+          "title": "Microservices",
+          "description": "Defining the microservices architectural style by describing their nine common characteristics",
+          "image": "https://martinfowler.com/articles/microservices/images/card.png",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://docs.python.org/3/library/urllib.parse.html",
+        "case": "open-graph: documentación",
+        "expected": {
+          "title": "urllib.parse — Parse URLs into components",
+          "description": "Source code: Lib/urllib/parse.py This module defines a standard interface to break Uniform Resource Locator (URL) strings up in components (addressing scheme, network location, path etc.), to combi...",
+          "image": "https://docs.python.org/3.15/_images/social_previews/summary_library_urllib.parse_ce343eb8.png",
+          "canonical": "https://docs.python.org/3/library/urllib.parse.html"
+        }
+      },
+      {
+        "url": "https://vimeo.com/76979871",
+        "case": "open-graph: vídeo",
+        "expected": {
+          "title": "The New Vimeo Player (You Know, For Videos)",
+          "description": "It may look (mostly) the same on the surface, but under the hood we totally rebuilt our player. Here’s a quick rundown of some of the coolest new features: • Lightning fast playback • Redesigned Share screen • Closed caption and subtitle compatible • HTML5 by default • Purchase-from-player functionality for embedded Vimeo On Demand trailers • More responsive than ever (go ahead, resize it, we dare you!!!) We’re really proud of these updates. So proud that we made a spiffy new page to showcase all the reasons why we have the best video player in the galaxy. Check it out here: http://vimeo.com/player In short, this is a player that even haters can love.",
+          "image": "https://i.vimeocdn.com/video/452001751-8216e0571c251a09d7a8387550942d89f7f86f6398f8ed886e639b0dd50d3c90-d?f=webp&amp;region=us",
+          "canonical": "https://vimeo.com/76979871"
+        }
+      },
+      {
+        "url": "https://www.goodreads.com/book/show/5907.The_Hobbit",
+        "case": "open-graph: ficha de libro",
+        "expected": {
+          "title": "The Hobbit, or There and Back Again",
+          "description": "In a hole in the ground there lived a hobbit. Not a nas…",
+          "image": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1546071216i/5907.jpg",
+          "canonical": "https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again"
+        }
+      },
+      {
+        "url": "https://www.gutenberg.org/ebooks/84",
+        "case": "open-graph: ficha de libro",
+        "expected": {
+          "title": "Frankenstein; or, The modern Prometheus by Mary Wollstonecraft Shelley",
+          "description": "Frankenstein; or, The modern Prometheus by Mary Wollstonecraft Shelley. Free eBook digitized and proofread by volunteers.",
+          "image": "https://www.gutenberg.org/cache/epub/84/pg84.cover.medium.jpg",
+          "canonical": "https://www.gutenberg.org/ebooks/84"
+        }
+      },
+      {
+        "url": "https://arstechnica.com/",
+        "case": "open-graph: prensa",
+        "expected": {
+          "title": "Ars Technica",
+          "description": "News and reviews, covering IT, AI, science, space, health, gaming, cybersecurity, tech policy, computers, mobile devices, and operating systems.",
+          "image": "https://cdn.arstechnica.net/wp-content/uploads/2016/10/cropped-ars-logo-512_480.png",
+          "canonical": "https://arstechnica.com/"
+        }
+      },
+      {
+        "url": "https://www.who.int/",
+        "case": "open-graph: organismo internacional",
+        "expected": {
+          "title": "World Health Organization (WHO)",
+          "description": "The United Nations agency working to promote health, keep the world safe and serve the vulnerable.",
+          "image": "https://cdn.who.int/media/images/default-source/infographics/logo-who.tmb-1200v.jpg?sfvrsn=2fcc68a0_35",
+          "canonical": "https://www.who.int/"
+        }
+      },
+      {
+        "url": "https://go.dev/",
+        "case": "open-graph: proyecto",
+        "expected": {
+          "title": "The Go Programming Language",
+          "description": "Go is an open source programming language that makes it simple to build secure, scalable systems.",
+          "image": "https://go.dev/doc/gopher/gopher5logo.jpg",
+          "canonical": "https://go.dev/"
+        }
+      },
+      {
+        "url": "https://www.bbc.co.uk/news",
+        "case": "open-graph: prensa",
+        "expected": {
+          "title": "Home - BBC News",
+          "description": "Visit BBC News for up-to-the-minute news, breaking news, video, audio and feature stories. BBC News provides trusted World and UK news as well as local and regional perspectives. Also entertainment, business, science, technology and health news.",
+          "image": "https://static.files.bbci.co.uk/core/website/assets/static/news/images/metadata/poster-1024x576.5f404a8b8b.png",
+          "canonical": "https://www.bbc.co.uk/news"
+        }
+      },
+      {
+        "url": "https://app.netlify.com/",
+        "case": "spa",
+        "expected": {
+          "title": "Netlify",
+          "description": "Create with AI or code, deploy instantly on production infrastructure. One platform to build and ship.",
+          "image": "https://app.netlify.com/og-image-default-app.png",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://web.whatsapp.com/",
+        "case": "spa",
+        "expected": {
+          "title": "WhatsApp Web",
+          "description": "Log in to WhatsApp Web for simple, reliable and private messaging on your desktop. Send and receive messages and files with ease, all for free.",
+          "image": "https://static.whatsapp.net/rsrc.php/v4/yY/r/N3wx3_N3oMg.png",
+          "canonical": "https://web.whatsapp.com/"
+        }
+      },
+      {
+        "url": "https://open.spotify.com/",
+        "case": "spa",
+        "expected": {
+          "title": "Spotify - Web Player: Listen to Music, Podcasts, and Audiobooks Online",
+          "description": "Spotify is a digital music service that gives you access to millions of songs, podcasts, and audiobooks. Listen to your favorites online now.",
+          "image": "https://open.spotifycdn.com/cdn/images/download-page-image-mac.fec937cc.png",
+          "canonical": "https://open.spotify.com/"
+        }
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/URL",
+        "case": "open-graph parcial: solo título",
+        "expected": {
+          "title": "URL - Wikipedia",
+          "description": "—",
+          "image": "—",
+          "canonical": "https://en.wikipedia.org/wiki/URL"
+        }
+      },
+      {
+        "url": "https://jvns.ca/",
+        "case": "open-graph parcial",
+        "expected": {
+          "title": "Julia Evans",
+          "description": "Julia Evans",
+          "image": "—",
+          "canonical": "https://jvns.ca/"
+        }
+      },
+      {
+        "url": "https://www.gov.uk/browse/driving",
+        "case": "open-graph parcial",
+        "expected": {
+          "title": "Driving and transport - GOV.UK",
+          "description": "Includes vehicle tax, MOT and driving licences",
+          "image": "https://www.gov.uk/assets/collections/govuk-opengraph-image-4196a4d6333cf92aaf720047f56cfd91b3532d7635fc21ebcf0d5897df6b5f77.png",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.typescriptlang.org/",
+        "case": "open-graph parcial",
+        "expected": {
+          "title": "JavaScript With Syntax For Types.",
+          "description": "TypeScript extends JavaScript by adding types to the language. TypeScript speeds up your development experience by catching errors and providing fixes before you even run your code.",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.bbc.com/news",
+        "case": "open-graph parcial, redirección",
+        "expected": {
+          "title": "BBC News - Breaking news, video and the latest top stories from the U.S. and around the world",
+          "description": "Visit BBC News for the latest news, breaking news, video, audio and analysis. BBC News provides trusted World, U.S. and U.K. news as well as local and regional perspectives. Also entertainment, climate, business, science, technology and health news.",
+          "image": "—",
+          "canonical": "https://www.bbc.com/news"
+        }
+      },
+      {
+        "url": "https://amp.theguardian.com/technology",
+        "case": "solo twitter:*, dos redirecciones",
+        "expected": {
+          "title": "Technology | The Guardian",
+          "description": "Latest Technology news, comment and analysis from the Guardian, the world's leading liberal voice",
+          "image": "—",
+          "canonical": "https://www.theguardian.com/uk/technology"
+        }
+      },
+      {
+        "url": "https://example.com/",
+        "case": "sin metadatos",
+        "expected": {
+          "title": "Example Domain",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://danluu.com/",
+        "case": "sin título ni metadatos",
+        "expected": {
+          "title": "—",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://news.ycombinator.com/",
+        "case": "solo básicas",
+        "expected": {
+          "title": "Hacker News",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://nodejs.org/api/url.html",
+        "case": "solo básicas",
+        "expected": {
+          "title": "URL | Node.js v26.13.1 Documentation",
+          "description": "—",
+          "image": "—",
+          "canonical": "https://nodejs.org/api/url.html"
+        }
+      },
+      {
+        "url": "https://url.spec.whatwg.org/",
+        "case": "solo básicas",
+        "expected": {
+          "title": "URL Standard",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.w3.org/TR/REC-html40/",
+        "case": "solo básicas, página antigua",
+        "expected": {
+          "title": "HTML 4.01 Specification",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.gnu.org/philosophy/free-sw.html",
+        "case": "solo básicas",
+        "expected": {
+          "title": "What is Free Software? - GNU Project - Free Software Foundation",
+          "description": "Since 1983, developing the free Unix style operating system GNU, so that computer users can have the freedom to share and improve the software they use.",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://sqlite.org/",
+        "case": "solo básicas",
+        "expected": {
+          "title": "SQLite Home Page",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.boe.es/",
+        "case": "solo básicas",
+        "expected": {
+          "title": "BOE.es - Agencia Estatal Boletín Oficial del Estado",
+          "description": "Agencia Estatal Bolet&iacute;n Oficial del Estado",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.spiegel.de/",
+        "case": "solo básicas, redirección",
+        "expected": {
+          "title": "DER SPIEGEL - Ihr System wird nicht unterstützt",
+          "description": "—",
+          "image": "—",
+          "canonical": "https://www.spiegel.de/system-update"
+        }
+      },
+      {
+        "url": "http://www.aozora.gr.jp/cards/000035/files/1567_14913.html",
+        "case": "codificación: Shift_JIS por meta, redirección a https",
+        "expected": {
+          "title": "太宰治 走れメロス",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "http://abehiroshi.la.coocan.jp/",
+        "case": "codificación: Shift_JIS por meta, página con marcos",
+        "expected": {
+          "title": "阿部寛のホームページ",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "http://lib.ru/",
+        "case": "codificación: KOI8-R por cabecera",
+        "expected": {
+          "title": "Lib.Ru: Библиотека Максима Мошкова",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "http://www.dangdang.com/",
+        "case": "codificación: GBK por cabecera",
+        "expected": {
+          "title": "当当网",
+          "description": "全球领先的综合性网上购物中心。超过100万种商品在线热销！图书、童书、绘本、中小学教辅、文学小说、音像、母婴、家居、服装、鞋包等几十大类，正版保证，低至2折（自营图书满49元免运费。当当网一贯秉承提升顾客体验的承诺，自助退换货便捷又放心）",
+          "image": "—",
+          "canonical": "http://www.dangdang.com/"
+        }
+      },
+      {
+        "url": "https://www.elmundo.es/",
+        "case": "codificación: ISO-8859-15 por cabecera, open-graph completo",
+        "expected": {
+          "title": "EL MUNDO - Diario online líder de información en español",
+          "description": "Noticias, actualidad, álbumes, debates, sociedad, servicios, entretenimiento y última hora en España y el mundo",
+          "image": "https://e00-elmundo.uecdn.es/assets/v26/img/destacadas/elmundo__logo-generica.jpg",
+          "canonical": "https://www.elmundo.es/"
+        }
+      },
+      {
+        "url": "https://www.rtve.es/noticias/",
+        "case": "codificación: windows-1252 por cabecera",
+        "expected": {
+          "title": "Noticias, la última hora de España y el mundo - RTVE.es",
+          "description": "Noticias de última hora en España y el mundo. Toda la actualidad y las últimas noticias nacionales e internacionales aquí, en RTVE.es",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.lua.org/",
+        "case": "codificación: windows-1252 por meta",
+        "expected": {
+          "title": "The Programming Language Lua",
+          "description": "Official website of the Lua language",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "http://info.cern.ch/",
+        "case": "codificación: sin declarar (windows-1252 por defecto)",
+        "expected": {
+          "title": "http://info.cern.ch",
+          "description": "—",
+          "image": "—",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://bun.sh/",
+        "case": "canónica en otro dominio",
+        "expected": {
+          "title": "Bun — A fast all-in-one JavaScript runtime",
+          "description": "Bundle, install, and run JavaScript & TypeScript — all in Bun. Bun is a fast JavaScript runtime & toolkit with a bundler, test runner, and npm-compatible package manager built in.",
+          "image": "https://bun.com/share_v4.png",
+          "canonical": "https://bun.com/"
+        }
+      },
+      {
+        "url": "https://en-m-wikipedia-org.translate.goog/wiki/URL?_x_tr_sl=en&_x_tr_tl=es",
+        "case": "canónica en otro dominio: página servida por el proxy de Google Translate",
+        "expected": {
+          "title": "URL - Wikipedia",
+          "description": "—",
+          "image": "—",
+          "canonical": "https://en.wikipedia.org/wiki/URL"
+        }
+      },
+      {
+        "url": "http://wikipedia.org/",
+        "case": "redirección: dos saltos",
+        "expected": {
+          "title": "Wikipedia, the free encyclopedia",
+          "description": "Wikipedia is a free online encyclopedia, created and edited by volunteers around the world and hosted by the Wikimedia Foundation.",
+          "image": "https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/250px-Wikipedia-logo-v2.svg.png",
+          "canonical": "—"
+        }
+      },
+      {
+        "url": "https://www.nature.com/",
+        "case": "redirección: cuatro saltos",
+        "expected": {
+          "title": "Nature",
+          "description": "Nature is the foremost international weekly scientific journal in the world and is the flagship journal for Nature Portfolio. It publishes the finest ...",
+          "image": "https://media.springernature.com/lw630/nature-cms/uploads/cms/pages/2913/top_item_image/2026-11-12_NEWS_Brain_proteins_and_Alzheimer_s_THUMB-0b5e0262c74141792bb3bf6145080cba.jpg",
+          "canonical": "https://www.nature.com/"
+        }
+      },
+      {
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "case": "documento truncado a 1 MiB",
+        "expected": {
+          "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+          "description": "The official video for “Never Gonna Give You Up” by Rick Astley. Never: The Autobiography 📚 OUT NOW! Follow this link to get your copy and listen to Rick’s ...",
+          "image": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+          "canonical": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        }
+      },
+      {
+        "url": "https://www.ikea.com/us/en/p/billy-bookcase-white-00263850/",
+        "case": "documento truncado a 1 MiB, redirección",
+        "expected": {
+          "title": "BILLY Bookcases & Bookshelves",
+          "description": "The BILLY bookcase is a timeless storage solution with adjustable shelves to fit books, decor and more. Shop BILLY bookshelves at IKEA.",
+          "image": "https://www.ikea.com/global/assets/range-categorisation/images/billy-bookcases-58288.jpeg",
+          "canonical": "https://www.ikea.com/us/en/cat/billy-bookcases-58288/"
+        }
+      }
+    ]
+  },
+  "tls": [
+    {
+      "target": "sha256.badssl.com",
+      "expect": {
+        "trust": "trusted",
+        "problems": []
+      }
+    },
+    {
+      "target": "expired.badssl.com",
+      "expect": {
+        "problems": ["tls.expired"]
+      }
+    },
+    {
+      "target": "self-signed.badssl.com",
+      "expect": {
+        "problems": ["tls.self-signed"]
+      }
+    },
+    {
+      "target": "wrong.host.badssl.com",
+      "expect": {
+        "problems": ["tls.name-mismatch"]
+      }
+    },
+    {
+      "target": "untrusted-root.badssl.com",
+      "expect": {
+        "problems": ["tls.self-signed"]
+      }
+    },
+    {
+      "target": "incomplete-chain.badssl.com",
+      "expect": {
+        "problems": ["tls.incomplete-chain"]
+      }
+    }
+  ],
+  "dns": [
+    {
+      "target": "dnssec-failed.org",
+      "expect": {
+        "dnssec": "bogus"
+      }
+    },
+    {
+      "target": "cloudflare.com",
+      "expect": {
+        "dnssec": "validated"
+      }
+    },
+    {
+      "target": "ietf.org",
+      "expect": {
+        "dnssec": "validated"
+      }
+    },
+    {
+      "target": "example.com",
+      "expect": {
+        "dnssec": "validated"
+      }
+    },
+    {
+      "target": "google.com",
+      "expect": {
+        "dnssec": "unsigned"
+      }
+    },
+    {
+      "target": "github.com",
+      "expect": {
+        "dnssec": "unsigned"
+      }
+    },
+    {
+      "target": "urlkit-reference-no-existe-7f3a9c.com",
+      "expect": {
+        "outcome": "nxdomain"
+      }
+    }
+  ]
+}

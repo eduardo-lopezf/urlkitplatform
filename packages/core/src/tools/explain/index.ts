@@ -212,7 +212,7 @@ export const explainTool: ToolDefinition<{ url: string }, Explanation> = {
     if (!ctx.catalog) throw new Error('explain needs the rules catalog in its context');
     return explain({ url, catalog: ctx.catalog });
   },
-  sendTo: ['clean', 'parse', 'diff', 'inspect'],
+  sendTo: ['clean', 'parse', 'diff', 'inspect', 'security'],
   share: {
     encode: ({ url }) => encodeFragment([['u', url]]),
     decode(fragment) {

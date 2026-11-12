@@ -1,0 +1,416 @@
+﻿site,check,urlkit_state,urlkit_findings,reviewer_state,notes
+https://www.google.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.google.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.google.com/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.google.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.google.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.google.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,cookie:WMF-Last-Access,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,cookie:WMF-Last-Access-Global,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,cookie:GeoIP,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,cookie:NetworkProbeLimit,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.wikipedia.org/,cookie:WMF-Uniq,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,cookie:_gh_sess,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,cookie:_octo,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://github.com/,cookie:logged_in,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,content-security-policy,misconfigured,headers.csp.unsafe-eval headers.csp.unsafe-inline,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.mozilla.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,content-security-policy,misconfigured,headers.csp.unsafe-inline headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.apple.com/,cookie:geo,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.microsoft.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,content-security-policy,misconfigured,headers.csp.unsafe-inline headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,cookie:_ga,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,cookie:cfz_google-analytics_v4,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,cookie:cfz_adobe,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,cookie:kndctr_8AD56F28618A50850A495FB6_AdobeOrg_identity,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.cloudflare.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,content-security-policy,misconfigured,headers.csp.no-script-restriction,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:session-id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:session-id-time,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:i18n-prefs,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:lc-main,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:sp-cdn,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.amazon.com/,cookie:skin,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bbc.co.uk/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,content-security-policy,misconfigured,headers.csp.unsafe-source headers.csp.unsafe-inline headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-a,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:datadome,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-gdpr,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-purr,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-geo,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt.et.dd,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:datadome,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-s-present,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.nytimes.com/,cookie:nyt-traceid,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://elpais.com/,cookie:datadome,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.rtve.es/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gov.uk/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://european-union.europa.eu/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,content-security-policy,misconfigured,headers.csp.no-script-restriction,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.w3.org/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.ietf.org/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,content-security-policy,missing,headers.csp.missing headers.csp.report-only,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.python.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://nodejs.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.npmjs.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stackoverflow.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reddit.com/,cookie:edgebucket,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,content-security-policy,misconfigured,headers.csp.unsafe-inline headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://duckduckgo.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:MUID,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:MUIDB,issues,headers.cookie.not-secure,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:_EDGE_S,issues,headers.cookie.not-secure,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:_EDGE_V,issues,headers.cookie.not-secure,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:__Host-XY,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:SRCHD,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:SRCHUID,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:SRCHUSR,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:SRCHHPGUSR,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:_SS,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:ULC,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bing.com/,cookie:_HPVN,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,content-security-policy,misconfigured,headers.csp.no-script-restriction,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.yahoo.com/,cookie:A1,ok,,,sin datos: curl recibió otra respuesta y esta cookie no aparece en su copia
+https://www.yahoo.com/,cookie:A3,ok,,,sin datos: curl recibió otra respuesta y esta cookie no aparece en su copia
+https://www.yahoo.com/,cookie:A1S,issues,headers.cookie.not-httponly,,sin datos: curl recibió otra respuesta y esta cookie no aparece en su copia
+https://www.linkedin.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:JSESSIONID,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:lang,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:bcookie,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:bscookie,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:lidc,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.linkedin.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:guest_id_marketing,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:guest_id_ads,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:gt,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:personalization_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:guest_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:ct0,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://x.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,cookie:fr,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.facebook.com/,cookie:sb,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,cookie:csrftoken,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.instagram.com/,cookie:mid,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,content-security-policy,misconfigured,headers.csp.unsafe-source headers.csp.unsafe-eval,misconfigured,"revisión a mano: estado correcto por unsafe-eval; el aviso unsafe-source (http:) sobra, porque con strict-dynamic el navegador ignora las fuentes de esquema (CSP3)"
+https://www.youtube.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:__Secure-YNID,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:GPS,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:YSC,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:__Secure-ROLLOUT_TOKEN,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:__Secure-YEC,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:VISITOR_INFO1_LIVE,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.youtube.com/,cookie:VISITOR_PRIVACY_METADATA,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,content-security-policy,missing,headers.csp.missing headers.csp.report-only,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,cookie:flwssn,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,cookie:nfvdid,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,cookie:SecureNetflixId,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,cookie:NetflixId,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.netflix.com/,cookie:gsid,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,cookie:sp_t,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,cookie:sp_landing,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,cookie:sp_t,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,cookie:sp_new,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://open.spotify.com/,cookie:sp_landing,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,cookie:datadome,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.paypal.com/,cookie:ddgl,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://stripe.com/,cookie:cid,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.shopify.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://wordpress.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.debian.org/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,strict-transport-security,misconfigured,headers.hsts.short-max-age,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://ubuntu.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://archlinux.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,content-security-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.kernel.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.gnu.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,content-security-policy,misconfigured,headers.csp.unsafe-eval headers.csp.unsafe-inline headers.csp.unsafe-source,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://letsencrypt.org/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.eff.org/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.eff.org/,content-security-policy,missing,headers.csp.missing headers.csp.report-only,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.eff.org/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.eff.org/,x-frame-options,misconfigured,headers.framing.invalid,present,"revisión a mano: «SAMEORIGIN, SAMEORIGIN» vale como SAMEORIGIN según el estándar HTML (valores repetidos iguales)"
+https://www.eff.org/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.eff.org/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,content-security-policy,misconfigured,headers.csp.unsafe-inline headers.csp.unsafe-eval headers.csp.unsafe-inline,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:gu_client_ab_tests,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:gu_client_ab_tests,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:gu_v2_mvt_id,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:gu_v2_mvt_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:GU_mvt_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.theguardian.com/,cookie:GU_geo_country,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,content-security-policy,misconfigured,headers.csp.unsafe-source headers.csp.unsafe-inline headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.lemonde.fr/,cookie:lmd_a_c,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,content-security-policy,misconfigured,headers.csp.no-script-restriction,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,x-content-type-options,missing,headers.nosniff.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.spiegel.de/,cookie:SPGR-User,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval headers.csp.unsafe-inline headers.csp.unsafe-source,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:cnnB,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:SecGpc,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:countryCode,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:stateCode,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:geoData,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:wbdFch,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://edition.cnn.com/,cookie:FastAB,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,content-security-policy,misconfigured,headers.csp.no-script-restriction,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.reuters.com/,cookie:datadome,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,strict-transport-security,missing,headers.hsts.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,permissions-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://apnews.com/,cookie:__cf_bm,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,content-security-policy,missing,headers.csp.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,x-frame-options,missing,headers.framing.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,referrer-policy,missing,headers.referrer.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:_pxhd,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:session_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:_session_id_backup,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:agent_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:session_key,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.bloomberg.com/,cookie:visitor_id,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,strict-transport-security,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,content-security-policy,misconfigured,headers.csp.unsafe-eval headers.csp.unsafe-inline,misconfigured,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,x-content-type-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,x-frame-options,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,referrer-policy,present,,present,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,permissions-policy,missing,headers.permissions.missing,missing,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,cookie:gvc,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,cookie:t,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,cookie:__Host-js_csrf,issues,headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,cookie:__Host-ss,ok,,ok,evaluador independiente (Python) con la rúbrica de headers.json
+https://www.dropbox.com/,cookie:locale,issues,headers.cookie.not-secure headers.cookie.not-httponly,issues,evaluador independiente (Python) con la rúbrica de headers.json

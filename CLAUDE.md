@@ -39,7 +39,14 @@ funcionan en local con todas las puertas de calidad en verde. En `specs/001-mvp-
 hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas) y
 T111–T114 (despliegue: necesitan el VPS, el dominio y las cuentas; la guía está en
 `infrastructure/README.md`, "Despliegue autogestionado"). El registro de lo ejecutado está en
-`specs/001-mvp-url-toolkit/validation/`. La rama de trabajo es `001-mvp-url-toolkit`.
+`specs/001-mvp-url-toolkit/validation/`. La rama de trabajo es `main`. Spec Kit no crea ramas en
+este proyecto: la feature activa la indica `.specify/feature.json`.
+
+La v2 (`specs/002-v2-network-analysis`) está **implementada en local**: HTTP Headers, Metadata, TLS,
+DNS y Security Analysis, con sus endpoints `/v1` y sus páginas, y las puertas de calidad en verde.
+Queda pendiente su validación contra la red real (T096, T098) y el despliegue, que depende del de
+la 001. Se hizo entera en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md`
+§11).
 
 El cortafuegos de salida se probó en Docker Desktop (macOS), no en un host Linux con Docker
 Engine. `RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
@@ -71,7 +78,7 @@ pnpm dev:container           # api (8787) y Valkey en contenedor + web (4321) en
 pnpm test                    # Vitest en todos los proyectos
 pnpm lint                    # ESLint + Prettier --check
 pnpm typecheck               # tsc --noEmit en todos los paquetes
-pnpm test:e2e                # Playwright + axe (requiere build de la web)
+pnpm test:e2e                # Playwright + axe: compila la web y la sirve en el 4322 (E2E_PORT), nunca reutiliza un servidor
 pnpm size                    # presupuesto de JS por página
 pnpm lhci                    # Lighthouse CI
 docker compose up -d         # Valkey para desarrollo
@@ -93,8 +100,9 @@ Ningún cambio se integra con alguna de esas puertas en rojo.
 La decisión de fondo es **TypeScript en el borde, Python cuando aparezca la red**. La lógica de
 URLs es obligatoriamente de cliente (privacidad, 100 ms, coste marginal cero), así que vive en
 `packages/core` y se ejecuta igual en el navegador y en el servidor, con **una sola
-implementación**. El análisis de red nunca puede ocurrir en el navegador, así que podrá estar en
-otro lenguaje (servicio de sondas en Python, v2).
+implementación**. El análisis de red nunca puede ocurrir en el navegador, así que podría estar en
+otro lenguaje; la evaluación de la v2 concluyó que Node basta y las sondas viven en
+`apps/api/src/probes/` (`docs/arquitectura.md` §11).
 
 ```text
 Navegador                       Servidor
@@ -104,11 +112,12 @@ isla Vue ──► core (TS)          ruta /v1 (Hono)
                                   │ mide
                                   ├─► core (TS)
                                   ├─► cliente HTTP seguro (inspect)
-                                  └─► servicio de sondas (v2, por contrato)
+                                  └─► sondas de red (v2: cabeceras, TLS, DNS)
 ```
 
-Cuatro de las cinco herramientas se ejecutan en el navegador y **la web no llama a la API** para
-ellas (FR-006). Solo Redirect Inspector y el envío de métricas cruzan la red.
+Cuatro de las diez herramientas (Smart Cleaner, URL Parser, URL Diff y Explain URL) se ejecutan en
+el navegador y **la web no llama a la API** para ellas (FR-006). Redirect Inspector, las cinco
+herramientas de la v2 y el envío de métricas cruzan la red.
 
 ## Reglas que es fácil romper sin darse cuenta
 
@@ -139,8 +148,9 @@ se revisan a mano. El grafo completo está en `plan.md`, sección "Grafo de depe
    nueva añade al menos un caso al corpus.
 9. **La protección SSRF es completa y no se entrega por partes.** Resolver, validar todas las IPs,
    conectar a la IP validada, revalidar en cada salto, `maxRedirections: 0`, sin honrar proxies de
-   entorno. Sus casos viven en `tests/ssrf-vectors/` como datos, porque el servicio Python de la
-   v2 tendrá que pasar los mismos.
+   entorno. Sus casos viven en `tests/ssrf-vectors/` como datos: hoy los ejecutan los dos
+   conectores de `apps/api` (`safeFetch` y el de TLS), y un servicio en otro lenguaje tendría que
+   pasar los mismos.
 10. **Pruebas primero** en el núcleo: escribe la prueba, compruébala en rojo y luego implementa.
 
 ## Flujo de trabajo
@@ -160,8 +170,9 @@ la spec primero.
 
 - **Base de datos, ORM, migraciones y colas**: llegan en la v3 con cuentas, historial, lotes e
   informes. El MVP no guarda nada.
-- **`services/probes/` (Python)**: entra al empezar la v2, y solo si el análisis previsto no se
-  resuelve bien con las bibliotecas de Node. No hay código Python de producción hasta entonces.
+- **`services/probes/` (Python)**: no entró en la v2, porque Node resolvió su alcance
+  (`docs/arquitectura.md` §11). Solo se crea si una necesidad futura reabre esa sección. No hay
+  código Python de producción.
 - **`packages/sdk/`**: v3, y será **generado** desde `openapi.json`, nunca escrito a mano.
 - **Suites en `tests/` de la raíz**: solo para lo que cruza dos despliegues o dos lenguajes. En el
   MVP, ese directorio contiene únicamente `ssrf-vectors/`, que son datos.

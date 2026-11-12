@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "URLkit API",
-    "version": "1.0.0",
-    "description": "API v1 del MVP de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional."
+    "version": "1.1.0",
+    "description": "API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto."
   },
   "servers": [
     {
@@ -187,6 +187,9 @@
           "url.invalid",
           "url.too-long",
           "url.unsupported-scheme",
+          "host.invalid",
+          "dns.ip-literal",
+          "dns.special-use",
           "inspect.blocked",
           "inspect.blocked.private-address",
           "inspect.blocked.scheme",
@@ -235,6 +238,60 @@
           "explain.signal.unusual-port",
           "explain.signal.nested-url",
           "explain.signal.abuse-tld",
+          "headers.hsts.missing",
+          "headers.hsts.short-max-age",
+          "headers.hsts.invalid",
+          "headers.csp.missing",
+          "headers.csp.report-only",
+          "headers.csp.unsafe-inline",
+          "headers.csp.unsafe-eval",
+          "headers.csp.unsafe-source",
+          "headers.csp.no-script-restriction",
+          "headers.framing.missing",
+          "headers.framing.invalid",
+          "headers.nosniff.missing",
+          "headers.nosniff.invalid",
+          "headers.referrer.missing",
+          "headers.referrer.unsafe-url",
+          "headers.referrer.invalid",
+          "headers.permissions.missing",
+          "headers.cookie.not-secure",
+          "headers.cookie.not-httponly",
+          "headers.cookie.samesite-none-insecure",
+          "metadata.missing-title",
+          "metadata.missing-description",
+          "metadata.missing-image",
+          "metadata.canonical-cross-domain",
+          "metadata.image-relative",
+          "metadata.truncated",
+          "metadata.not-html",
+          "metadata.unknown-encoding",
+          "tls.expired",
+          "tls.not-yet-valid",
+          "tls.self-signed",
+          "tls.name-mismatch",
+          "tls.incomplete-chain",
+          "tls.untrusted-root",
+          "tls.expiring-soon",
+          "tls.weak-signature",
+          "tls.legacy-protocol",
+          "tls.timeout",
+          "tls.refused",
+          "tls.no-tls",
+          "tls.handshake-failed",
+          "dns.unavailable",
+          "dns.nxdomain",
+          "dns.failed",
+          "dns.bogus",
+          "dns.unsigned",
+          "dns.no-caa",
+          "dns.no-spf",
+          "dns.no-dmarc",
+          "security.part-skipped",
+          "security.hop.https-downgrade",
+          "security.hop.domain-change",
+          "security.not-checked.reputation",
+          "security.not-checked.content",
           "quota.exceeded",
           "auth.missing",
           "auth.invalid",
@@ -242,7 +299,7 @@
           "request.too-large",
           "internal.error"
         ],
-        "description": "Stable message code. Part of the public contract: a published code never changes meaning or disappears without deprecation."
+        "description": "Stable message code. Part of the public contract: a published code never changes meaning or disappears without deprecation. New codes are added in minor versions: clients MUST accept values they do not know."
       },
       "ToolError": {
         "type": "object",
@@ -271,6 +328,10 @@
           "url.invalid",
           "url.too-long",
           "url.unsupported-scheme",
+          "host.invalid",
+          "dns.ip-literal",
+          "dns.special-use",
+          "dns.unavailable",
           "quota.exceeded",
           "auth.missing",
           "auth.invalid",
@@ -733,6 +794,887 @@
           "flags"
         ]
       },
+      "HeadersAnalysis": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "finalUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hops": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "stopReason": {
+            "type": "string",
+            "enum": [
+              "final",
+              "loop",
+              "max-hops",
+              "blocked",
+              "error",
+              "timeout"
+            ]
+          },
+          "status": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            },
+            "description": "En el orden recibido; repeticiones por separado. Set-Cookie con valor \"<omitido>\"."
+          },
+          "security": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "header": {
+                  "type": "string"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "present",
+                    "missing",
+                    "misconfigured",
+                    "not-applicable"
+                  ]
+                },
+                "findings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageRef"
+                  }
+                }
+              },
+              "required": [
+                "header",
+                "state",
+                "findings"
+              ]
+            }
+          },
+          "cookies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "secure": {
+                  "type": "boolean"
+                },
+                "httpOnly": {
+                  "type": "boolean"
+                },
+                "sameSite": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "enum": [
+                    "strict",
+                    "lax",
+                    "none",
+                    null
+                  ]
+                },
+                "findings": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessageRef"
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "secure",
+                "httpOnly",
+                "sameSite",
+                "findings"
+              ],
+              "description": "Atributos de una cookie. Su valor nunca se devuelve."
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/MessageRef"
+          },
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          }
+        },
+        "required": [
+          "input",
+          "finalUrl",
+          "hops",
+          "stopReason",
+          "status",
+          "headers",
+          "security",
+          "cookies",
+          "catalogVersion"
+        ]
+      },
+      "PageMetadata": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "finalUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hops": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "stopReason": {
+            "type": "string",
+            "enum": [
+              "final",
+              "loop",
+              "max-hops",
+              "blocked",
+              "error",
+              "timeout"
+            ]
+          },
+          "contentType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "encoding": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "bom",
+                  "header",
+                  "meta",
+                  "default"
+                ]
+              },
+              "warning": {
+                "$ref": "#/components/schemas/MessageRef"
+              }
+            },
+            "required": [
+              "label",
+              "source"
+            ]
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "sources": {
+            "type": "object",
+            "properties": {
+              "basic": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "openGraph": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "twitter": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "links": {
+                "type": "object",
+                "properties": {
+                  "canonical": {
+                    "type": "string"
+                  },
+                  "icon": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "alternate": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "hreflang": {
+                          "type": "string"
+                        },
+                        "href": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "hreflang",
+                        "href"
+                      ]
+                    }
+                  }
+                }
+              },
+              "lang": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "basic",
+              "openGraph",
+              "twitter",
+              "links"
+            ]
+          },
+          "effective": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              },
+              "description": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              },
+              "image": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              },
+              "url": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              },
+              "siteName": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              },
+              "type": {
+                "$ref": "#/components/schemas/EffectiveValue"
+              }
+            },
+            "description": "Valor que mostraría una vista previa. Las URL son texto: el cliente no debe cargarlas."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageRef"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/MessageRef"
+          },
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          }
+        },
+        "required": [
+          "input",
+          "finalUrl",
+          "hops",
+          "stopReason",
+          "contentType",
+          "truncated",
+          "sources",
+          "effective",
+          "warnings",
+          "catalogVersion"
+        ]
+      },
+      "EffectiveValue": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "enum": [
+              "openGraph",
+              "twitter",
+              "basic"
+            ]
+          }
+        },
+        "required": [
+          "value",
+          "from"
+        ]
+      },
+      "TlsAnalysis": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "host": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "unicode": {
+                    "type": "string"
+                  },
+                  "ascii": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "unicode",
+                  "ascii"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "ip": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ip"
+                ]
+              }
+            ]
+          },
+          "port": {
+            "type": "integer"
+          },
+          "blocked": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageRef"
+              },
+              {
+                "description": "Código inspect.blocked.* con el mismo significado publicado en la v1."
+              }
+            ]
+          },
+          "protocol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cipher": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "alpn": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sniSent": {
+            "type": "boolean"
+          },
+          "trust": {
+            "type": "string",
+            "enum": [
+              "trusted",
+              "untrusted"
+            ]
+          },
+          "chain": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Certificate"
+            }
+          },
+          "problems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageRef"
+            }
+          },
+          "transparency": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "embedded",
+                  "absent",
+                  "unknown"
+                ]
+              },
+              "count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "status",
+              "count"
+            ]
+          },
+          "error": {
+            "$ref": "#/components/schemas/MessageRef"
+          },
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          }
+        },
+        "required": [
+          "input",
+          "host",
+          "port",
+          "protocol",
+          "cipher",
+          "alpn",
+          "sniSent",
+          "chain",
+          "problems",
+          "transparency",
+          "catalogVersion"
+        ]
+      },
+      "Certificate": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "subjectAltNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "validFrom": {
+            "type": "string"
+          },
+          "validTo": {
+            "type": "string"
+          },
+          "daysRemaining": {
+            "type": "integer",
+            "description": "Negativo si ya caducó"
+          },
+          "signatureAlgorithm": {
+            "type": "string"
+          },
+          "fingerprint256": {
+            "type": "string"
+          },
+          "isCa": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "subject",
+          "issuer",
+          "subjectAltNames",
+          "serialNumber",
+          "validFrom",
+          "validTo",
+          "daysRemaining",
+          "signatureAlgorithm",
+          "fingerprint256",
+          "isCa"
+        ]
+      },
+      "DnsLookup": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/DnsName"
+          },
+          "alternative": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "unicode": {
+                "type": "string"
+              },
+              "ascii": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "host",
+                  "registrable"
+                ]
+              }
+            },
+            "required": [
+              "unicode",
+              "ascii",
+              "kind"
+            ]
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "exists",
+              "nxdomain",
+              "failed"
+            ]
+          },
+          "dnssec": {
+            "type": "string",
+            "enum": [
+              "validated",
+              "unsigned",
+              "bogus",
+              "unknown"
+            ]
+          },
+          "resolver": {
+            "type": "string",
+            "enum": [
+              "cloudflare",
+              "quad9"
+            ]
+          },
+          "records": {
+            "type": "object",
+            "properties": {
+              "A": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "AAAA": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "CNAME": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "MX": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "NS": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "TXT": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "CAA": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              },
+              "SOA": {
+                "$ref": "#/components/schemas/DnsRecordSet"
+              }
+            },
+            "required": [
+              "A",
+              "AAAA",
+              "CNAME",
+              "MX",
+              "NS",
+              "TXT",
+              "CAA",
+              "SOA"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageRef"
+            }
+          }
+        },
+        "required": [
+          "input",
+          "name",
+          "alternative",
+          "outcome",
+          "dnssec",
+          "resolver",
+          "records",
+          "warnings"
+        ]
+      },
+      "DnsName": {
+        "type": "object",
+        "properties": {
+          "unicode": {
+            "type": "string"
+          },
+          "ascii": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "unicode",
+          "ascii"
+        ]
+      },
+      "DnsRecordSet": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "empty",
+              "failed"
+            ]
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "ttl": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "data": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "description": "Cadena (A, AAAA, CNAME, NS, TXT) u objeto estructurado (MX, CAA, SOA)."
+                }
+              },
+              "required": [
+                "name",
+                "ttl",
+                "data"
+              ]
+            }
+          }
+        },
+        "required": [
+          "state",
+          "records"
+        ]
+      },
+      "SecurityReview": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "finalUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "description": "Ordenados por gravedad (high → info) y, a igual gravedad, por herramienta."
+          },
+          "parts": {
+            "type": "object",
+            "properties": {
+              "explain": {
+                "$ref": "#/components/schemas/PartState"
+              },
+              "redirects": {
+                "$ref": "#/components/schemas/PartState"
+              },
+              "headers": {
+                "$ref": "#/components/schemas/PartState"
+              },
+              "tls": {
+                "$ref": "#/components/schemas/PartState"
+              },
+              "dns": {
+                "$ref": "#/components/schemas/PartState"
+              }
+            },
+            "required": [
+              "explain",
+              "redirects",
+              "headers",
+              "tls",
+              "dns"
+            ]
+          },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "checked": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "explain",
+                    "inspect",
+                    "headers",
+                    "tls",
+                    "dns"
+                  ]
+                }
+              },
+              "notChecked": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "reputation",
+                    "content"
+                  ]
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "checked",
+              "notChecked"
+            ]
+          },
+          "catalogVersion": {
+            "$ref": "#/components/schemas/CatalogVersion"
+          }
+        },
+        "required": [
+          "input",
+          "finalUrl",
+          "findings",
+          "parts",
+          "scope",
+          "catalogVersion"
+        ],
+        "additionalProperties": false,
+        "description": "Sin campo de nota, puntuación ni veredicto (FR-064)."
+      },
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/MessageCode"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/Severity"
+          },
+          "tool": {
+            "type": "string",
+            "enum": [
+              "explain",
+              "inspect",
+              "headers",
+              "tls",
+              "dns"
+            ]
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            }
+          },
+          "text": {
+            "type": "string",
+            "description": "Solo si se pidió lang"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "tool"
+        ]
+      },
+      "Severity": {
+        "type": "string",
+        "enum": [
+          "high",
+          "medium",
+          "low",
+          "info"
+        ]
+      },
+      "PartState": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "incomplete",
+              "skipped"
+            ]
+          },
+          "reason": {
+            "$ref": "#/components/schemas/MessageRef"
+          }
+        },
+        "required": [
+          "state"
+        ]
+      },
       "ToolId": {
         "type": "string",
         "enum": [
@@ -740,8 +1682,14 @@
           "parse",
           "inspect",
           "diff",
-          "explain"
-        ]
+          "explain",
+          "headers",
+          "metadata",
+          "tls",
+          "dns",
+          "security"
+        ],
+        "description": "Tool identifier. New tools are added in minor versions: clients MUST accept values they do not know."
       }
     },
     "parameters": {}
@@ -1246,6 +2194,605 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RedirectChain"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headers": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "analyzeHeaders",
+        "summary": "HTTP Headers",
+        "description": "Sigue las redirecciones con las reglas de Redirect Inspector y devuelve el estado y las cabeceras de la respuesta final, en el orden recibido, con la evaluación de las cabeceras de seguridad. Los valores de Set-Cookie nunca se devuelven. Límite sin cuenta: 10 por hora y 50 por día por visitante.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Análisis de cabeceras. Bloqueos, tiempos de espera y errores TLS se informan aquí con stopReason y error, no como error HTTP.",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeadersAnalysis"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/metadata": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "extractMetadata",
+        "summary": "Metadata",
+        "description": "Lee como máximo 1 MiB del documento final y extrae los metadatos por origen y el valor efectivo de una vista previa. No ejecuta scripts. Las URL devueltas son texto: el cliente no debe cargarlas automáticamente. Límite sin cuenta: 10 por hora y 50 por día por visitante.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Metadatos de la página",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageMetadata"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tls": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "analyzeTls",
+        "summary": "TLS",
+        "description": "Conecta a la IP validada del host, completa el handshake y devuelve la cadena de certificados con sus problemas. Un certificado inválido no interrumpe el análisis. Límite sin cuenta: 10 por hora y 50 por día por visitante.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32000,
+                    "description": "URL `https` o nombre de host (con puerto opcional)."
+                  }
+                },
+                "required": [
+                  "target"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Análisis TLS",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TlsAnalysis"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dns": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "lookupDns",
+        "summary": "DNS",
+        "description": "Consulta A, AAAA, CNAME, MX, NS, TXT, CAA y SOA a resolutores validadores fijos por DoH, con el estado DNSSEC. No se acepta un resolutor elegido por el cliente. Se rechazan las IP literales y los nombres de uso especial (400 con dns.ip-literal o dns.special-use). Límite sin cuenta: 10 por hora y 50 por día por visitante.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32000,
+                    "description": "URL o nombre"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "enum": [
+                      "host",
+                      "registrable"
+                    ],
+                    "default": "host"
+                  }
+                },
+                "required": [
+                  "target"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consulta DNS",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DnsLookup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Límite de uso alcanzado",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Ningún resolutor respondió (dns.unavailable). El cliente puede reintentar; el uso no se descuenta de la cuota.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/security": {
+      "post": {
+        "tags": [
+          "tools"
+        ],
+        "operationId": "reviewSecurity",
+        "summary": "Security Analysis",
+        "description": "Reúne en una lista ordenada por gravedad los hallazgos de Explain URL, Redirect Inspector, HTTP Headers, TLS y DNS. No hay nota, puntuación ni veredicto. scope declara qué no se comprueba (reputación, contenido). Cuenta como un único uso. Límite sin cuenta: 10 por hora y 50 por día por visitante.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "es",
+                "en"
+              ],
+              "description": "Si se indica, cada MessageRef incluye también el texto traducido."
+            },
+            "required": false,
+            "description": "Si se indica, cada MessageRef incluye también el texto traducido.",
+            "name": "lang",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "$ref": "#/components/schemas/UrlInput"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Revisión de seguridad, posiblemente parcial",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityReview"
                 }
               }
             }

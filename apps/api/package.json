@@ -16,17 +16,21 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.301.0",
     "@opentelemetry/resources": "^2.12.0",
     "@opentelemetry/sdk-trace-node": "^2.12.0",
+    "@peculiar/asn1-schema": "^3.0.0",
+    "@peculiar/asn1-x509": "^3.0.0",
     "@sentry/node": "^11.11.0",
     "@urlkit/contracts": "workspace:*",
     "@urlkit/core": "workspace:*",
     "@urlkit/i18n": "workspace:*",
     "@urlkit/rules": "workspace:*",
+    "dns-packet": "^5.6.1",
     "hono": "^4.13.16",
     "ioredis": "^6.0.0",
     "undici": "^8.12.4",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/dns-packet": "^5.6.5",
     "ajv": "^8.20.0",
     "yaml": "^2.9.1"
   }

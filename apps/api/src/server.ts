@@ -11,6 +11,10 @@ import { createApp } from './app.ts';
 import { createFetchHop } from './inspect/fetch-hop.ts';
 import { createSafeFetch } from './inspect/safe-fetch.ts';
 import { createMetrics } from './metrics/registry.ts';
+import { createFetchChain } from './probes/chain.ts';
+import { createQueryDns } from './probes/dns/doh.ts';
+import { createSecurityAdapters } from './probes/security.ts';
+import { createProbeTls } from './probes/tls/connect.ts';
 import { initErrorReporting } from './observability/errors.ts';
 import { initTracing } from './observability/tracing.ts';
 import { createLogger } from './privacy/logger.ts';
@@ -69,6 +73,10 @@ const app = createApp({
   metrics: createMetrics(),
   webOrigin: env.WEB_ORIGIN ?? 'http://localhost:4321',
   inspectFetcher: () => createFetchHop({ safeFetch }),
+  chainFetcher: () => createFetchChain({ safeFetch }),
+  tlsProber: () => createProbeTls(),
+  dnsQuerier: () => createQueryDns(),
+  securityAdapters: () => createSecurityAdapters({ safeFetch }),
   clientIp,
 });
 

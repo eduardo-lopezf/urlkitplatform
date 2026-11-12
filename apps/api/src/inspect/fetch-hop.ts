@@ -3,7 +3,7 @@
  * the whole chain, and at most 256 KB of body read, only from HTML responses (to detect
  * `meta refresh` and JS redirects without executing them). Errors map to core codes.
  */
-import type { FetchHop, HopResponse } from '@urlkit/core';
+import type { FetchHop, FinalResponse, HopResponse } from '@urlkit/core';
 import type { SafeFetch } from './safe-fetch.ts';
 
 export const HOP_TIMEOUT_MS = 5000;
@@ -34,21 +34,33 @@ export function errorCode(error: unknown): 'inspect.timeout' | 'inspect.tls' | '
 async function readHtml(
   body: AsyncIterable<Uint8Array> & { destroy?(): void },
   limit: number,
-): Promise<string> {
+): Promise<{ text: string; bytes: Uint8Array; truncated: boolean }> {
   const decoder = new TextDecoder();
+  const kept: Uint8Array[] = [];
   let text = '';
   let read = 0;
+  let ended = true;
   for await (const chunk of body) {
     const room = limit - read;
     read += chunk.byteLength;
-    text += decoder.decode(chunk.byteLength > room ? chunk.subarray(0, room) : chunk, {
-      stream: true,
-    });
-    if (read >= limit) break;
+    const part = chunk.byteLength > room ? chunk.subarray(0, room) : chunk;
+    kept.push(part);
+    text += decoder.decode(part, { stream: true });
+    if (read >= limit) {
+      ended = false;
+      break;
+    }
   }
   body.destroy?.();
-  return text + decoder.decode();
+  return {
+    text: text + decoder.decode(),
+    bytes: Buffer.concat(kept),
+    truncated: read > limit || !ended,
+  };
 }
+
+/** What the v2 chain probe keeps of each response (002/T020); the inspector ignores it. */
+export type ResponseObserver = (response: FinalResponse) => void;
 
 export function createFetchHop({
   safeFetch,
@@ -56,12 +68,15 @@ export function createFetchHop({
   totalTimeoutMs = TOTAL_TIMEOUT_MS,
   maxBodyBytes = MAX_BODY_BYTES,
   clock = () => performance.now(),
+  observe,
 }: {
   safeFetch: SafeFetch;
   hopTimeoutMs?: number;
   totalTimeoutMs?: number;
   maxBodyBytes?: number;
   clock?: () => number;
+  /** Called once per response, with its raw headers and the HTML bytes read (if any). */
+  observe?: ResponseObserver;
 }): FetchHop {
   const deadline = AbortSignal.timeout(totalTimeoutMs);
   return async (url): Promise<HopResponse> => {
@@ -84,11 +99,20 @@ export function createFetchHop({
       const type = String(res.headers['content-type'] ?? '').toLowerCase();
       const location = res.headers.location;
       let html: string | null = null;
+      let read: Awaited<ReturnType<typeof readHtml>> | null = null;
       if (res.body) {
-        if (res.status >= 200 && res.status < 300 && type.includes('html'))
-          html = await readHtml(res.body, maxBodyBytes);
-        else res.body.destroy?.();
+        if (res.status >= 200 && res.status < 300 && type.includes('html')) {
+          read = await readHtml(res.body, maxBodyBytes);
+          html = read.text;
+        } else res.body.destroy?.();
       }
+      observe?.({
+        status: res.status,
+        rawHeaders: res.rawHeaders,
+        contentType: type === '' ? null : String(res.headers['content-type']),
+        body: read?.bytes ?? null,
+        bodyTruncated: read?.truncated ?? false,
+      });
       return {
         kind: 'response',
         status: res.status,

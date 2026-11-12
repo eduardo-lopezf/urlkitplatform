@@ -30,7 +30,7 @@ export const inspectTool: ToolDefinition<{ url: string }, RedirectChain> = {
     if (!ctx.fetchHop) throw new Error('inspect needs a network adapter (ctx.fetchHop)');
     return inspect(url, ctx.fetchHop);
   },
-  sendTo: ['clean', 'parse', 'explain', 'diff'],
+  sendTo: ['clean', 'parse', 'explain', 'diff', 'headers', 'security'],
   share: {
     // Opening a shared link fills the input; the inspection still needs an explicit click.
     encode: ({ url }) => encodeFragment([['u', url]]),

@@ -80,6 +80,18 @@ describe('trace attributes', () => {
     });
   });
 
+  it('keep the TLS protocol version and nothing else of a certificate (002/T092)', () => {
+    expect(
+      safeAttributes({
+        'tls.protocol': 'TLSv1.3',
+        'tls.subject': 'CN=ejemplo.com',
+        'tls.fingerprint': 'AB:CD',
+        'dns.records': '93.184.215.14',
+        'http.headers': 'set-cookie: sid=1',
+      }),
+    ).toEqual({ 'tls.protocol': 'TLSv1.3' });
+  });
+
   it('drop allowed keys whose value looks like a URL or a path', () => {
     expect(safeAttributes({ 'url.registrable_domain': 'https://ejemplo.com/secret-path' })).toEqual(
       {},

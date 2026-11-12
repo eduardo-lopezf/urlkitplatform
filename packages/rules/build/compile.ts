@@ -13,12 +13,30 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Ajv2020 } from 'ajv/dist/2020.js';
-import type { DomainRule, ParamRule, RuleCatalog, WrapperRule } from '@urlkit/core';
+import type {
+  DomainRule,
+  MetadataCriteria,
+  ParamRule,
+  RuleCatalog,
+  SecurityCriteria,
+  WrapperRule,
+} from '@urlkit/core';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DATA = join(ROOT, 'data');
 const RULE_DIRS = [DATA, join(DATA, 'domains')];
 const NOT_RULES = new Set(['abuse-tlds.json']);
+
+/**
+ * v2 criteria (002 research R8): data, not rules. They live in their own folders, so the rule
+ * loader never sees them, and are validated against schema/criteria.schema.json.
+ */
+export const CRITERIA_FILES = {
+  headers: 'security/headers.json',
+  tls: 'security/tls.json',
+  severities: 'security/severities.json',
+  precedence: 'metadata/precedence.json',
+} as const;
 
 interface SourceRule {
   id: string;
@@ -51,7 +69,8 @@ export function loadRuleFiles(): Array<{ file: string; rule: unknown }> {
 /** Hash of every data file, in a stable order. */
 export function fingerprint(): string {
   const hash = createHash('sha256');
-  for (const file of [...ruleFiles(), join(DATA, 'abuse-tlds.json')]) {
+  const criteria = Object.values(CRITERIA_FILES).map((f) => join(DATA, f));
+  for (const file of [...ruleFiles(), join(DATA, 'abuse-tlds.json'), ...criteria]) {
     hash.update(file.slice(DATA.length)).update('\0').update(readFileSync(file)).update('\0');
   }
   return hash.digest('hex');
@@ -145,7 +164,44 @@ export function compile(): RuleCatalog {
     tlds: string[];
   };
   catalog.abuseTlds = [...abuse.tlds].sort();
+
+  const criteria = loadCriteria();
+  catalog.security = {
+    headers: withoutMeta(criteria.headers) as unknown as SecurityCriteria['headers'],
+    tls: withoutMeta(criteria.tls) as unknown as SecurityCriteria['tls'],
+    severities: (criteria.severities as { severities: SecurityCriteria['severities'] }).severities,
+  };
+  catalog.metadata = {
+    precedence: (criteria.precedence as { precedence: MetadataCriteria['precedence'] }).precedence,
+  };
   return catalog;
+}
+
+/** Reads and validates every criteria file against its `$defs` entry of the schema. */
+function loadCriteria(): Record<keyof typeof CRITERIA_FILES, Record<string, unknown>> {
+  const schema = JSON.parse(readFileSync(join(ROOT, 'schema/criteria.schema.json'), 'utf8')) as {
+    $id: string;
+  };
+  const ajv = new Ajv2020({ allErrors: true });
+  ajv.addSchema(schema);
+  const out = {} as Record<keyof typeof CRITERIA_FILES, Record<string, unknown>>;
+  for (const [name, file] of Object.entries(CRITERIA_FILES) as Array<
+    [keyof typeof CRITERIA_FILES, string]
+  >) {
+    const data = JSON.parse(readFileSync(join(DATA, file), 'utf8')) as Record<string, unknown>;
+    const validate = ajv.getSchema(`${schema.$id}#/$defs/${name}`);
+    if (!validate) throw new Error(`criteria schema has no $defs/${name}`);
+    if (!validate(data))
+      throw new Error(`${file}: invalid criteria ${JSON.stringify(validate.errors)}`);
+    out[name] = data;
+  }
+  return out;
+}
+
+/** `source` and `reviewed` document the data; they are not part of the compiled catalog. */
+function withoutMeta(data: Record<string, unknown>): Record<string, unknown> {
+  const { source: _source, reviewed: _reviewed, ...rest } = data;
+  return rest;
 }
 
 function main(): void {

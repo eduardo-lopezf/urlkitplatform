@@ -13,6 +13,8 @@ const ALLOWED = new Set([
   'url.registrable_domain',
   'http.response.status_code',
   'urlkit.duration_ms',
+  // v2 TLS: the negotiated protocol version only, never a certificate field (002 research R14)
+  'tls.protocol',
 ]);
 
 export function safeAttributes(input: Record<string, unknown>): Attributes {

@@ -1,0 +1,449 @@
+openapi: 3.1.0
+info:
+  title: URLkit API — ampliación v2
+  version: 1.1.0
+  description: >
+    Ampliación **compatible** de la API v1 (research R10): cinco endpoints nuevos bajo el mismo
+    prefijo `/v1`. Este fichero solo describe lo que se añade; lo existente está en
+    `specs/001-mvp-url-toolkit/contracts/openapi.yaml` y se referencia desde aquí. El contrato
+    publicado (`packages/contracts/openapi.json`) se sigue generando desde Zod y es la referencia
+    final.
+
+    Cambios en lo existente, todos aditivos: `ToolId` gana `headers`, `metadata`, `tls`, `dns`
+    y `security`, y `MessageCode` gana los códigos `headers.*`, `metadata.*`, `tls.*`, `dns.*` y
+    `security.*`. Los clientes MUST aceptar valores de enum que no conozcan.
+
+    Las cinco herramientas consultan la red desde el servidor. Límite sin cuenta: 10 por hora y
+    50 por día por visitante y herramienta. Las URLs y los dominios enviados no se almacenan ni
+    se registran. Un destino que no responde, bloqueado o con TLS inválido es un **resultado**
+    (200), no un error HTTP.
+servers:
+  - url: https://api.urlkit.example/v1
+security:
+  - {}
+  - apiKey: []
+
+paths:
+  /headers:
+    post:
+      tags: [tools]
+      operationId: analyzeHeaders
+      summary: HTTP Headers
+      description: >
+        Sigue las redirecciones con las reglas de Redirect Inspector y devuelve el estado y las
+        cabeceras de la respuesta final, en el orden recibido, con la evaluación de las
+        cabeceras de seguridad. Los valores de `Set-Cookie` nunca se devuelven.
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody: { $ref: '#/components/requestBodies/UrlBody' }
+      responses:
+        '200':
+          description: Análisis de cabeceras
+          headers: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HeadersAnalysis' }
+        '400': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/BadRequest' }
+        '429': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/QuotaExceeded' }
+
+  /metadata:
+    post:
+      tags: [tools]
+      operationId: extractMetadata
+      summary: Metadata
+      description: >
+        Lee como máximo 1 MiB del documento final y extrae los metadatos por origen y el valor
+        efectivo de una vista previa. No ejecuta scripts. Las URL devueltas son texto: el
+        cliente no debe cargarlas automáticamente.
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody: { $ref: '#/components/requestBodies/UrlBody' }
+      responses:
+        '200':
+          description: Metadatos de la página
+          headers: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PageMetadata' }
+        '400': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/BadRequest' }
+        '429': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/QuotaExceeded' }
+
+  /tls:
+    post:
+      tags: [tools]
+      operationId: analyzeTls
+      summary: TLS
+      description: >
+        Conecta a la IP validada del host, completa el handshake y devuelve la cadena de
+        certificados con sus problemas. Un certificado inválido no interrumpe el análisis.
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target:
+                  type: string
+                  minLength: 1
+                  maxLength: 32000
+                  description: URL `https` o nombre de host (con puerto opcional).
+      responses:
+        '200':
+          description: Análisis TLS
+          headers: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TlsAnalysis' }
+        '400': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/BadRequest' }
+        '429': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/QuotaExceeded' }
+
+  /dns:
+    post:
+      tags: [tools]
+      operationId: lookupDns
+      summary: DNS
+      description: >
+        Consulta A, AAAA, CNAME, MX, NS, TXT, CAA y SOA a resolutores validadores fijos por DoH,
+        con el estado DNSSEC. No se acepta un resolutor elegido por el cliente. Se rechazan las IP
+        literales y los nombres de uso especial (400 con `dns.ip-literal` o `dns.special-use`).
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target: { type: string, minLength: 1, maxLength: 32000, description: URL o nombre }
+                scope:
+                  type: string
+                  enum: [host, registrable]
+                  default: host
+      responses:
+        '200':
+          description: Consulta DNS
+          headers: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DnsLookup' }
+        '400': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/BadRequest' }
+        '429': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/QuotaExceeded' }
+        '503':
+          description: >
+            Ningún resolutor respondió (`dns.unavailable`). El cliente puede reintentar; el uso
+            no se descuenta de la cuota.
+          content:
+            application/json:
+              schema: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/schemas/ToolError' }
+
+  /security:
+    post:
+      tags: [tools]
+      operationId: reviewSecurity
+      summary: Security Analysis
+      description: >
+        Reúne en una lista ordenada por gravedad los hallazgos de Explain URL, Redirect
+        Inspector, HTTP Headers, TLS y DNS. **No hay nota, puntuación ni veredicto.** `scope`
+        declara qué no se comprueba (reputación, contenido). Cuenta como un único uso.
+      parameters: [{ $ref: '#/components/parameters/Lang' }]
+      requestBody: { $ref: '#/components/requestBodies/UrlBody' }
+      responses:
+        '200':
+          description: Revisión de seguridad, posiblemente parcial
+          headers: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/headers/RateLimitSet' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SecurityReview' }
+        '400': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/BadRequest' }
+        '429': { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/responses/QuotaExceeded' }
+
+components:
+  securitySchemes:
+    # El mismo esquema declarado en la v1; no cambia.
+    apiKey: { type: http, scheme: bearer, bearerFormat: urlkit-api-key }
+
+  parameters:
+    Lang:
+      name: lang
+      in: query
+      required: false
+      schema: { type: string, enum: [es, en] }
+      description: Si se indica, cada MessageRef incluye también el texto traducido.
+
+  requestBodies:
+    UrlBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [url]
+            properties:
+              url: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/schemas/UrlInput' }
+
+  schemas:
+    MessageRef: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/schemas/MessageRef' }
+    CatalogVersion: { $ref: '../../001-mvp-url-toolkit/contracts/openapi.yaml#/components/schemas/CatalogVersion' }
+    StopReason:
+      type: string
+      enum: [final, loop, max-hops, blocked, error, timeout]
+    Severity:
+      type: string
+      enum: [high, medium, low, info]
+
+    HeadersAnalysis:
+      type: object
+      required: [input, finalUrl, hops, stopReason, status, headers, security, cookies, catalogVersion]
+      properties:
+        input: { type: string }
+        finalUrl: { type: [string, 'null'] }
+        hops: { type: integer, minimum: 0 }
+        stopReason: { $ref: '#/components/schemas/StopReason' }
+        status: { type: [integer, 'null'] }
+        headers:
+          type: array
+          description: En el orden recibido; repeticiones por separado. Set-Cookie con valor "<omitido>".
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name: { type: string }
+              value: { type: string }
+        security:
+          type: array
+          items:
+            type: object
+            required: [header, state, findings]
+            properties:
+              header: { type: string }
+              state: { type: string, enum: [present, missing, misconfigured, not-applicable] }
+              findings: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+        cookies:
+          type: array
+          items:
+            type: object
+            required: [name, secure, httpOnly, sameSite, findings]
+            properties:
+              name: { type: string }
+              secure: { type: boolean }
+              httpOnly: { type: boolean }
+              sameSite: { type: [string, 'null'], enum: [strict, lax, none, null] }
+              findings: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+        error: { $ref: '#/components/schemas/MessageRef' }
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }
+
+    EffectiveValue:
+      type: object
+      required: [value, from]
+      properties:
+        value: { type: string }
+        from: { type: string, enum: [openGraph, twitter, basic] }
+
+    PageMetadata:
+      type: object
+      required: [input, finalUrl, hops, stopReason, contentType, truncated, sources, effective, warnings, catalogVersion]
+      properties:
+        input: { type: string }
+        finalUrl: { type: [string, 'null'] }
+        hops: { type: integer, minimum: 0 }
+        stopReason: { $ref: '#/components/schemas/StopReason' }
+        contentType: { type: [string, 'null'] }
+        encoding:
+          type: object
+          required: [label, source]
+          properties:
+            label: { type: string }
+            source: { type: string, enum: [bom, header, meta, default] }
+            warning: { $ref: '#/components/schemas/MessageRef' }
+        truncated: { type: boolean }
+        sources:
+          type: object
+          properties:
+            basic: { type: object, additionalProperties: { type: string } }
+            openGraph: { type: object, additionalProperties: { type: array, items: { type: string } } }
+            twitter: { type: object, additionalProperties: { type: array, items: { type: string } } }
+            links:
+              type: object
+              properties:
+                canonical: { type: string }
+                icon: { type: array, items: { type: string } }
+                alternate:
+                  type: array
+                  items:
+                    type: object
+                    properties: { hreflang: { type: string }, href: { type: string } }
+            lang: { type: string }
+        effective:
+          type: object
+          properties:
+            title: { $ref: '#/components/schemas/EffectiveValue' }
+            description: { $ref: '#/components/schemas/EffectiveValue' }
+            image: { $ref: '#/components/schemas/EffectiveValue' }
+            url: { $ref: '#/components/schemas/EffectiveValue' }
+            siteName: { $ref: '#/components/schemas/EffectiveValue' }
+            type: { $ref: '#/components/schemas/EffectiveValue' }
+        warnings: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+        error: { $ref: '#/components/schemas/MessageRef' }
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }
+
+    Certificate:
+      type: object
+      required: [subject, issuer, subjectAltNames, serialNumber, validFrom, validTo, daysRemaining, signatureAlgorithm, fingerprint256, isCa]
+      properties:
+        subject: { type: string }
+        issuer: { type: string }
+        subjectAltNames: { type: array, items: { type: string } }
+        serialNumber: { type: string }
+        validFrom: { type: string, format: date-time }
+        validTo: { type: string, format: date-time }
+        daysRemaining: { type: integer, description: Negativo si ya caducó }
+        signatureAlgorithm: { type: string }
+        fingerprint256: { type: string }
+        isCa: { type: boolean }
+
+    TlsAnalysis:
+      type: object
+      required:
+        [input, host, port, protocol, cipher, alpn, sniSent, chain, problems, transparency, catalogVersion]
+      properties:
+        input: { type: string }
+        host:
+          oneOf:
+            - type: object
+              required: [unicode, ascii]
+              properties: { unicode: { type: string }, ascii: { type: string } }
+            - type: object
+              required: [ip]
+              properties: { ip: { type: string } }
+        port: { type: integer }
+        blocked:
+          allOf: [{ $ref: '#/components/schemas/MessageRef' }]
+          description: Código inspect.blocked.* con el mismo significado publicado en la v1.
+        protocol: { type: [string, 'null'] }
+        cipher: { type: [string, 'null'] }
+        alpn: { type: [string, 'null'] }
+        sniSent: { type: boolean }
+        trust: { type: string, enum: [trusted, untrusted] }
+        chain: { type: array, items: { $ref: '#/components/schemas/Certificate' } }
+        problems: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+        transparency:
+          type: object
+          required: [status, count]
+          properties:
+            status: { type: string, enum: [embedded, absent, unknown] }
+            count: { type: integer, minimum: 0 }
+        error: { $ref: '#/components/schemas/MessageRef' }
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }
+
+    DnsName:
+      type: object
+      required: [unicode, ascii]
+      properties:
+        unicode: { type: string }
+        ascii: { type: string }
+
+    DnsRecordSet:
+      type: object
+      required: [state, records]
+      properties:
+        state: { type: string, enum: [ok, empty, failed] }
+        records:
+          type: array
+          items:
+            type: object
+            required: [name, ttl, data]
+            properties:
+              name: { type: string }
+              ttl: { type: integer, minimum: 0 }
+              data:
+                description: Cadena (A, AAAA, CNAME, NS, TXT) u objeto estructurado (MX, CAA, SOA).
+                oneOf:
+                  - type: string
+                  - type: object
+
+    DnsLookup:
+      type: object
+      required: [input, name, alternative, outcome, dnssec, resolver, records, warnings]
+      properties:
+        input: { type: string }
+        name: { $ref: '#/components/schemas/DnsName' }
+        alternative:
+          oneOf:
+            - type: 'null'
+            - allOf:
+                - { $ref: '#/components/schemas/DnsName' }
+                - type: object
+                  required: [kind]
+                  properties: { kind: { type: string, enum: [host, registrable] } }
+        outcome: { type: string, enum: [exists, nxdomain, failed] }
+        dnssec: { type: string, enum: [validated, unsigned, bogus, unknown] }
+        resolver: { type: string, enum: [cloudflare, quad9] }
+        records:
+          type: object
+          required: [A, AAAA, CNAME, MX, NS, TXT, CAA, SOA]
+          additionalProperties: false
+          properties:
+            A: { $ref: '#/components/schemas/DnsRecordSet' }
+            AAAA: { $ref: '#/components/schemas/DnsRecordSet' }
+            CNAME: { $ref: '#/components/schemas/DnsRecordSet' }
+            MX: { $ref: '#/components/schemas/DnsRecordSet' }
+            NS: { $ref: '#/components/schemas/DnsRecordSet' }
+            TXT: { $ref: '#/components/schemas/DnsRecordSet' }
+            CAA: { $ref: '#/components/schemas/DnsRecordSet' }
+            SOA: { $ref: '#/components/schemas/DnsRecordSet' }
+        warnings: { type: array, items: { $ref: '#/components/schemas/MessageRef' } }
+
+    Finding:
+      type: object
+      required: [code, severity, tool]
+      properties:
+        code: { type: string, description: MessageCode }
+        severity: { $ref: '#/components/schemas/Severity' }
+        tool: { type: string, enum: [explain, inspect, headers, tls, dns] }
+        params:
+          type: object
+          additionalProperties: { oneOf: [{ type: string }, { type: number }] }
+        text: { type: string, description: Solo si se pidió lang }
+
+    PartState:
+      type: object
+      required: [state]
+      properties:
+        state: { type: string, enum: [complete, incomplete, skipped] }
+        reason: { $ref: '#/components/schemas/MessageRef' }
+
+    SecurityReview:
+      type: object
+      required: [input, finalUrl, findings, parts, scope, catalogVersion]
+      additionalProperties: false
+      description: Sin campo de nota, puntuación ni veredicto (FR-064).
+      properties:
+        input: { type: string }
+        finalUrl: { type: [string, 'null'] }
+        findings:
+          type: array
+          description: Ordenados por gravedad (high → info) y, a igual gravedad, por herramienta.
+          items: { $ref: '#/components/schemas/Finding' }
+        parts:
+          type: object
+          required: [explain, redirects, headers, tls, dns]
+          properties:
+            explain: { $ref: '#/components/schemas/PartState' }
+            redirects: { $ref: '#/components/schemas/PartState' }
+            headers: { $ref: '#/components/schemas/PartState' }
+            tls: { $ref: '#/components/schemas/PartState' }
+            dns: { $ref: '#/components/schemas/PartState' }
+        scope:
+          type: object
+          required: [checked, notChecked]
+          properties:
+            checked:
+              type: array
+              items: { type: string, enum: [explain, inspect, headers, tls, dns] }
+            notChecked:
+              type: array
+              minItems: 1
+              items: { type: string, enum: [reputation, content] }
+        catalogVersion: { $ref: '#/components/schemas/CatalogVersion' }

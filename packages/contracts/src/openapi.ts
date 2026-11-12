@@ -7,6 +7,11 @@ import { CleanRequest, CleanResultSchema } from './v1/clean.ts';
 import { LangQuerySchema, ToolErrorSchema, z } from './v1/common.ts';
 import { DiffRequest, UrlComparisonSchema } from './v1/diff.ts';
 import { ExplainRequest, ExplanationSchema } from './v1/explain.ts';
+import { HeadersAnalysisSchema, HeadersRequest } from './v1/headers.ts';
+import { MetadataRequest, PageMetadataSchema } from './v1/metadata.ts';
+import { TlsAnalysisSchema, TlsRequest } from './v1/tls.ts';
+import { DnsLookupSchema, DnsRequest } from './v1/dns.ts';
+import { SecurityRequest, SecurityReviewSchema } from './v1/security.ts';
 import { InspectRequest, RedirectChainSchema } from './v1/inspect.ts';
 import { MetricsEvent } from './v1/metrics.ts';
 import { ParseRequest, ParsedUrlSchema } from './v1/parse.ts';
@@ -34,7 +39,7 @@ function tool(
   body: z.ZodType,
   result: z.ZodType,
   description: string,
-  extra: { query?: z.ZodObject; okDescription?: string } = {},
+  extra: { query?: z.ZodObject; okDescription?: string; unavailable?: string } = {},
 ) {
   registry.registerPath({
     method: 'post',
@@ -51,6 +56,9 @@ function tool(
       200: { description, headers: RATE_LIMIT_HEADERS, content: json(result) },
       400: badRequest,
       429: quotaExceeded,
+      ...(extra.unavailable === undefined
+        ? {}
+        : { 503: { description: extra.unavailable, content: json(ToolErrorSchema) } }),
     },
   });
 }
@@ -116,6 +124,65 @@ export function buildOpenApiDocument() {
     },
   );
 
+  tool(
+    registry,
+    '/headers',
+    'analyzeHeaders',
+    'HTTP Headers',
+    HeadersRequest,
+    HeadersAnalysisSchema,
+    'Análisis de cabeceras. Bloqueos, tiempos de espera y errores TLS se informan aquí con stopReason y error, no como error HTTP.',
+    {
+      query: LangQuerySchema,
+      okDescription:
+        'Sigue las redirecciones con las reglas de Redirect Inspector y devuelve el estado y las cabeceras de la respuesta final, en el orden recibido, con la evaluación de las cabeceras de seguridad. Los valores de Set-Cookie nunca se devuelven. Límite sin cuenta: 10 por hora y 50 por día por visitante.',
+    },
+  );
+
+  tool(
+    registry,
+    '/metadata',
+    'extractMetadata',
+    'Metadata',
+    MetadataRequest,
+    PageMetadataSchema,
+    'Metadatos de la página',
+    {
+      query: LangQuerySchema,
+      okDescription:
+        'Lee como máximo 1 MiB del documento final y extrae los metadatos por origen y el valor efectivo de una vista previa. No ejecuta scripts. Las URL devueltas son texto: el cliente no debe cargarlas automáticamente. Límite sin cuenta: 10 por hora y 50 por día por visitante.',
+    },
+  );
+
+  tool(registry, '/tls', 'analyzeTls', 'TLS', TlsRequest, TlsAnalysisSchema, 'Análisis TLS', {
+    query: LangQuerySchema,
+    okDescription:
+      'Conecta a la IP validada del host, completa el handshake y devuelve la cadena de certificados con sus problemas. Un certificado inválido no interrumpe el análisis. Límite sin cuenta: 10 por hora y 50 por día por visitante.',
+  });
+
+  tool(registry, '/dns', 'lookupDns', 'DNS', DnsRequest, DnsLookupSchema, 'Consulta DNS', {
+    query: LangQuerySchema,
+    okDescription:
+      'Consulta A, AAAA, CNAME, MX, NS, TXT, CAA y SOA a resolutores validadores fijos por DoH, con el estado DNSSEC. No se acepta un resolutor elegido por el cliente. Se rechazan las IP literales y los nombres de uso especial (400 con dns.ip-literal o dns.special-use). Límite sin cuenta: 10 por hora y 50 por día por visitante.',
+    unavailable:
+      'Ningún resolutor respondió (dns.unavailable). El cliente puede reintentar; el uso no se descuenta de la cuota.',
+  });
+
+  tool(
+    registry,
+    '/security',
+    'reviewSecurity',
+    'Security Analysis',
+    SecurityRequest,
+    SecurityReviewSchema,
+    'Revisión de seguridad, posiblemente parcial',
+    {
+      query: LangQuerySchema,
+      okDescription:
+        'Reúne en una lista ordenada por gravedad los hallazgos de Explain URL, Redirect Inspector, HTTP Headers, TLS y DNS. No hay nota, puntuación ni veredicto. scope declara qué no se comprueba (reputación, contenido). Cuenta como un único uso. Límite sin cuenta: 10 por hora y 50 por día por visitante.',
+    },
+  );
+
   registry.registerPath({
     method: 'post',
     path: '/metrics/events',
@@ -140,9 +207,9 @@ export function buildOpenApiDocument() {
     openapi: '3.1.0',
     info: {
       title: 'URLkit API',
-      version: '1.0.0',
+      version: '1.1.0',
       description:
-        'API v1 del MVP de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional.',
+        'API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto.',
     },
     servers: [
       { url: 'https://api.urlkit.example/v1', description: 'Producción (dominio provisional)' },

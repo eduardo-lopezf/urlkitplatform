@@ -13,6 +13,10 @@ export const CODES = [
   'url.invalid',
   'url.too-long',
   'url.unsupported-scheme',
+  // v2: host input of TLS and DNS (002/T016)
+  'host.invalid',
+  'dns.ip-literal',
+  'dns.special-use',
 
   // Inspector hop errors (Hop.error). `inspect.blocked` is the generic block; the sub-codes say why.
   'inspect.blocked',
@@ -71,6 +75,70 @@ export const CODES = [
   'explain.signal.unusual-port',
   'explain.signal.nested-url',
   'explain.signal.abuse-tld',
+
+  // HTTP Headers (002/T029): one code per finding about a security header or a cookie
+  'headers.hsts.missing',
+  'headers.hsts.short-max-age',
+  'headers.hsts.invalid',
+  'headers.csp.missing',
+  'headers.csp.report-only',
+  'headers.csp.unsafe-inline',
+  'headers.csp.unsafe-eval',
+  'headers.csp.unsafe-source',
+  'headers.csp.no-script-restriction',
+  'headers.framing.missing',
+  'headers.framing.invalid',
+  'headers.nosniff.missing',
+  'headers.nosniff.invalid',
+  'headers.referrer.missing',
+  'headers.referrer.unsafe-url',
+  'headers.referrer.invalid',
+  'headers.permissions.missing',
+  'headers.cookie.not-secure',
+  'headers.cookie.not-httponly',
+  'headers.cookie.samesite-none-insecure',
+
+  // Metadata (002/T041): warnings about what a link preview would show
+  'metadata.missing-title',
+  'metadata.missing-description',
+  'metadata.missing-image',
+  'metadata.canonical-cross-domain',
+  'metadata.image-relative',
+  'metadata.truncated',
+  'metadata.not-html',
+  'metadata.unknown-encoding',
+
+  // TLS (002/T054): certificate problems and connection failures
+  'tls.expired',
+  'tls.not-yet-valid',
+  'tls.self-signed',
+  'tls.name-mismatch',
+  'tls.incomplete-chain',
+  'tls.untrusted-root',
+  'tls.expiring-soon',
+  'tls.weak-signature',
+  'tls.legacy-protocol',
+  'tls.timeout',
+  'tls.refused',
+  'tls.no-tls',
+  'tls.handshake-failed',
+
+  // DNS (002/T067): outcome, DNSSEC state and configuration warnings
+  'dns.unavailable',
+  'dns.nxdomain',
+  'dns.failed',
+  'dns.bogus',
+  'dns.unsigned',
+  'dns.no-caa',
+  'dns.no-spf',
+  'dns.no-dmarc',
+
+  // Security Analysis (002/T080): findings of its own and how the review is scoped
+  'security.part-skipped',
+  'security.hop.https-downgrade',
+  'security.hop.domain-change',
+  'security.not-checked.reputation',
+  'security.not-checked.content',
 ] as const;
 
 Object.freeze(CODES);
@@ -78,7 +146,15 @@ Object.freeze(CODES);
 export type MessageCode = (typeof CODES)[number];
 
 /** Codes the core may return as `ToolError.code`. */
-export const ERROR_CODES = ['url.invalid', 'url.too-long', 'url.unsupported-scheme'] as const;
+export const ERROR_CODES = [
+  'url.invalid',
+  'url.too-long',
+  'url.unsupported-scheme',
+  'host.invalid',
+  'dns.ip-literal',
+  'dns.special-use',
+  'dns.unavailable',
+] as const;
 export type CoreErrorCode = (typeof ERROR_CODES)[number];
 
 /** Codes a rule may use as its `reason`. */

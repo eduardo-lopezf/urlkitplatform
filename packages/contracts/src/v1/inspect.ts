@@ -1,4 +1,4 @@
-import { MessageRefSchema, UrlInputSchema, z } from './common.ts';
+import { MessageRefSchema, StopReasonSchema, UrlInputSchema, z } from './common.ts';
 
 export const HopSchema = z
   .object({
@@ -18,7 +18,7 @@ export const RedirectChainSchema = z
     input: z.string(),
     hops: z.array(HopSchema).max(21),
     final: z.string().nullable(),
-    stopReason: z.enum(['final', 'loop', 'max-hops', 'blocked', 'error', 'timeout']),
+    stopReason: StopReasonSchema,
     totalMs: z.number().int(),
   })
   .openapi('RedirectChain');

@@ -1,0 +1,223 @@
+# Validación: conjuntos de referencia (002/T096)
+
+**Fecha**: 2026-11-12T01:04:46.478Z · **Catálogo**: 1.3.0 · **Node**: v26.5.0
+
+Ejecutado con `node apps/api/scripts/reference-check.ts`, contra la red real, desde la máquina de desarrollo. Usa los adaptadores de producción y las herramientas del núcleo, sin la API ni sus cuotas.
+
+| Criterio | Resultado |
+| --- | --- |
+| SC-003 HTTP Headers (estado y cabeceras frente a curl) | 46/49 (94 %) |
+| SC-003 evaluación de cabeceras frente a revisión manual | 412/412 (100 %) tras corregir los dos fallos encontrados (411/412 antes); revisión independiente, falta muestra humana |
+| SC-004 Metadata | 200/200 (100 %) sobre las instantáneas del 2026-11-12; revisión independiente, falta muestra humana |
+| SC-005 TLS | 6/6 (100 %) |
+| SC-006 DNSSEC | 7/7 (100 %) |
+
+## SC-003 — HTTP Headers frente a curl
+
+| URL | Estado (URLkit / curl) | Cabeceras comunes | Resultado |
+| --- | --- | --- | --- |
+| https://www.google.com/ | 200 / 200 | 30 % | difiere |
+| https://www.wikipedia.org/ | 200 / 200 | 100 % | coincide |
+| https://github.com/ | 200 / 200 | 100 % | coincide |
+| https://www.mozilla.org/ | 200 / 200 | 100 % | coincide |
+| https://www.apple.com/ | 200 / 200 | 100 % | coincide |
+| https://www.microsoft.com/ | 200 / 200 | 100 % | coincide |
+| https://www.cloudflare.com/ | 200 / 200 | 100 % | coincide |
+| https://www.amazon.com/ | 200 / 200 | 100 % | coincide |
+| https://www.bbc.co.uk/ | 200 / 200 | 100 % | coincide |
+| https://www.nytimes.com/ | 200 / 403 | 74 % | difiere |
+| https://elpais.com/ | 200 / 200 | 100 % | coincide |
+| https://www.rtve.es/ | 200 / 200 | 100 % | coincide |
+| https://www.gov.uk/ | 200 / 200 | 100 % | coincide |
+| https://european-union.europa.eu/ | 200 / 200 | 100 % | coincide |
+| https://www.w3.org/ | 200 / 200 | 100 % | coincide |
+| https://www.ietf.org/ | 200 / 200 | 100 % | coincide |
+| https://www.python.org/ | 200 / 200 | 100 % | coincide |
+| https://nodejs.org/ | 200 / 200 | 100 % | coincide |
+| https://www.npmjs.com/ | 403 / 403 | 100 % | coincide |
+| https://stackoverflow.com/ | 403 / 403 | 100 % | coincide |
+| https://www.reddit.com/ | 200 / 200 | 100 % | coincide |
+| https://duckduckgo.com/ | 200 / 200 | 100 % | coincide |
+| https://www.bing.com/ | 200 / 200 | 100 % | coincide |
+| https://www.yahoo.com/ | 200 / 200 | 100 % | coincide |
+| https://www.linkedin.com/ | 200 / 200 | 40 % | difiere |
+| https://x.com/ | 200 / 200 | 100 % | coincide |
+| https://www.facebook.com/ | 200 / 200 | 100 % | coincide |
+| https://www.instagram.com/ | 200 / 200 | 100 % | coincide |
+| https://www.youtube.com/ | 200 / 200 | 100 % | coincide |
+| https://www.netflix.com/ | 200 / 200 | 100 % | coincide |
+| https://open.spotify.com/ | 200 / 200 | 100 % | coincide |
+| https://www.paypal.com/ | 403 / 403 | 100 % | coincide |
+| https://stripe.com/ | 200 / 200 | 100 % | coincide |
+| https://www.shopify.com/ | 200 / 200 | 100 % | coincide |
+| https://wordpress.org/ | 200 / 200 | 100 % | coincide |
+| https://www.debian.org/ | 200 / 200 | 100 % | coincide |
+| https://ubuntu.com/ | 200 / 200 | 100 % | coincide |
+| https://archlinux.org/ | 200 / 200 | 100 % | coincide |
+| https://www.kernel.org/ | 200 / 200 | 100 % | coincide |
+| https://www.gnu.org/ | inspect.timeout / error | — | no comparable |
+| https://letsencrypt.org/ | 200 / 200 | 100 % | coincide |
+| https://www.eff.org/ | 200 / 200 | 100 % | coincide |
+| https://www.theguardian.com/ | 200 / 200 | 100 % | coincide |
+| https://www.lemonde.fr/ | 200 / 200 | 100 % | coincide |
+| https://www.spiegel.de/ | 200 / 200 | 100 % | coincide |
+| https://edition.cnn.com/ | 200 / 200 | 100 % | coincide |
+| https://www.reuters.com/ | 401 / 401 | 100 % | coincide |
+| https://apnews.com/ | 403 / 403 | 100 % | coincide |
+| https://www.bloomberg.com/ | 403 / 403 | 100 % | coincide |
+| https://www.dropbox.com/ | 200 / 200 | 100 % | coincide |
+
+Coinciden: **46/49 (94 %)** de los comparables (objetivo: 100 %).
+
+## SC-003 — Evaluación de las cabeceras de seguridad (segunda mitad)
+
+**Resultado: 411/412 (99,8 %)** de las comprobaciones (6 cabeceras de 50 sitios y 115 cookies;
+3 cookies sin datos), puntuado con `--score` sobre
+[`sc003-review-2026-11-12.csv`](./sc003-review-2026-11-12.csv), que guarda el juicio de cada fila
+y su origen. Instantáneas en `apps/api/scripts/out/2026-11-12-sc003/` (ignoradas por git).
+
+Cómo se hizo la revisión:
+
+1. Las instantáneas se repitieron con las cookies conservando nombre y atributos (solo se omite el
+   valor); antes se omitía la línea entera y no había nada que juzgar.
+2. Un evaluador independiente en Python aplicó la rúbrica (criterios de
+   `packages/rules/data/security/headers.json`, reglas de la spec y de research R3) a la
+   instantánea de URLkit, con las mismas cabeceras que URLkit evaluó, de modo que se compara la
+   lógica y no la variabilidad del servidor. Las cookies salen de la copia de curl tomada a la vez,
+   la única con atributos. Coincidió con URLkit en las 412 filas comparables.
+3. Como las dos implementaciones podían compartir un error de interpretación, Claude revisó a mano,
+   sobre las cabeceras crudas, los casos delicados: CSP con *nonce* o *hash* (17 sitios), con
+   `strict-dynamic` (4), solo *report-only* (3), `Referrer-Policy` con lista, `X-Frame-Options`
+   con valores raros, las 6 HSTS mal configuradas y una muestra de cookies.
+
+Lo que encontró la revisión a mano:
+
+| Sitio | Hallazgo | Efecto en el resultado |
+| --- | --- | --- |
+| `https://www.eff.org/` | `X-Frame-Options: SAMEORIGIN, SAMEORIGIN` vale como `SAMEORIGIN` según el estándar HTML (si todos los valores de la lista son iguales, cuenta ese valor). URLkit la marca como mal configurada: **fallo de URLkit** | El único desacuerdo |
+| `https://www.youtube.com/` | `script-src … 'strict-dynamic' https: http: 'unsafe-eval'`: el estado *mal configurada* es correcto por `'unsafe-eval'`, pero el aviso `headers.csp.unsafe-source` (`http:`) sobra, porque con `strict-dynamic` el navegador ignora las fuentes de host y de esquema (CSP3): **falso positivo de URLkit** a nivel de aviso | Ninguno: el estado coincide |
+
+**Los dos fallos están corregidos** en `packages/core/src/tools/headers/analyze.ts`, con pruebas en
+`packages/core/tests/unit/headers.test.ts`: `X-Frame-Options` se lee como lista y vale si todos sus
+valores son iguales, y con `'strict-dynamic'` se ignoran las fuentes de host y de esquema y
+`'unsafe-inline'`. Reevaluadas con el código corregido las mismas instantáneas de URLkit, solo cambia
+el estado de eff.org (*mal configurada* → *presente*) y el acuerdo queda en **412/412 (100 %)**. El
+CSV guardado conserva los estados de URLkit anteriores a la corrección, para que se vea el
+desacuerdo que motivó el cambio.
+
+El resto de casos delicados se evaluó bien: `'unsafe-inline'` ignorado junto a un *nonce*, *report-only*
+contado como ausente, la última política válida de `Referrer-Policy`, y HSTS de menos de un año
+(180 días en w3.org, facebook.com, shopify.com y debian.org; 3600 s en wordpress.org).
+
+Límites:
+
+- **No es una revisión humana**: es una segunda implementación más una revisión hecha por Claude.
+  Conviene que una persona revise una muestra antes de dar SC-003 por cumplido.
+- Mide la rúbrica tal como está escrita. Si la rúbrica cambia (por ejemplo, el umbral de HSTS), el
+  resultado deja de valer.
+
+## SC-004 — Metadata
+
+50 páginas elegidas por los casos que cubren (campo `case` en `apps/api/scripts/reference-sets.json`):
+Open Graph completo y parcial, solo tarjeta de redes, solo etiquetas básicas o nada, aplicaciones
+de una sola página, ocho codificaciones distintas de UTF-8 (Shift_JIS, KOI8-R, GBK, ISO-8859-15,
+windows-1252 y sin declarar), canónica en otro dominio, redirecciones y documentos de más de 1 MiB.
+Cuatro campos por página: título, descripción, imagen y canónica.
+
+**Resultado: 200/200 (100 %)**, puntuado con `--score` sobre `sc004-review.csv` y las instantáneas
+del 2026-11-12.
+
+Cómo se obtuvieron los valores esperados:
+
+1. Un extractor independiente en Python (`html.parser`, sin código compartido con URLkit) leyó las
+   instantáneas, las decodificó y aplicó la regla documentada: Open Graph, después tarjeta de
+   redes y después HTML básico para título y descripción; Open Graph y después tarjeta de redes
+   para la imagen; `<link rel=canonical>` para la canónica.
+2. Coincidió con URLkit en 195 de los 200 campos. Las 5 diferencias eran canónicas escritas sin
+   barra final (`https://www.theguardian.com`), que URLkit serializa como
+   `https://www.theguardian.com/` según el estándar URL de WHATWG (Principio II): es la misma URL, y
+   se dio por buena la forma del estándar.
+3. Claude revisó a mano, sobre el HTML, los casos donde las dos implementaciones podrían
+   equivocarse igual: las ocho codificaciones (títulos en japonés, ruso y chino legibles), la
+   página con marcos, la ausencia de `<title>` en danluu.com, el `<title>` dentro de `<body>` de
+   info.cern.ch, AMP, el proxy de Google Translate y los dos documentos truncados.
+
+Límites de este resultado:
+
+- **No es una revisión humana.** Es una comparación con una segunda implementación más una revisión
+  hecha por Claude. Antes de dar SC-004 por cumplido conviene que una persona revise una muestra
+  (por ejemplo 10 páginas, 40 campos) sobre las mismas instantáneas.
+- **No cubre dos casos** que no aparecieron en páginas reales: varias `og:image` y `og:image`
+  relativa. Los cubren las pruebas unitarias de `packages/core/tests/unit/metadata.test.ts`.
+- **Vale para las instantáneas de ese día.** Al repetir el script, las páginas vivas pueden haber
+  cambiado (las portadas de prensa cambian a diario), y entonces la comparación con los valores
+  guardados mide el cambio de la página, no la herramienta.
+
+## SC-005 — TLS con badssl.com
+
+| Host | Esperado | Obtenido | Resultado |
+| --- | --- | --- | --- |
+| sha256.badssl.com | trusted | trusted | correcto |
+| expired.badssl.com | tls.expired | tls.expired | correcto |
+| self-signed.badssl.com | tls.self-signed | tls.self-signed | correcto |
+| wrong.host.badssl.com | tls.name-mismatch | tls.name-mismatch | correcto |
+| untrusted-root.badssl.com | tls.self-signed | tls.self-signed | correcto |
+| incomplete-chain.badssl.com | tls.incomplete-chain | tls.incomplete-chain | correcto |
+
+Detectados: **6/6 (100 %)** (objetivo: 100 %).
+
+## SC-006 — Estado DNSSEC
+
+| Dominio | Esperado | Obtenido | Resolutor | Resultado |
+| --- | --- | --- | --- | --- |
+| dnssec-failed.org | {"dnssec":"bogus"} | {"dnssec":"bogus","outcome":"exists"} | cloudflare | correcto |
+| cloudflare.com | {"dnssec":"validated"} | {"dnssec":"validated","outcome":"exists"} | cloudflare | correcto |
+| ietf.org | {"dnssec":"validated"} | {"dnssec":"validated","outcome":"exists"} | cloudflare | correcto |
+| example.com | {"dnssec":"validated"} | {"dnssec":"validated","outcome":"exists"} | cloudflare | correcto |
+| google.com | {"dnssec":"unsigned"} | {"dnssec":"unsigned","outcome":"exists"} | cloudflare | correcto |
+| github.com | {"dnssec":"unsigned"} | {"dnssec":"unsigned","outcome":"exists"} | cloudflare | correcto |
+| urlkit-reference-no-existe-7f3a9c.com | {"outcome":"nxdomain"} | {"dnssec":"unsigned","outcome":"nxdomain"} | cloudflare | correcto |
+
+Correctos: **7/7 (100 %)** (objetivo: 100 %).
+
+
+## Análisis de las diferencias de SC-003
+
+Historial de ejecuciones de este script, el mismo día:
+
+| Ejecución | Resultado | Qué cambió |
+| --- | --- | --- |
+| 1 | 0/49 | **Fallo de la v2**: con HTTP/2, undici entrega las cabeceras como objeto y no como lista, y HTTP Headers devolvía la lista vacía |
+| 2 | 45/49 | Corregido (`headerPairs` en `apps/api/src/inspect/safe-fetch.ts`, prueba en `tests/integration/raw-headers.test.ts`). Aparecen dos **fallos del MVP** en Redirect Inspector, cuya cadena reutiliza HTTP Headers (ver abajo) |
+| 3 (esta) | 46/49 | Corregidos los dos fallos del MVP. ubuntu.com y duckduckgo.com coinciden ahora con curl |
+
+Las diferencias que quedan en esta ejecución se deben a los servidores, no a la herramienta:
+
+| URL | Causa |
+| --- | --- |
+| `https://www.nytimes.com/` | El servidor responde 200 a URLkit y 403 a curl con el mismo `User-Agent`: protección contra bots que distingue clientes |
+| `https://www.google.com/`, `https://www.linkedin.com/` | Mismo estado; las cabeceras cambian entre dos peticiones seguidas (experimentos, consentimiento, enrutado). En otras ejecuciones LinkedIn coincidió |
+| `https://www.gnu.org/` | No respondió en 15 s ni a URLkit ni a curl |
+
+Entre ejecuciones también aparecieron fallos pasajeros de red (un `inspect.network` en
+facebook.com, un fallo en un host de badssl.com) que desaparecieron al repetir sin cambiar nada.
+
+### Los dos fallos del MVP, corregidos
+
+| URL | Causa | Corrección |
+| --- | --- | --- |
+| `https://ubuntu.com/` | `detectJsRedirect` buscaba `location=` en todo el HTML y tomó el atributo `data-form-location="/shared/forms/form-template"` por una asignación de JavaScript; seguía hasta un 404 | Solo se busca en el contenido de los `<script>` ejecutables |
+| `https://duckduckgo.com/` | `<noscript><meta http-equiv="refresh" content="0; url=&quot;…&quot;"></noscript>`: no se decodificaban las entidades y se seguía a una URL con `&quot;` dentro (410) | Se decodifican las entidades del `content`, y un `meta refresh` dentro de `<noscript>` no se sigue, porque un navegador con scripts no lo aplica |
+
+Ambas en `packages/core/src/tools/inspect/logic.ts`, con pruebas en
+`packages/core/tests/unit/inspect.test.ts` y el comportamiento descrito en
+`specs/001-mvp-url-toolkit/data-model.md` (RedirectChain).
+
+En SC-006, el primer dominio inexistente elegido (`…example.org`) respondía `NOERROR` sin datos
+en lugar de `NXDOMAIN`, como hacen a propósito algunos servidores autoritativos firmados ("black
+lies"). La herramienta informa lo que dice el DNS; el caso se cambió por un `.com` inexistente.
+
+Pendiente, fuera de este script:
+
+- SC-003, segunda mitad: que una persona revise una muestra.
+- SC-004: que una persona revise una muestra de los valores esperados (ver la sección de SC-004).

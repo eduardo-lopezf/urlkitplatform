@@ -58,4 +58,38 @@ export interface RuleCatalog {
   domains: Record<string, DomainRule[]>;
   /** TLDs frequently used for abuse, without the dot (Explain URL). */
   abuseTlds: string[];
+  /** v2 criteria (002 research R8). Optional so MVP-only catalogs stay valid. */
+  security?: SecurityCriteria;
+  metadata?: MetadataCriteria;
+}
+
+export type Severity = 'high' | 'medium' | 'low' | 'info';
+
+export interface HeaderCriteria {
+  hsts: { minMaxAge: number };
+  /** Lower-cased CSP sources that make `script-src` unsafe. */
+  csp: { unsafeScriptSources: string[] };
+  frameOptions: { valid: string[] };
+  referrerPolicy: { valid: string[]; unsafe: string[] };
+}
+
+export interface TlsCriteria {
+  expiringSoonDays: number;
+  /** Hash names matched inside the signature algorithm (e.g. `sha1`). */
+  weakSignatures: string[];
+  legacyProtocols: string[];
+}
+
+export interface SecurityCriteria {
+  headers: HeaderCriteria;
+  tls: TlsCriteria;
+  /** Message code → severity of the finding it produces. */
+  severities: Record<string, Severity>;
+}
+
+export type MetadataSource = 'openGraph' | 'twitter' | 'basic';
+export type MetadataField = 'title' | 'description' | 'image' | 'url' | 'siteName' | 'type';
+
+export interface MetadataCriteria {
+  precedence: Record<MetadataField, MetadataSource[]>;
 }

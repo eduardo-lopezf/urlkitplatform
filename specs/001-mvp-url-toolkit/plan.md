@@ -183,14 +183,16 @@ Fuera del alcance del MVP, con ubicación ya decidida para no improvisarla despu
 ([`docs/arquitectura.md`](../../docs/arquitectura.md), sección 2):
 
 ```text
-services/probes/             # v2: Python + FastAPI (mundo políglota, fuera del workspace pnpm)
-tests/contract/              # v2: suites de contrato entre apps/api y services/probes
+services/probes/             # sin etapa: la v2 se resolvió en Node (docs/arquitectura.md §11)
+tests/contract/              # sin etapa: solo si existe un servicio de sondas aparte
 packages/sdk/                # v3: cliente generado desde openapi.json, nunca escrito a mano
 ```
 
 `tests/ssrf-vectors/` sí existe desde el MVP: son datos, no una suite, y los ejecuta la suite SSRF
-de `apps/api`. El servicio de sondas de la versión 2 ejecutará los mismos vectores en Python,
-porque la validación ocurre en el proceso que conecta y no se puede delegar (Principio V).
+de `apps/api`. Desde la versión 2 los ejecutan sus dos conectores, `safeFetch` y el de TLS
+(`specs/002-v2-network-analysis/research.md`, R11). Un servicio en otro lenguaje tendría que pasar
+los mismos, porque la validación ocurre en el proceso que conecta y no se puede delegar
+(Principio V).
 
 ### Grafo de dependencias
 
@@ -235,7 +237,8 @@ contrato de ambos lados y, en la versión 3, el SDK generado.
 Las pruebas viven junto a lo que prueban, para que cada paquete pueda probarse de forma aislada
 (Principio I). El `tests/` de la raíz es solo para lo que atraviesa dos unidades de despliegue o
 dos lenguajes: en el MVP contiene únicamente `ssrf-vectors/` (datos compartidos entre lenguajes);
-las suites de contrato entre `apps/api` y `services/probes` llegan con la versión 2.
+las suites de contrato entre `apps/api` y un servicio de sondas solo llegarían si ese servicio
+existe, y la versión 2 no lo necesitó.
 
 ## Delivery Order
 

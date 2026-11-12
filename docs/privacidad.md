@@ -1,6 +1,6 @@
 # Privacidad: qué se guarda, qué no y por qué
 
-**Estado**: vigente | **Fecha**: 2026-11-06
+**Estado**: vigente | **Fecha**: 2026-11-11
 
 Este documento describe los compromisos de privacidad del producto y cómo se materializan. No es
 un texto legal: es la descripción técnica que cualquier persona puede verificar y que el equipo
@@ -8,7 +8,7 @@ está obligado a cumplir (Principio V de la [constitución](../.specify/memory/c
 
 ## El compromiso, en una frase
 
-Las URLs que escribes no se almacenan en ningún sitio, y en cuatro de las cinco herramientas no
+Las URLs que escribes no se almacenan en ningún sitio, y en las cuatro herramientas locales no
 llegan siquiera a salir de tu navegador.
 
 ## Dónde se procesa cada herramienta
@@ -20,6 +20,11 @@ llegan siquiera a salir de tu navegador.
 | URL Diff | **No** | Comparación local |
 | Explain URL | **No** | Reglas fijas, sin IA, ejecutadas localmente |
 | Redirect Inspector | **Sí** | Alguien tiene que seguir los saltos; si lo hiciera tu navegador, visitarías cada destino |
+| HTTP Headers | **Sí** | Hay que pedir la página para ver qué responde el servidor |
+| Metadata | **Sí** | Hay que leer el documento para extraer sus metadatos |
+| TLS | **Sí** | Hay que conectarse al servidor para ver su certificado |
+| DNS | **Sí** (solo el nombre) | Hay que preguntar a un resolutor; de una URL solo se usa el host |
+| Security Analysis | **Sí** | Reúne las cuatro anteriores y Explain URL |
 
 Que las cuatro primeras sean locales no es una optimización: es el motivo por el que el producto
 puede ser gratuito, instantáneo y privado a la vez.
@@ -29,6 +34,28 @@ puede ser gratuito, instantáneo y privado a la vez.
 Al seguir la cadena desde nuestro servidor, el sitio de destino **no ve tu dirección IP, tu
 navegador ni tus cookies**: ve nuestra petición. Es una ventaja de privacidad, no una concesión.
 A cambio, esa URL sí llega a nuestro servidor, y sobre eso aplica todo lo que sigue.
+
+### Las herramientas de análisis técnico
+
+HTTP Headers, Metadata, TLS, DNS y Security Analysis funcionan igual: la petición la hace nuestro
+servidor, nunca tu navegador, y se aplican las mismas reglas que a Redirect Inspector. En
+concreto:
+
+- **HTTP Headers** pide la página y te devuelve sus cabeceras. Los **valores de las cookies no se
+  devuelven nunca**: ves el nombre de cada cookie y sus atributos, y su valor aparece como
+  `<omitido>`.
+- **Metadata** lee como máximo 1 MiB del documento y no ejecuta nada de él. La imagen de vista
+  previa y los iconos se te muestran como direcciones de texto: **tu navegador no los descarga**,
+  así que su servidor no recibe tu IP.
+- **TLS** se conecta al servidor, completa la negociación del cifrado y cierra sin pedir nada más.
+- **DNS** pregunta por el nombre a dos resolutores públicos que validan DNSSEC: **Cloudflare**
+  (`1.1.1.1`) y, si no responde, **Quad9** (`9.9.9.9`). El resolutor ve el nombre consultado, pero
+  llega desde la IP de nuestro servidor, **nunca desde la tuya**. No puedes elegir otro resolutor.
+- **Security Analysis** hace todo lo anterior sobre el destino final del enlace, con una sola
+  petición tuya y un solo uso de su límite.
+
+Ninguna de ellas guarda el resultado: ni en una base de datos, ni en una caché, ni en los
+registros.
 
 ## Qué no se guarda nunca
 
@@ -57,8 +84,9 @@ envía a ningún sitio y el producto funciona igual si la bloqueas.
 
 ## Los límites de uso y la seudonimización
 
-Redirect Inspector tiene un límite gratuito (10 inspecciones por hora y 50 al día) que hay que
-poder contar sin identificar a nadie. Se resuelve así:
+Redirect Inspector y cada herramienta de análisis técnico tienen su propio límite gratuito (10 usos
+por hora y 50 al día cada una), que hay que poder contar sin identificar a nadie. Agotar una no
+bloquea las demás. Se resuelve así:
 
 1. De tu dirección IP se calcula un **hash con clave** (HMAC-SHA256). En IPv6 se reduce primero al
    prefijo `/64`.
@@ -67,8 +95,9 @@ poder contar sin identificar a nadie. Se resuelve así:
 4. La dirección IP original no se almacena en ningún momento.
 
 Consecuencia honesta: si compartes red con mucha gente —una oficina, una universidad, una VPN—
-compartís el contador. El mensaje de límite lo explica, y las otras cuatro herramientas siguen
-funcionando sin límite porque no pasan por el servidor.
+compartís el contador. El mensaje de límite lo explica, y las cuatro herramientas locales siguen
+funcionando sin límite porque no pasan por el servidor. Si los resolutores DNS no responden, esa
+consulta no cuenta para tu límite.
 
 ## Qué se mide
 
@@ -102,8 +131,11 @@ copiarlo.
   sus políticas y no las nuestras. En el servidor, el cifrado termina en nuestro propio proxy, así
   que su proveedor ve el tráfico pero no su contenido. Cuáles son y qué registran está en
   [Proveedores y qué registran](#proveedores-y-qué-registran).
-- **El sitio que inspeccionas sabe que alguien lo inspeccionó.** Verá una petición de nuestro
-  servicio, con un `User-Agent` identificable. No sabrá quién la pidió.
+- **El sitio que inspeccionas o analizas sabe que alguien lo hizo.** Verá una petición o una
+  conexión de nuestro servicio, con un `User-Agent` identificable cuando es una petición web. No
+  sabrá quién la pidió.
+- **Los resolutores DNS ven el nombre que consultas.** Lo reciben de nuestro servidor, no de ti, y
+  sin nada que te identifique.
 
 ## Proveedores y qué registran
 
@@ -117,6 +149,7 @@ copiarlo.
 | Proxy TLS | Caddy, en nuestro servidor | La petición completa | Nada de la petición. No hay registro de accesos, y los errores llevan solo mensaje, estado y duración (comprobado el 2026-11-10) |
 | Contadores de cuota | Valkey, en nuestro servidor | El seudónimo del día | El contador, que caduca con su ventana |
 | DNS de la API | _Por elegir_. Si es Cloudflare, en modo «solo DNS» | Las consultas por el nombre de la API, que normalmente hace tu resolvedor y no tu dispositivo | _Por confirmar_ |
+| Resolutores de la herramienta DNS | Cloudflare (`1.1.1.1`) y Quad9 (`9.9.9.9`), por DNS sobre HTTPS | El nombre que consultas, desde la IP de nuestro servidor. Nunca tu IP ni la URL completa | Lo que establezcan las políticas de privacidad de sus servicios públicos de resolución |
 | Certificado TLS | La autoridad que usa Caddy (Let's Encrypt por defecto) | Nada de tus visitas: solo el nombre de la API al emitir el certificado | — |
 | Errores (opcional) | _Por decidir_ si se activa Sentry | Errores sin campos de entrada, depurados antes de enviarse | Lo que establezca su política, si se activa |
 | Trazas (opcional) | _Por decidir_ si se activa un destino OTLP | Trazas con, como mucho, el dominio registrable del destino | Lo que establezca su política, si se activa |
@@ -135,15 +168,16 @@ Antes de quitar la marca de borrador:
 
 - Abre las herramientas de red de tu navegador y usa el limpiador, el analizador, el comparador o
   la explicación: **no verás ninguna petición** con tu URL.
+- Usa una herramienta de análisis técnico: verás **una sola petición**, un `POST` a la API con la
+  URL en el cuerpo. Ninguna va a terceros, tampoco a la imagen de vista previa.
 - Revisa el almacenamiento: no hay cookies.
 - El código es el que está en este repositorio, y las garantías anteriores tienen pruebas
   automáticas que bloquean la integración si fallan.
 
 ## Qué cambiará en las próximas versiones
 
-- **v2** (DNS, TLS, cabeceras, metadatos): son herramientas que consultan la red, así que el
-  dominio que analices llegará al servidor, con las mismas reglas de no almacenamiento y los
-  mismos límites seudonimizados.
+- **v2** (HTTP Headers, Metadata, TLS, DNS y Security Analysis): ya disponible. Lo que llega al
+  servidor con cada una está descrito arriba, en "Las herramientas de análisis técnico".
 - **v3** (cuentas, historial, informes): guardar algo será **opcional y explícito**. Tener cuenta
   no cambiará el funcionamiento de las herramientas gratuitas, y seguirán usándose sin cuenta.
 

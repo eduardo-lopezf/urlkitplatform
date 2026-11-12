@@ -28,6 +28,32 @@ const designed = parseYaml(
   ),
 ) as Doc;
 
+/**
+ * v2 additions (specs/002-v2-network-analysis/contracts/openapi.yaml). The v2 tools land one by
+ * one (002 plan.md, "Delivery Order"), so only the operations already generated are compared,
+ * with the v2 component schemas they publish.
+ */
+const designedV2 = parseYaml(
+  readFileSync(
+    new URL('../../../specs/002-v2-network-analysis/contracts/openapi.yaml', import.meta.url),
+    'utf8',
+  ),
+) as Doc;
+const v2Bodies = (designedV2 as { components: { requestBodies?: Record<string, unknown> } })
+  .components.requestBodies;
+for (const [path, methods] of Object.entries(designedV2.paths)) {
+  if (!(path in generated.paths)) continue;
+  for (const op of Object.values(methods)) {
+    const ref = (op.requestBody as { $ref?: string } | undefined)?.$ref;
+    const body = ref ? v2Bodies?.[ref.split('/').pop() ?? ''] : undefined;
+    if (body) op.requestBody = body as NonNullable<typeof op.requestBody>;
+  }
+  designed.paths[path] = methods;
+}
+for (const [name, schema] of Object.entries(designedV2.components.schemas))
+  if (!(name in designed.components.schemas) && name in generated.components.schemas)
+    designed.components.schemas[name] = schema;
+
 /** Schemas that only exist in the generated document because they are derived from code. */
 const GENERATED_ONLY = new Set(['MessageCode', 'ErrorCode']);
 
@@ -50,6 +76,8 @@ describe('published contract', () => {
         ),
       );
     expect(ops(generated).sort()).toEqual(ops(designed).sort());
+    for (const path of Object.keys(generated.paths).filter((p) => !(p in designed.paths)))
+      throw new Error(`${path} is generated but designed in neither contract`);
   });
 
   it('has the same request bodies as the designed contract', () => {

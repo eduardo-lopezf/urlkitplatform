@@ -56,6 +56,114 @@ describe('structured logger', () => {
   });
 });
 
+// 002/T092: the five v2 endpoints, fed with observations full of sensitive values.
+describe('v2 network tools', () => {
+  const MARKERS = [
+    'secret-path',
+    'token=abc',
+    'SECRET-HEADER',
+    'COOKIE-SECRET',
+    'CERT-SUBJECT',
+    'DNS-DATA',
+    'DOC-CONTENT',
+  ];
+  const url = 'https://ejemplo.com/secret-path?token=abc';
+  const final = {
+    status: 200,
+    rawHeaders: [
+      ['X-Private', 'SECRET-HEADER'],
+      ['Set-Cookie', 'sid=COOKIE-SECRET'],
+      ['Content-Type', 'text/html'],
+    ] as Array<[string, string]>,
+    contentType: 'text/html',
+    body: new TextEncoder().encode('<title>DOC-CONTENT</title>'),
+    bodyTruncated: false,
+  };
+  const chain = {
+    input: url,
+    hops: [
+      {
+        index: 0,
+        url,
+        status: 200,
+        type: 'final' as const,
+        location: null,
+        durationMs: 1,
+        flags: [],
+      },
+    ],
+    final: url,
+    stopReason: 'final' as const,
+    totalMs: 1,
+  };
+  const cert = {
+    subject: 'CN=CERT-SUBJECT',
+    issuer: 'CN=CERT-SUBJECT',
+    subjectAltNames: ['DNS:CERT-SUBJECT'],
+    serialNumber: '01',
+    validFrom: '2026-01-01T00:00:00.000Z',
+    validTo: '2027-01-01T00:00:00.000Z',
+    signatureAlgorithm: 'ecdsa-with-SHA256',
+    fingerprint256: 'AA',
+    isCa: false,
+    selfIssued: true,
+  };
+  const answer = {
+    rcode: 'NOERROR',
+    ad: true,
+    ede: [],
+    records: [{ name: 'ejemplo.com', type: 'TXT' as const, ttl: 60, data: ['DNS-DATA'] }],
+    retriedWithCd: null,
+    transportError: false,
+  };
+  const fetchChain = async () => ({ ok: true as const, value: { chain, finalResponse: final } });
+  const probeTls = async () => ({
+    kind: 'handshake' as const,
+    observedAt: '2026-11-11T00:00:00.000Z',
+    host: 'ejemplo.com',
+    port: 443,
+    sniSent: true,
+    protocol: 'TLSv1.3',
+    cipher: null,
+    alpn: null,
+    authorized: true,
+    authorizationError: null,
+    hostMatches: true,
+    chain: [cert],
+  });
+  const queryDns = async (name: string) => ({
+    observedAt: '2026-11-11T00:00:00.000Z',
+    name,
+    resolver: 'cloudflare' as const,
+    answers: Object.fromEntries(
+      ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'CAA', 'SOA'].map((t) => [t, answer]),
+    ) as never,
+    dmarc: answer,
+  });
+
+  it('log no URL, header value, cookie, document, certificate or DNS data', async () => {
+    const { app, lines } = testApp({
+      chainFetcher: () => fetchChain,
+      tlsProber: () => probeTls,
+      dnsQuerier: () => queryDns,
+      securityAdapters: () => ({ fetchChain, probeTls, queryDns }),
+    });
+    for (const [path, body] of [
+      ['/v1/headers', { url }],
+      ['/v1/metadata', { url }],
+      ['/v1/tls', { target: url }],
+      ['/v1/dns', { target: url }],
+      ['/v1/security', { url }],
+    ] as const) {
+      const res = await post(app, path, body, { 'x-test-ip': '203.0.113.7' });
+      expect(res.status, path).toBe(200);
+    }
+    expect(lines.length).toBeGreaterThan(0);
+    const out = lines.join('\n');
+    for (const needle of [...MARKERS, ...SENSITIVE]) expect(out).not.toContain(needle);
+  });
+});
+
 describe('subjectHash', () => {
   const day1 = new Date(T0);
   const day2 = new Date(T0 + 24 * 3600 * 1000);
