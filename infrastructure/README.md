@@ -111,7 +111,7 @@ Así se despliega el MVP (research R12): la web en Cloudflare Pages y la API en 
 ### 3. Primer despliegue
 
 ```bash
-git clone <repositorio> urlkit && cd urlkit
+git clone -b production <repositorio> urlkit && cd urlkit
 cp .env.example .env        # rellenar QUOTA_SECRET (openssl rand -hex 32), API_DOMAIN, WEB_ORIGIN
 docker compose --profile selfhosted up -d --build
 ```
@@ -142,6 +142,8 @@ unos segundos en aplicar las reglas: si falla la parte de reglas, repítelo.
 
 ### 4. Actualizar
 
+El servidor sigue la rama `production`, la misma que publica la web (ver "Publicar una versión").
+
 ```bash
 git pull && docker compose --profile selfhosted up -d --build && infrastructure/check-selfhosted.sh
 ```
@@ -153,14 +155,20 @@ certificados de Caddy viven en el volumen `caddy_data`. Lo único que hay que co
 
 Proyecto conectado al repositorio de GitHub:
 
-| Ajuste                    | Valor                             |
-| ------------------------- | --------------------------------- |
-| Directorio raíz           | raíz del repositorio              |
-| Comando de build          | `pnpm --filter @urlkit/web build` |
-| Directorio de salida      | `apps/web/dist`                   |
-| Variable `PUBLIC_API_URL` | `https://<API_DOMAIN>`            |
-| Variable `NODE_VERSION`   | `24`                              |
+| Ajuste                      | Valor                             |
+| --------------------------- | --------------------------------- |
+| Directorio raíz             | raíz del repositorio              |
+| Comando de build            | `pnpm --filter @urlkit/web build` |
+| Directorio de salida        | `apps/web/dist`                   |
+| Variable `PUBLIC_API_URL`   | `https://<API_DOMAIN>`            |
+| Variable `NODE_VERSION`     | `24`                              |
+| Rama de producción          | `production`                      |
+| Despliegues de vista previa | desactivados                      |
 
+- La rama de producción es `production`, no `main`: Pages publica en cuanto recibe un push, sin
+  esperar a CI. Ver "Publicar una versión".
+- Sin vistas previas: cada rama tendría una copia pública en `*.pages.dev` que llama a la API de
+  producción. CORS solo admite `WEB_ORIGIN`, así que su Redirect Inspector fallaría igualmente.
 - `PUBLIC_API_URL` se fija en el build: decide a qué API llama Redirect Inspector y qué origen
   admite la CSP (`connect-src`). Cambiarla exige volver a desplegar la web.
 - `apps/web/public/_headers` llega a `dist/_headers`, y Pages lo aplica tal cual.
@@ -168,5 +176,44 @@ Proyecto conectado al repositorio de GitHub:
 - **No activar** Web Analytics, Bot Fight Mode ni Zaraz: añaden scripts de terceros o cookies, y
   el MVP no tiene ninguno de los dos (Principio V).
 
+El build de Pages se reprodujo en local en `node:24-bookworm-slim` con pnpm 10.34.9 y desde una
+copia limpia del repositorio (`specs/001-mvp-url-toolkit/validation/quickstart-run.md`). Da el mismo
+resultado que con Node 26. El aviso de Shiki sobre la CSP no afecta: la web no tiene Markdown ni
+bloques de código.
+
 Sin verificar hasta T112: que la imagen de build de Pages use la versión de pnpm de
-`packageManager` en `package.json`.
+`packageManager` en `package.json`. Si usa otra, se fija con la variable `PNPM_VERSION=10.34.9`.
+
+### 6. Publicar una versión
+
+Ningún cambio se integra con alguna puerta de calidad en rojo, y CI tarda varios minutos en
+`main`. Pages conectado a `main` publicaría antes de que CI termine. Por eso producción es la rama
+`production`, que solo avanza a un commit que ya pasó CI en `main`:
+
+1. Push a `main` y esperar a que los dos trabajos de CI (`quality` y `egress-linux`) estén en verde.
+2. Llevar ese mismo commit a producción, sin crear otro:
+
+   ```bash
+   git push origin main:production
+   ```
+
+   Pages compila y publica la web.
+
+3. En el servidor, a continuación, "Actualizar" (sección 4).
+
+La web y la API salen así del mismo commit. Durante los minutos entre los pasos 2 y 3, la web
+nueva puede llamar a la API anterior: los cambios de `/v1` son aditivos, así que solo fallaría una
+herramienta nueva que aún no tenga endpoint.
+
+Para que GitHub lo haga cumplir y no dependa de la disciplina, una regla sobre `production` en
+_Settings → Rules_ (o _Branches_):
+
+- exigir que pasen los checks `quality` y `egress-linux`. El push del paso 2 lleva un commit que ya
+  los pasó en `main`, así que se acepta; uno que no los pasó, no;
+- bloquear los force push y el borrado de la rama.
+
+En un repositorio privado con el plan gratuito de GitHub estas reglas no están disponibles. Sin
+ellas, el paso 1 es responsabilidad de quien publica.
+
+Sin verificar hasta T112: que la regla acepte el push del paso 2 con los checks que pasaron en
+`main`.

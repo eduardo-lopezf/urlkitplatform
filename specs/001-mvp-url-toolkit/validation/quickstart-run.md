@@ -172,3 +172,26 @@ local y en el VPS (T111). Probado en Docker Desktop 29.7.2 (macOS) con `API_DOMA
 | Tras `restart egress-guard` | ✅ vuelven las 16 reglas y pasa de nuevo. Si se lanza durante los segundos que tarda en aplicarlas, falla la parte de reglas |
 | `API_DOMAIN` que no resuelve | ✅ las comprobaciones a través de Caddy fallan sin abortar el script |
 | Órdenes del paso de CI (`egress-linux`): perfil `full`, después `selfhosted --wait` y el script, con `QUOTA_SECRET` de prueba | ✅ código 0 en Docker Desktop. En Docker Engine sobre Linux, pendiente del primer push |
+
+## Build de Cloudflare Pages con Node 24 (2026-11-12)
+
+Parte local de T112: el comando de build de Pages (`pnpm --filter @urlkit/web build`) con
+`PUBLIC_API_URL=https://api.example.com`, desde una copia de los ficheros versionados (como un clon
+nuevo), en `node:24-bookworm-slim` (glibc, como la imagen de build de Pages).
+
+| Comprobación | Resultado |
+|---|---|
+| Node 24.22.3, pnpm 10.34.9 de `packageManager` con corepack | ✅ `install --frozen-lockfile` en 92 s, con el `postinstall` que compila el catálogo; build en 37 s |
+| `dist/_headers` | ✅ idéntico a `apps/web/public/_headers` |
+| CSP de las 27 páginas | ✅ todas con `connect-src 'self' https://api.example.com`; ninguna referencia a `localhost:8787` |
+| Comparación con el mismo build en Node 26.5 | ✅ 52 ficheros en los dos; JS y CSS idénticos; los HTML solo difieren en el `uid` aleatorio de las islas |
+| Presupuesto de JS (`size-limit`) | ✅ 143,55 KB de 150 |
+
+Aviso del build, igual en Node 24 y 26: Shiki indica que su resaltado usa estilos en línea
+incompatibles con la CSP. No afecta: la web no tiene Markdown ni bloques de código.
+
+Al preparar la copia, el `tar` de macOS añadió ficheros `._*` (atributos extendidos) y la
+compilación del catálogo falló al leerlos como JSON. Un clon de Git no los tiene; la copia se
+rehízo con `COPYFILE_DISABLE=1 tar --no-xattrs`.
+
+Pendiente para T112: que la imagen de Pages use esa versión de pnpm.
