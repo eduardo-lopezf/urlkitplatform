@@ -79,6 +79,9 @@ reenvía la IP de ese proxy y todas sus visitas comparten cuota.
 
 - Caddy no escribe log de acceso, y en sus propios logs (errores como un 502) se borra la petición
   entera: IP del cliente, URI y cabeceras. Solo quedan el mensaje, el estado y la duración.
+- Los logs de los contenedores tienen un límite de tamaño: `json-file` con 3 ficheros de 10 MB por
+  servicio (`x-logging` en `docker-compose.yml`). No hace falta configurarlo en el demonio de
+  Docker del servidor.
 - `monitoring/prometheus.yml` lee `/internal/metrics` de la API. Ese camino no se expone al
   exterior: Caddy responde 404.
 - `monitoring/otel-collector.yaml` recibe trazas OTLP y borra, como segunda barrera, cualquier

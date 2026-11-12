@@ -1,8 +1,16 @@
 # Development entry point and, with `--profile selfhosted`, the MVP production stack on one VPS
 # (research R12). The web is static and goes to a CDN, so it is not part of Compose.
 # Cross-service configuration lives in infrastructure/ (see infrastructure/README.md).
+
+# Docker keeps container logs without a size limit by default. The logs carry no URLs or IPs
+# (Principio V), but on a VPS that runs for months they would fill the disk.
+x-logging: &logging
+  driver: json-file
+  options: { max-size: '10m', max-file: '3' }
+
 services:
   redis:
+    logging: *logging
     image: valkey/valkey:8-alpine
     restart: unless-stopped
     # Host ports are bound to loopback only: Valkey has no password, and with the `selfhosted`
@@ -13,6 +21,7 @@ services:
     networks: [default, internal]
 
   api:
+    logging: *logging
     profiles: [full, selfhosted]
     build: { context: ., dockerfile: apps/api/Dockerfile }
     restart: unless-stopped
@@ -40,6 +49,7 @@ services:
   # and the Docker Desktop VM). The rules are lost on reboot, so it stays running: Docker restarts
   # it at boot and it applies them again (the script is idempotent).
   egress-guard:
+    logging: *logging
     profiles: [full, selfhosted]
     image: alpine:3.22
     network_mode: host
@@ -51,10 +61,12 @@ services:
     restart: unless-stopped
 
   caddy:
+    logging: *logging
     profiles: [selfhosted]
     image: caddy:2-alpine
     restart: unless-stopped
-    ports: ['80:80', '443:443']
+    # 443/udp is HTTP/3, which Caddy enables by default; without it browsers stay on HTTP/2.
+    ports: ['80:80', '443:443', '443:443/udp']
     environment:
       # The public name of the API; `localhost` gets a certificate from Caddy's local CA.
       API_DOMAIN: ${API_DOMAIN:-localhost}
@@ -68,6 +80,7 @@ services:
     networks: [egress]
 
   prometheus:
+    logging: *logging
     profiles: [monitoring]
     image: prom/prometheus:v3.5.0
     volumes:
@@ -76,6 +89,7 @@ services:
     networks: [internal]
 
   otel-collector:
+    logging: *logging
     profiles: [monitoring]
     image: otel/opentelemetry-collector:0.130.0
     volumes:

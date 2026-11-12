@@ -143,3 +143,19 @@ cliente, URI y cabeceras). `log { output discard }` solo descartaba el log de ac
 No probado: un reinicio real de la máquina o de Docker Desktop. Se simuló borrando las reglas y
 reiniciando los contenedores; que Docker arranque al inicio los servicios con
 `restart: unless-stopped` es su comportamiento estándar.
+
+## HTTP/3 y límite de logs (2026-11-12)
+
+Dos ajustes de `docker-compose.yml` que salieron al preparar T111, probados con el perfil
+`selfhosted` en Docker Desktop 29.7.2 (macOS) y `API_DOMAIN=localhost`.
+
+| Comprobación | Resultado |
+|---|---|
+| Caddy publica `443/udp` | ✅ antes solo `443/tcp`: Caddy anunciaba `alt-svc: h3=":443"` pero el puerto UDP no llegaba al contenedor |
+| `POST /v1/clean` solo por HTTP/3 (cliente QUIC `aioquic` 1.7.2, fuera del repositorio) | ✅ 200, `output` = `https://ejemplo.com/?id=1` |
+| Límite de logs en los servicios del perfil | ✅ `redis`, `api`, `egress-guard` y `caddy` con `json-file`, `max-size: 10m`, `max-file: 3` |
+| Reglas de salida tras recrear los contenedores | ✅ 16 reglas sobre `172.30.0.0/24` |
+| Logs de Caddy tras la petición HTTP/3 | ✅ sin IP del cliente, URI ni cabeceras |
+
+El curl de macOS y el de las imágenes `alpine` y `curlimages/curl` no traen HTTP/3; por eso la
+prueba usa un cliente QUIC en Python.
