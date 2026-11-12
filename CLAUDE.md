@@ -38,21 +38,34 @@ El MVP está **implementado y en validación**: las cinco herramientas, la API `
 funcionan en local con todas las puertas de calidad en verde. En `specs/001-mvp-url-toolkit/tasks.md`
 hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas) y
 T111–T114 (despliegue: necesitan el VPS, el dominio y las cuentas; la guía está en
-`infrastructure/README.md`, "Despliegue autogestionado"). El registro de lo ejecutado está en
-`specs/001-mvp-url-toolkit/validation/`. La rama de trabajo es `main`. Spec Kit no crea ramas en
+`infrastructure/README.md`, "Despliegue autogestionado"). Todo lo que se podía preparar en local
+está hecho: el build de Pages se reprodujo con Node 24 y la tabla de proveedores de
+`docs/privacidad.md` (T114) solo espera decisiones y respuestas de los proveedores. El registro de
+lo ejecutado está en `specs/001-mvp-url-toolkit/validation/`. La rama de trabajo es `main`. Spec Kit no crea ramas en
 este proyecto: la feature activa la indica `.specify/feature.json`.
 
 La v2 (`specs/002-v2-network-analysis`) está **implementada en local**: HTTP Headers, Metadata, TLS,
 DNS y Security Analysis, con sus endpoints `/v1` y sus páginas, y las puertas de calidad en verde.
 Está validada contra la red real desde local (T096, T098; registro en
 `specs/002-v2-network-analysis/validation/`). Queda el despliegue, que va con el de la 001: sale en
-la misma imagen de la API y su comprobación en producción forma parte de T113. Se hizo entera en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md`
-§11).
+la misma imagen de la API y su comprobación en producción forma parte de T113. Se hizo entera en
+Node: el servicio de sondas en Python no entró (`docs/arquitectura.md` §11).
 
-El cortafuegos de salida se probó en Docker Desktop (macOS), no en un host Linux con Docker
-Engine. `RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
+Despliegue, lo que no se deduce del código:
+
+- `infrastructure/check-selfhosted.sh` comprueba el perfil `selfhosted` igual en local, en el VPS
+  y en CI (trabajo `egress-linux`, Docker Engine en Linux). Que las reglas de salida bloquean se
+  demuestra con el contador de la regla `DROP`: una conexión fallida no prueba nada, porque
+  también falla sin reglas. Si cambias Compose, Caddy o egress-guard, ejecútalo.
+- Se publica desde la rama `production`, no desde `main`: Pages y el VPS la siguen, y solo avanza
+  a commits que ya pasaron CI (`infrastructure/README.md`, "Publicar una versión").
+- La web envía HSTS sin `preload` a propósito; no lo añadas. Sentry y OTLP van vacíos en
+  producción: activarlos exige antes su fila en `docs/privacidad.md`.
+
+`RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
 (sin `REDIS_URL`, esa prueba se salta; en CI hay un servicio Valkey y se ejecuta). En Node 26,
-`astro check` no arranca (dependencia transitiva rota); `pnpm typecheck` usa `vue-tsc`. Para e2e con el Chrome instalado: `PW_CHANNEL=chrome pnpm test:e2e`.
+`astro check` no arranca (dependencia transitiva rota); `pnpm typecheck` usa `vue-tsc`. Para e2e
+con el Chrome instalado: `PW_CHANNEL=chrome pnpm test:e2e`.
 
 Antes de implementar cualquier cosa, lee la tarea correspondiente en `tasks.md`: dice qué fichero
 crear, qué debe cumplir y qué prueba la cubre.
