@@ -140,29 +140,52 @@ copiarlo.
 ## Proveedores y qué registran
 
 > **Borrador (T114).** Se completa al desplegar (T111 y T112). Lo marcado como _por confirmar_
-> todavía no es un compromiso.
+> o _por elegir_ todavía no es un compromiso. Lo que dicen los proveedores se consultó el
+> 2026-11-12 (ver [Fuentes](#fuentes-de-los-proveedores)).
 
 | Pieza | Quién | Qué recibe de tu visita | Qué registra |
 |---|---|---|---|
-| Web: páginas, código y catálogo de reglas | Cloudflare Pages | Tu IP, tu navegador y la página que abres (`/es/clean`). Nunca la URL que escribes: no sale del navegador, y en un enlace compartido va en el fragmento | _Por confirmar_: qué registra Cloudflare de las visitas a Pages y cuánto tiempo lo guarda. No activamos Web Analytics, Bot Fight Mode ni Zaraz |
-| Servidor de la API | Proveedor de VPS _por elegir_ (candidato: Hetzner Cloud, en la UE) | Tráfico cifrado: IPs, puertos y volumen. No ve rutas, consultas ni la URL que inspeccionas, porque el cifrado termina en nuestro Caddy | _Por confirmar_: qué registros de red guarda el proveedor |
+| Web: páginas, código y catálogo de reglas | Cloudflare Pages | Tu IP, tu navegador y la página que abres (`/es/clean`). Nunca la URL que escribes: no sale del navegador, y en un enlace compartido va en el fragmento | Cloudflare trata tu IP y los datos de la conexión para servir la página y proteger su red. Para los registros que pone a nuestra disposición actúa como encargado del tratamiento, con su acuerdo de tratamiento de datos (DPA). No publica cuánto tiempo los guarda. Si el dominio de la web está en Cloudflare, su panel muestra al menos 31 días de analítica de tráfico en el plan gratuito; no la exportamos ni la usamos. No activamos Web Analytics, Bot Fight Mode ni Zaraz |
+| Servidor de la API | Proveedor de VPS _por elegir_ (candidato: Hetzner Cloud, en Falkenstein, Núremberg o Helsinki) | Tráfico cifrado: IPs, puertos y volumen. No ve rutas, consultas ni la URL que inspeccionas, porque el cifrado termina en nuestro Caddy | Si es Hetzner: actúa como encargado del tratamiento con un DPA, y en esas ubicaciones los datos se guardan y procesan en la UE. Ni su política de privacidad ni su documentación dicen qué registra del tráfico de red de un servidor cloud ni durante cuánto tiempo. _Por confirmar_ con Hetzner al contratar |
 | Proxy TLS | Caddy, en nuestro servidor | La petición completa | Nada de la petición. No hay registro de accesos, y los errores llevan solo mensaje, estado y duración (comprobado el 2026-11-10) |
 | Contadores de cuota | Valkey, en nuestro servidor | El seudónimo del día | El contador, que caduca con su ventana |
-| DNS de la API | _Por elegir_. Si es Cloudflare, en modo «solo DNS» | Las consultas por el nombre de la API, que normalmente hace tu resolvedor y no tu dispositivo | _Por confirmar_ |
-| Resolutores de la herramienta DNS | Cloudflare (`1.1.1.1`) y Quad9 (`9.9.9.9`), por DNS sobre HTTPS | El nombre que consultas, desde la IP de nuestro servidor. Nunca tu IP ni la URL completa | Lo que establezcan las políticas de privacidad de sus servicios públicos de resolución |
+| DNS de la API | _Por elegir_. Si es Cloudflare, en modo «solo DNS» | Las consultas por el nombre de la API, que normalmente hace tu resolvedor y no tu dispositivo | Si es Cloudflare: no publica cuánto tiempo guarda las consultas a su DNS autoritativo. _Por confirmar_ |
+| Resolutores de la herramienta DNS | Cloudflare (`1.1.1.1`) y Quad9 (`9.9.9.9`), por DNS sobre HTTPS | El nombre que consultas, desde la IP de nuestro servidor. Nunca tu IP ni la URL completa | Cloudflare se compromete a borrar los registros de `1.1.1.1` en 25 horas y a no guardar la IP de origen salvo en un muestreo de paquetes para diagnóstico; esa IP es la de nuestro servidor. Quad9: lo que establezca su política de privacidad |
 | Certificado TLS | La autoridad que usa Caddy (Let's Encrypt por defecto) | Nada de tus visitas: solo el nombre de la API al emitir el certificado | — |
-| Errores (opcional) | _Por decidir_ si se activa Sentry | Errores sin campos de entrada, depurados antes de enviarse | Lo que establezca su política, si se activa |
-| Trazas (opcional) | _Por decidir_ si se activa un destino OTLP | Trazas con, como mucho, el dominio registrable del destino | Lo que establezca su política, si se activa |
 
 El repositorio y el build de la web están en GitHub y Cloudflare; ninguno de los dos recibe datos
 de quien visita la web.
 
-Antes de quitar la marca de borrador:
+No hay servicio externo de errores ni de trazas: en producción, `SENTRY_DSN` y
+`OTEL_EXPORTER_OTLP_ENDPOINT` van vacíos, así que los errores y las trazas no salen del servidor.
+Activar cualquiera de los dos exige añadir antes su fila a esta tabla.
 
-- Elegir el proveedor del VPS y enlazar su política de privacidad.
-- Confirmar con la documentación de Cloudflare qué registra de las visitas a Pages y del DNS.
-- Decidir si se activan Sentry y OTLP; si no, quitar sus filas.
-- Actualizar la fecha de la cabecera.
+### Fuentes de los proveedores
+
+Consultadas el 2026-11-12:
+
+- Cloudflare: [política de privacidad](https://www.cloudflare.com/privacypolicy/) y
+  [acuerdo de tratamiento de datos](https://www.cloudflare.com/cloudflare-customer-dpa/). Tratan los
+  datos de quien visita los sitios de sus clientes («End Users») y fijan su conservación por
+  criterios, sin un plazo concreto.
+- Cloudflare, analítica: [30 días de analítica en todos los planes](https://developers.cloudflare.com/changelog/post/2026-10-02-30-days-analytics-on-every-plan/)
+  y [Security Analytics](https://developers.cloudflare.com/waf/analytics/security-analytics/).
+- Cloudflare, `1.1.1.1`: [compromisos de privacidad del resolutor](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/).
+- Hetzner: [protección de datos en Hetzner](https://docs.hetzner.com/general/company-and-policy/data-protection-at-hetzner/)
+  (DPA, ubicación de los datos) y [política de privacidad](https://www.hetzner.com/legal/privacy-policy/).
+  Ninguna de las dos trata el tráfico de red de los servidores cloud.
+
+No se encontró documentación oficial sobre cuánto guarda Cloudflare las visitas a Pages ni las
+consultas a su DNS autoritativo. Sustituir las dos marcas _por confirmar_ exige preguntárselo a
+Cloudflare, o declarar en la tabla que no lo publica, como ya se hace.
+
+### Antes de quitar la marca de borrador
+
+- Elegir el proveedor del VPS y enlazar su política de privacidad. Si es Hetzner, preguntarle qué
+  registra del tráfico de red de un servidor cloud y durante cuánto tiempo.
+- Decidir el DNS de la API.
+- Pedir a Cloudflare los plazos de Pages y del DNS autoritativo, o aceptar «no lo publica».
+- Repasar las fuentes, porque las políticas cambian, y actualizar la fecha de la cabecera.
 
 ## Cómo verificarlo
 
