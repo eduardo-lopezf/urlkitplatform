@@ -172,6 +172,12 @@ Proyecto conectado al repositorio de GitHub:
 - `PUBLIC_API_URL` se fija en el build: decide a qué API llama Redirect Inspector y qué origen
   admite la CSP (`connect-src`). Cambiarla exige volver a desplegar la web.
 - `apps/web/public/_headers` llega a `dist/_headers`, y Pages lo aplica tal cual.
+- HSTS de la web: `max-age=63072000; includeSubDomains`, sin `preload`. Desde la primera visita,
+  el navegador exige HTTPS durante dos años en **todos** los subdominios del dominio de la web: el
+  dominio tiene que ser solo para URLkit, o tener HTTPS en todos sus subdominios. `preload` se
+  quitó a propósito: con él, cualquiera puede enviar el dominio a la lista que los navegadores
+  traen de serie, y salir de ella tarda meses. Entrar en esa lista es una decisión aparte, más
+  adelante.
 - El dominio propio de la web es el que va en `WEB_ORIGIN` del `.env` del VPS (CORS).
 - **No activar** Web Analytics, Bot Fight Mode ni Zaraz: añaden scripts de terceros o cookies, y
   el MVP no tiene ninguno de los dos (Principio V).
