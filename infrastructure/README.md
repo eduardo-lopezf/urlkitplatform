@@ -118,20 +118,32 @@ docker compose --profile selfhosted up -d --build
 
 Caddy pide el certificado de `API_DOMAIN` al arrancar; el registro DNS tiene que existir antes.
 
-Comprobación:
+Comprobación, la misma en local, en el servidor y en CI (trabajo `egress-linux`, sobre Docker
+Engine en Linux):
 
 ```bash
-docker compose --profile selfhosted ps                 # cuatro servicios en marcha
-curl -s -X POST https://$API_DOMAIN/v1/clean -H 'content-type: application/json' \
-  -d '{"url":"https://ejemplo.com/?utm_source=x&id=1"}'  # output sin utm_source
-curl -s -o /dev/null -w '%{http_code}\n' https://$API_DOMAIN/internal/metrics   # 404
-sudo iptables -S DOCKER-USER | grep 172.30.0.0/24       # reglas de egress-guard
+infrastructure/check-selfhosted.sh
 ```
+
+Lee `API_DOMAIN` de `.env` y comprueba:
+
+- los cuatro servicios y el 443/udp;
+- las 16 reglas de salida, y que **bloquean**: la API intenta conectar con `10.255.255.1` y el
+  contador de la regla `DROP` de `10.0.0.0/8` tiene que subir. Una regla que existe pero no se
+  recorre, por otro motor de `iptables` u otra cadena, no bloquea nada. Fallar la conexión no basta,
+  porque también falla sin reglas;
+- la salida a una dirección pública;
+- `/v1/clean`, HTTP → HTTPS, `/internal/metrics` y el escenario 6 a través de Caddy;
+- que los logs no contienen una IP de cliente marcada ni las URLs de prueba.
+
+Solo lee: no cambia reglas, contenedores ni ficheros. Gasta una inspección de la cuota de Redirect
+Inspector y termina con código 1 si algo falla. Justo después de un arranque, egress-guard tarda
+unos segundos en aplicar las reglas: si falla la parte de reglas, repítelo.
 
 ### 4. Actualizar
 
 ```bash
-git pull && docker compose --profile selfhosted up -d --build
+git pull && docker compose --profile selfhosted up -d --build && infrastructure/check-selfhosted.sh
 ```
 
 No hay datos que migrar ni copias que hacer: Valkey solo guarda contadores con caducidad, y los

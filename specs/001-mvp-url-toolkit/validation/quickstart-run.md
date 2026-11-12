@@ -159,3 +159,16 @@ Dos ajustes de `docker-compose.yml` que salieron al preparar T111, probados con 
 
 El curl de macOS y el de las imágenes `alpine` y `curlimages/curl` no traen HTTP/3; por eso la
 prueba usa un cliente QUIC en Python.
+
+## Script de comprobación del perfil `selfhosted` (2026-11-12)
+
+`infrastructure/check-selfhosted.sh` reúne las comprobaciones de T110 para ejecutarlas igual en
+local y en el VPS (T111). Probado en Docker Desktop 29.7.2 (macOS) con `API_DOMAIN=localhost`.
+
+| Caso | Resultado |
+|---|---|
+| Pila en marcha | ✅ 13 comprobaciones correctas, código 0; el contador de `DROP` de `10.0.0.0/8` sube (3 → 6) |
+| Regla `DROP` de `10.0.0.0/8` borrada a mano | ✅ falla con «15 de 16» y el contador sin regla, código 1. La conexión a `10.255.255.1` también falla sin la regla: por eso la prueba mira el contador |
+| Tras `restart egress-guard` | ✅ vuelven las 16 reglas y pasa de nuevo. Si se lanza durante los segundos que tarda en aplicarlas, falla la parte de reglas |
+| `API_DOMAIN` que no resuelve | ✅ las comprobaciones a través de Caddy fallan sin abortar el script |
+| Órdenes del paso de CI (`egress-linux`): perfil `full`, después `selfhosted --wait` y el script, con `QUOTA_SECRET` de prueba | ✅ código 0 en Docker Desktop. En Docker Engine sobre Linux, pendiente del primer push |

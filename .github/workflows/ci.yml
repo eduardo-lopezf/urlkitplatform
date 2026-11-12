@@ -29,11 +29,12 @@ jobs:
   # Docker Desktop. It does not replace T111: the provider's own network is not tested here.
   egress-linux:
     runs-on: ubuntu-latest
+    # Job-wide: the selfhosted step runs `up` again, and the API must keep the same secret.
+    env:
+      QUOTA_SECRET: ci-only-${{ github.run_id }}-0123456789abcdef0123
     steps:
       - uses: actions/checkout@v4
       - name: Start Valkey, API and egress-guard on Docker Engine
-        env:
-          QUOTA_SECRET: ci-only-${{ github.run_id }}-0123456789abcdef0123
         run: docker compose --profile full up -d --build --wait redis api egress-guard
       - name: Egress rules are in place
         run: |
@@ -55,3 +56,9 @@ jobs:
             s.on('timeout', () => process.exit(1)); s.on('error', () => process.exit(1));"; }
           if probe 169.254.169.254 80; then echo 'reached metadata'; exit 1; fi
           probe 1.1.1.1 443 || { echo 'public egress broken'; exit 1; }
+      # The same check as on the VPS (T111), here on Linux Docker Engine: the whole selfhosted
+      # stack behind Caddy with its local CA (API_DOMAIN defaults to localhost, no .env in CI).
+      - name: Selfhosted stack passes infrastructure/check-selfhosted.sh
+        run: |
+          docker compose --profile selfhosted up -d --build --wait
+          bash infrastructure/check-selfhosted.sh
