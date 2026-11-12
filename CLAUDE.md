@@ -44,8 +44,9 @@ este proyecto: la feature activa la indica `.specify/feature.json`.
 
 La v2 (`specs/002-v2-network-analysis`) está **implementada en local**: HTTP Headers, Metadata, TLS,
 DNS y Security Analysis, con sus endpoints `/v1` y sus páginas, y las puertas de calidad en verde.
-Queda pendiente su validación contra la red real (T096, T098) y el despliegue, que depende del de
-la 001. Se hizo entera en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md`
+Está validada contra la red real desde local (T096, T098; registro en
+`specs/002-v2-network-analysis/validation/`). Queda el despliegue, que va con el de la 001: sale en
+la misma imagen de la API y su comprobación en producción forma parte de T113. Se hizo entera en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md`
 §11).
 
 El cortafuegos de salida se probó en Docker Desktop (macOS), no en un host Linux con Docker
