@@ -310,3 +310,67 @@ Pendiente, fuera de este script:
 
 - SC-003, segunda mitad: que una persona revise una muestra.
 - SC-004: que una persona revise una muestra de los valores esperados (ver la sección de SC-004).
+
+Las dos hojas están preparadas (ver «Muestra humana de SC-003 y SC-004»).
+
+## Muestra humana de SC-003 y SC-004
+
+**Estado**: preparada el 2026-11-12, pendiente de que una persona la rellene. Las dos muestras salen
+de las instantáneas del 2026-11-12, que son las mismas que se evaluaron. Están ignoradas por git:
+quien revise necesita la copia local de `apps/api/scripts/out/`. La semilla es fija (`20261112`),
+así que la selección es reproducible.
+
+### SC-003: [`sc003-sample-2026-11-12.csv`](./sc003-sample-2026-11-12.csv)
+
+40 filas: 6 por cabecera (las seis comprobaciones de seguridad) y 4 cookies. Es una muestra
+estratificada que sobrerrepresenta a propósito el estado *mal configurada*, que es donde se
+esconden los errores. Quedan 16 *presente*, 15 *ausente*, 5 *mal configurada* y 4 cookies (2 *ok*,
+2 con problemas).
+
+Es una revisión **a ciegas**: la hoja no muestra el estado de URLkit. Cada fila da la ruta de la
+instantánea, con los números de línea, y las líneas que importan (`evidence`; si la cabecera no
+está, lo dice). Hay que escribir en `reviewer_state` uno de estos valores:
+
+| Valor | Cuándo |
+| --- | --- |
+| `present` | La cabecera está y su valor cumple la rúbrica |
+| `missing` | La cabecera no está. Una CSP solo en modo `report-only` cuenta como ausente |
+| `misconfigured` | La cabecera está, pero su valor no cumple la rúbrica |
+| `ok` | Cookie: tiene `HttpOnly` y, en un sitio `https` o si lleva `SameSite=None`, también `Secure` |
+| `issues` | Cookie: le falta alguno de esos atributos |
+
+La rúbrica, resumida de `packages/rules/data/security/headers.json` (la hoja de referencia):
+
+- **HSTS**: `max-age` de al menos 31536000 (un año).
+- **CSP**: `script-src` (o `default-src`) restringe los scripts sin `'unsafe-inline'`,
+  `'unsafe-eval'`, `*`, `data:` ni `http:`. `'unsafe-inline'` no cuenta junto a un *nonce* o un
+  *hash*, y con `'strict-dynamic'` se ignoran las fuentes de host y de esquema.
+- **X-Frame-Options**: `DENY` o `SAMEORIGIN`, también como lista de valores iguales. Una CSP con
+  `frame-ancestors` la sustituye y cuenta como *present*.
+- **X-Content-Type-Options**: exactamente `nosniff`.
+- **Referrer-Policy**: una política válida; `unsafe-url` cuenta como *misconfigured*.
+- **Permissions-Policy**: basta con que esté.
+
+### SC-004: [`sc004-sample-2026-11-12.csv`](./sc004-sample-2026-11-12.csv)
+
+10 páginas al azar con sus cuatro campos (título, descripción, imagen y canónica): 40 filas. Esta
+revisión es **de confirmación**: la hoja muestra el valor de URLkit (`urlkit_value`), porque
+escribir a ciegas descripciones largas sería lento y daría errores de copia. Para cada fila hay
+que abrir la instantánea (`snapshot`) y escribir en `expected` `ok` si el valor es correcto
+(también cuando está vacío porque la página no declara nada), o el valor correcto si no lo es. La
+regla: Open Graph, después tarjeta de redes y después HTML básico para título y descripción; Open
+Graph y después tarjeta de redes para la imagen; `<link rel=canonical>` para la canónica. Al
+azar no salió ninguna de las ocho codificaciones distintas de UTF-8; esas ya las revisó Claude a
+mano (ver la sección de SC-004).
+
+### Cómo se puntúan
+
+Se fusiona cada hoja con los valores de URLkit y se pasa por
+`node apps/api/scripts/reference-check.ts --score`:
+
+- **SC-003**: el estado de URLkit sale de `sc003-review-2026-11-12.csv`. Para eff.org
+  `x-frame-options` se usa `present`, el estado tras la corrección del 2026-11-12.
+- **SC-004**: un `ok` toma el valor de URLkit como esperado (`—` si está vacío).
+
+Objetivo: el 95 % o más en cada una. Cualquier desacuerdo se investiga como un posible fallo
+antes de puntuar.
