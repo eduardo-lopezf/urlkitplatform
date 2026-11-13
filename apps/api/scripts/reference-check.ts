@@ -5,6 +5,7 @@
  *   node apps/api/scripts/reference-check.ts [--out report.md] [--dir <folder>]
  *   node apps/api/scripts/reference-check.ts --score <folder>/sc003-review.csv
  *   node apps/api/scripts/reference-check.ts --score <folder>/sc004-review.csv
+ *   node apps/api/scripts/reference-check.ts --timing <api base URL> [--limit <n>]
  *
  * - SC-003 (HTTP Headers): status and header names of the final response, compared with what
  *   `curl` receives for the same URL and User-Agent. For the manual half, every response is saved
@@ -17,6 +18,10 @@
  * - SC-006 (DNS): DNSSEC state of signed, unsigned and broken domains.
  *
  * `--score` reads a reviewed CSV and prints the agreement and every disagreement.
+ *
+ * `--timing` (SC-001, 002/T098a) times the five network endpoints of a running API over the
+ * SC-003 site list and prints p50, p95 and the share under budget per tool. Unlike the rest, it
+ * goes through the API, because SC-001 is the time a visitor waits.
  *
  * Snapshots and CSVs go to `--dir` (default `apps/api/scripts/out/<date>`, ignored by git: they
  * hold third-party pages and headers). It uses the production adapters and core tools directly,
@@ -129,6 +134,93 @@ if (scoreArg !== -1) {
   const file = process.argv[scoreArg + 1];
   if (!file) throw new Error('--score needs the path of a reviewed CSV');
   score(file);
+  process.exit(0);
+}
+
+// ---------------------------------------------------------------- --timing <api> (SC-001)
+
+/** SC-001 budgets per endpoint, in milliseconds. */
+const BUDGETS = { headers: 5000, metadata: 5000, tls: 5000, dns: 5000, security: 10_000 } as const;
+
+const percentile = (sorted: number[], p: number) =>
+  sorted[Math.max(0, Math.ceil(p * sorted.length) - 1)] ?? 0;
+const seconds = (ms: number) => `${(ms / 1000).toFixed(2)} s`;
+
+/**
+ * Times each analysis end to end through the API (request sent, whole response read), one at a
+ * time, over the SC-003 site list. An error response (the tool could not analyse the target)
+ * is a measurement, counted in its column too; a 429 or a failed connection is not, and is
+ * counted apart. Each request carries a different documentation-range client IP, so a local API
+ * started with TRUST_PROXY=1 does not stop the run at 10 per hour; behind Caddy that header is
+ * replaced and the quota applies (use `--limit`).
+ */
+async function timing(base: string, limit: number): Promise<string> {
+  const { headers: sites } = JSON.parse(
+    readFileSync(new URL('./reference-sets.json', import.meta.url), 'utf8'),
+  ) as Sets;
+  const targets = sites.slice(0, limit);
+  const rows: string[] = [];
+  const slowest: string[] = [];
+  let n = 0;
+  for (const [tool, budget] of Object.entries(BUDGETS)) {
+    const samples: Array<{ url: string; ms: number }> = [];
+    let refused = 0;
+    let errors = 0;
+    for (const url of targets) {
+      n++;
+      const body = tool === 'tls' || tool === 'dns' ? { target: url } : { url };
+      const t0 = performance.now();
+      try {
+        const res = await fetch(`${base}/v1/${tool}`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-forwarded-for': `198.51.100.${(n % 254) + 1}`,
+          },
+          body: JSON.stringify(body),
+        });
+        await res.arrayBuffer();
+        if (res.status === 429) refused++;
+        else {
+          samples.push({ url, ms: performance.now() - t0 });
+          if (res.status !== 200) errors++;
+        }
+      } catch {
+        refused++;
+      }
+    }
+    const sorted = samples.map((s) => s.ms).sort((a, b) => a - b);
+    const within = sorted.filter((ms) => ms < budget).length;
+    const pct = sorted.length ? Math.round((within / sorted.length) * 1000) / 10 : 0;
+    rows.push(
+      `| ${tool} | ${sorted.length} | ${seconds(percentile(sorted, 0.5))} | ${seconds(percentile(sorted, 0.95))} | ${seconds(sorted.at(-1) ?? 0)} | ${within}/${sorted.length} (${pct} %) | < ${budget / 1000} s | ${pct >= 95 ? '✅' : '❌'} | ${errors} | ${refused} |`,
+    );
+    for (const s of [...samples].sort((a, b) => b.ms - a.ms).slice(0, 3)) {
+      slowest.push(`| ${tool} | \`${s.url}\` | ${seconds(s.ms)} |`);
+    }
+  }
+  return [
+    `**Fecha**: ${new Date().toISOString()} · **API**: \`${base}\` · **Node**: ${process.version}`,
+    '',
+    '| Herramienta | Muestras | p50 | p95 | Máximo | Por debajo del objetivo | Objetivo | ≥ 95 % | De ellas, error | 429 o sin conexión |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    ...rows,
+    '',
+    'Las tres más lentas de cada herramienta:',
+    '',
+    '| Herramienta | URL | Tiempo |',
+    '| --- | --- | --- |',
+    ...slowest,
+  ].join('\n');
+}
+
+const timingArg = process.argv.indexOf('--timing');
+if (timingArg !== -1) {
+  const base = process.argv[timingArg + 1]?.replace(/\/$/, '');
+  if (!base) throw new Error('--timing needs the base URL of the API, e.g. http://localhost:8788');
+  const limitArg = process.argv.indexOf('--limit');
+  const limit = limitArg !== -1 ? Number(process.argv[limitArg + 1]) : Infinity;
+  process.stdout.write((await timing(base, limit)) + '\n');
   process.exit(0);
 }
 

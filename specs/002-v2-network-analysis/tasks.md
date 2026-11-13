@@ -519,6 +519,16 @@ la red real
 - [X] T097 Run `pnpm lint`, `pnpm typecheck`, `pnpm boundaries`, `pnpm test`, `pnpm test:e2e`, `pnpm build`, `pnpm size` and `pnpm lhci`, and fix any failure. Confirm that `parse5` is absent from every web bundle and that the five new pages meet the 150 KB / < 1 s budgets. Record the run in `specs/002-v2-network-analysis/validation/quality-gates.md`
 - [X] T098 Run the [quickstart.md](./quickstart.md) manual scenarios 1–15 and its privacy checks against `pnpm dev`. Record the results in `specs/002-v2-network-analysis/validation/quickstart.md`
   - Done as: scenarios 1–13 run against a local API on port 8788 (the MVP container holds 8787); 14 and 15 are covered by automated tests. Scenario 13 found a Security Analysis gap, now fixed: an incomplete part keeps what was observed, so the findings of hops seen before a timeout are not lost (FR-062).
+- [X] T098a Measure SC-001 (95 % of HTTP Headers, Metadata, TLS and DNS analyses finish in under 5 s; 95 % of Security Analysis analyses in under 10 s):
+  - add a `--timing` option to `apps/api/scripts/reference-check.ts` that times each call end to end (request sent to response received) over the SC-003 site list, at least 50 targets per tool, and reports the p95 per tool. It stays outside CI;
+  - run it against a local API (`pnpm dev` or the `selfhosted` profile) and record the date, the place it ran from, the p95 per tool and the slowest targets in `specs/002-v2-network-analysis/validation/reference-sets.md`, in a new "SC-001" section;
+  - a local run shows whether the budget is plausible; the figure that counts comes from production, so repeat it against the production API as part of 001/T113 and record both.
+  - Done as: local run on 2026-11-12, 50 targets per tool through `PORT=8788 TRUST_PROXY=1` (a different documentation-range client IP per request, so the quota does not stop the run). Under budget: headers, metadata, TLS and Security Analysis 49/50 (98 %), DNS 50/50; p95 between 0.29 s and 1.91 s. The only target over budget is `www.gnu.org`, which does not answer and waits out the probe limits (the same site SC-003 explains). The production figure is part of 001/T113, with `--limit 10` because the quota applies behind Caddy.
+- [ ] T098b Run a usability check for SC-007 (≥ 90 % of non-technical participants identify, after using Security Analysis, the most serious problem of a test link and understand what was not checked) and record the protocol and results in `specs/002-v2-network-analysis/validation/usability.md`:
+  - same format as `specs/001-mvp-url-toolkit/validation/usability.md`: participants, material at 360 px and on a laptop, tasks without the moderator's help, a record per participant, and the success threshold;
+  - test links with a known most serious finding, chosen so that it is stable over time (for example quickstart scenario 13, the `https` → `http` downgrade), and two questions per link: "¿cuál es el problema más grave?" and "¿qué no ha comprobado la herramienta?" (the answer must mention reputation or content, `scope.notChecked`);
+  - before the session, rehearse every link in `/es/security` and `/en/security` and record what each one shows, as was done for 001/T103;
+  - it can share the session and the participants with 001/T103.
 
 ---
 
@@ -531,7 +541,8 @@ la red real
 - **Foundational (Phase 2)**: depends on Setup and BLOCKS all user stories
 - **US1–US4 (Phases 3–6)**: depend on Foundational and are independent of each other
 - **US5 (Phase 7)**: depends on US1–US4
-- **Polish (Phase 8)**: depends on the stories it covers. T096–T098 come last
+- **Polish (Phase 8)**: depends on the stories it covers. T096–T098b come last. T098b needs
+  people, like 001/T103, and T098a's production figure needs the deployment (001/T113)
 
 ### User Story Dependencies
 

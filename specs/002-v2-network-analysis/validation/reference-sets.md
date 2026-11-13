@@ -6,11 +6,62 @@ Ejecutado con `node apps/api/scripts/reference-check.ts`, contra la red real, de
 
 | Criterio | Resultado |
 | --- | --- |
+| SC-001 tiempos de respuesta, desde local | 98–100 % por debajo del objetivo en las cinco herramientas (≥ 95 %); falta la medición en producción |
 | SC-003 HTTP Headers (estado y cabeceras frente a curl) | 46/49 (94 %) |
 | SC-003 evaluación de cabeceras frente a revisión manual | 412/412 (100 %) tras corregir los dos fallos encontrados (411/412 antes); revisión independiente, falta muestra humana |
 | SC-004 Metadata | 200/200 (100 %) sobre las instantáneas del 2026-11-12; revisión independiente, falta muestra humana |
 | SC-005 TLS | 6/6 (100 %) |
 | SC-006 DNSSEC | 7/7 (100 %) |
+
+## SC-001 — Tiempos de respuesta (002/T098a)
+
+Ejecutado con `node apps/api/scripts/reference-check.ts --timing http://localhost:8788`, contra una
+API local (`PORT=8788 TRUST_PROXY=1 node apps/api/src/server.ts`, contadores en memoria) y desde la
+máquina de desarrollo. Cada análisis se mide de principio a fin a través de la API: desde que se
+envía la petición hasta que se lee la respuesta entera, uno cada vez, sobre los 50 sitios de la
+lista de SC-003. Con `TRUST_PROXY=1`, cada petición lleva una IP de cliente distinta de un rango de
+documentación, para que la cuota de 10 por hora no corte la medición.
+
+**Fecha**: 2026-11-12T23:55:34.520Z · **API**: `http://localhost:8788` · **Node**: v26.5.0
+
+| Herramienta | Muestras | p50 | p95 | Máximo | Por debajo del objetivo | Objetivo | ≥ 95 % | De ellas, error | 429 o sin conexión |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| headers | 50 | 0.38 s | 1.58 s | 10.43 s | 49/50 (98 %) | < 5 s | ✅ | 0 | 0 |
+| metadata | 50 | 0.43 s | 1.91 s | 10.41 s | 49/50 (98 %) | < 5 s | ✅ | 0 | 0 |
+| tls | 50 | 0.08 s | 0.29 s | 5.01 s | 49/50 (98 %) | < 5 s | ✅ | 0 | 0 |
+| dns | 50 | 0.14 s | 0.53 s | 1.05 s | 50/50 (100 %) | < 5 s | ✅ | 0 | 0 |
+| security | 50 | 0.45 s | 1.86 s | 14.41 s | 49/50 (98 %) | < 10 s | ✅ | 0 | 0 |
+
+Las tres más lentas de cada herramienta:
+
+| Herramienta | URL | Tiempo |
+| --- | --- | --- |
+| headers | `https://www.gnu.org/` | 10.43 s |
+| headers | `https://ubuntu.com/` | 1.91 s |
+| headers | `https://www.spiegel.de/` | 1.58 s |
+| metadata | `https://www.gnu.org/` | 10.41 s |
+| metadata | `https://www.spiegel.de/` | 2.79 s |
+| metadata | `https://www.netflix.com/` | 1.91 s |
+| tls | `https://www.gnu.org/` | 5.01 s |
+| tls | `https://archlinux.org/` | 0.57 s |
+| tls | `https://ubuntu.com/` | 0.29 s |
+| dns | `https://european-union.europa.eu/` | 1.05 s |
+| dns | `https://www.gov.uk/` | 0.61 s |
+| dns | `https://www.lemonde.fr/` | 0.53 s |
+| security | `https://www.gnu.org/` | 14.41 s |
+| security | `https://www.spiegel.de/` | 1.87 s |
+| security | `https://www.google.com/` | 1.86 s |
+
+El único caso fuera de objetivo, en headers, metadata, tls y security, es `www.gnu.org`. Es el
+mismo sitio que no respondió en 15 s ni a URLkit ni a curl en SC-003: la herramienta espera hasta
+sus límites (5 s por salto, 15 s en total) y luego informa de que no hubo respuesta, así que es un
+caso de cola esperado, no de lentitud propia. Las demás medianas quedan por debajo de medio segundo.
+
+Esta medición indica que el objetivo es plausible, pero se hizo desde local. La cifra que cuenta
+es la de producción: se repetirá contra la API desplegada como parte de 001/T113. Detrás de Caddy
+la cabecera `X-Forwarded-For` se reemplaza y la cuota se aplica (10 por hora y 50 al día por
+herramienta), así que allí se ejecuta con `--limit 10`: diez muestras por herramienta, una cifra
+orientativa que hay que registrar como tal.
 
 ## SC-003 — HTTP Headers frente a curl
 

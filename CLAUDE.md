@@ -48,7 +48,10 @@ La v2 (`specs/002-v2-network-analysis`) está **implementada en local**: HTTP He
 DNS y Security Analysis, con sus endpoints `/v1` y sus páginas, y las puertas de calidad en verde.
 Está validada contra la red real desde local (T096, T098; registro en
 `specs/002-v2-network-analysis/validation/`). Queda el despliegue, que va con el de la 001: sale en
-la misma imagen de la API y su comprobación en producción forma parte de T113. Se hizo entera en
+la misma imagen de la API y su comprobación en producción forma parte de T113. Quedan también dos
+piezas de validación: T098b (prueba de usabilidad de Security Analysis, que puede compartir
+sesión con T103) y la cifra de producción de T098a (tiempos de SC-001, ya medidos en local), que
+va en T113. Se hizo entera en
 Node: el servicio de sondas en Python no entró (`docs/arquitectura.md` §11).
 
 Despliegue, lo que no se deduce del código:
