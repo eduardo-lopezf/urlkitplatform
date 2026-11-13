@@ -261,6 +261,16 @@ const queryDns = createQueryDns();
 const VOLATILE =
   /^(date|age|expires|set-cookie|etag|last-modified|x-request-id|x-amz-|x-cache|cf-ray|report-to|nel|server-timing|x-served-by|x-timer|via|alt-svc|content-length|x-fastly|akamai|x-akamai|x-trace|traceparent|x-envoy|x-runtime)/i;
 
+/** Share of non-volatile header names two responses have in common (1 when neither has any). */
+function overlap(a: Iterable<string>, b: Iterable<string>): number {
+  const names = (list: Iterable<string>) =>
+    new Set([...list].map((n) => n.toLowerCase()).filter((n) => n && !VOLATILE.test(n)));
+  const x = names(a);
+  const y = names(b);
+  const largest = Math.max(x.size, y.size);
+  return largest === 0 ? 1 : [...x].filter((n) => y.has(n)).length / largest;
+}
+
 /** Final status and headers as curl sees them (GET, same User-Agent, following redirects). */
 function curl(url: string): { status: number; names: Set<string>; raw: string[] } | null {
   try {
@@ -304,6 +314,7 @@ async function headers(): Promise<string> {
   row('---', '---', '---', '---');
   let ok = 0;
   let total = 0;
+  let excluded = 0;
   const review: Array<Array<string | number>> = [
     ['site', 'check', 'urlkit_state', 'urlkit_findings', 'reviewer_state', 'notes'],
   ];
@@ -343,34 +354,80 @@ async function headers(): Promise<string> {
     }
     if (theirs)
       writeFileSync(join(DIR, 'headers', `${name}.curl.txt`), theirs.raw.join('\n') + '\n');
-    if (!ours.ok || !theirs || ours.value.status === null) {
+    // SC-003 (spec, Clarifications 2026-11-12): a site that does not answer, answers each client
+    // differently or changes its headers between two requests is excluded with its cause.
+    if (!theirs) {
+      excluded++;
       row(
         url,
-        `${ours.ok ? (ours.value.error?.code ?? ours.value.status) : ours.error.code} / ${theirs?.status ?? 'error'}`,
+        `${ours.ok ? (ours.value.error?.code ?? ours.value.status) : ours.error.code} / error`,
         '—',
-        'no comparable',
+        'excluido: no contesta',
       );
       continue;
     }
     total++;
-    const mine = new Set(ours.value.headers.map((h) => h.name.toLowerCase()));
-    const stable = (s: Set<string>) => [...s].filter((n) => n && !VOLATILE.test(n));
-    const a = stable(mine);
-    const b = new Set(stable(theirs.names));
-    const shared = a.filter((n) => b.has(n)).length;
-    const overlap = Math.max(a.length, b.size) === 0 ? 1 : shared / Math.max(a.length, b.size);
-    const pass = ours.value.status === theirs.status && overlap >= 0.9;
-    if (pass) ok++;
+    if (!ours.ok || ours.value.status === null) {
+      row(
+        url,
+        `${ours.ok ? ours.value.error?.code : ours.error.code} / ${theirs.status}`,
+        '—',
+        'difiere',
+      );
+      continue;
+    }
+    const mine = ours.value.headers.map((h) => h.name);
+    const match = overlap(mine, theirs.names);
+    if (ours.value.status === theirs.status && match >= 0.9) {
+      ok++;
+      row(
+        url,
+        `${ours.value.status} / ${theirs.status}`,
+        `${Math.round(match * 100)} %`,
+        'coincide',
+      );
+      continue;
+    }
+    // A second request from each client tells the server's instability from a URLkit error.
+    const again = await headersTool.run({ url }, { fetchChain, catalog });
+    const theirs2 = curl(url);
+    const ours2 = again.ok && again.value.status !== null ? again.value : null;
+    let cause = '';
+    if (ours2 && theirs2) {
+      if (
+        ours.value.status !== theirs.status &&
+        ours2.status === ours.value.status &&
+        theirs2.status === theirs.status
+      )
+        cause = 'estado distinto según el cliente';
+      else if (
+        overlap(theirs.names, theirs2.names) < 0.9 ||
+        overlap(
+          mine,
+          ours2.headers.map((h) => h.name),
+        ) < 0.9
+      )
+        cause = 'cabeceras cambian entre dos peticiones seguidas';
+    }
+    if (cause) {
+      total--;
+      excluded++;
+    }
     row(
       url,
       `${ours.value.status} / ${theirs.status}`,
-      `${Math.round(overlap * 100)} %`,
-      pass ? 'coincide' : 'difiere',
+      `${Math.round(match * 100)} %`,
+      cause ? `excluido: ${cause}` : 'difiere',
     );
   }
-  lines.push('', `Coinciden: **${rate(ok, total)}** de los comparables (objetivo: 100 %).`, '');
+  const share = Math.round((excluded / sets.headers.length) * 1000) / 10;
+  lines.push(
+    '',
+    `Coinciden: **${rate(ok, total)}** de los sitios estables (objetivo: 100 %). Excluidos: ${excluded} de ${sets.headers.length} (${share} %; límite: 10 %).`,
+    '',
+  );
   writeFileSync(join(DIR, 'sc003-review.csv'), toCsv(review));
-  return rate(ok, total);
+  return `${rate(ok, total)} de los sitios estables; ${excluded} de ${sets.headers.length} excluidos (${share} %, límite 10 %)`;
 }
 
 async function metadata(): Promise<string> {

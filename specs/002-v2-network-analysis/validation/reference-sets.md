@@ -7,7 +7,7 @@ Ejecutado con `node apps/api/scripts/reference-check.ts`, contra la red real, de
 | Criterio | Resultado |
 | --- | --- |
 | SC-001 tiempos de respuesta, desde local | 98–100 % por debajo del objetivo en las cinco herramientas (≥ 95 %); falta la medición en producción |
-| SC-003 HTTP Headers (estado y cabeceras frente a curl) | 46/49 (94 %) |
+| SC-003 HTTP Headers (estado y cabeceras frente a curl) | 48/48 (100 %) de los sitios estables, 2 de 50 excluidos (4 %, límite 10 %), ejecución del 2026-11-13, tras corregir un falso positivo de Redirect Inspector en google.com |
 | SC-003 evaluación de cabeceras frente a revisión manual | 412/412 (100 %) tras corregir los dos fallos encontrados (411/412 antes); revisión independiente, falta muestra humana |
 | SC-004 Metadata | 200/200 (100 %) sobre las instantáneas del 2026-11-12; revisión independiente, falta muestra humana |
 | SC-005 TLS | 6/6 (100 %) |
@@ -65,9 +65,15 @@ orientativa que hay que registrar como tal.
 
 ## SC-003 — HTTP Headers frente a curl
 
+Ejecución del 2026-11-13 (`2026-11-13T02:58:35Z`), con la comprobación de estabilidad del
+script y la corrección del falso positivo de google.com (ver el análisis). A cada sitio que
+difiere se le repite la petición desde URLkit y desde curl, y se excluye solo si cumple una de las
+causas de SC-003 (spec, Clarifications 2026-11-12). La ejecución del 2026-11-12 dio 46/49 de los
+comparables, con las causas deducidas a mano.
+
 | URL | Estado (URLkit / curl) | Cabeceras comunes | Resultado |
 | --- | --- | --- | --- |
-| https://www.google.com/ | 200 / 200 | 30 % | difiere |
+| https://www.google.com/ | 200 / 200 | 100 % | coincide |
 | https://www.wikipedia.org/ | 200 / 200 | 100 % | coincide |
 | https://github.com/ | 200 / 200 | 100 % | coincide |
 | https://www.mozilla.org/ | 200 / 200 | 100 % | coincide |
@@ -76,7 +82,7 @@ orientativa que hay que registrar como tal.
 | https://www.cloudflare.com/ | 200 / 200 | 100 % | coincide |
 | https://www.amazon.com/ | 200 / 200 | 100 % | coincide |
 | https://www.bbc.co.uk/ | 200 / 200 | 100 % | coincide |
-| https://www.nytimes.com/ | 200 / 403 | 74 % | difiere |
+| https://www.nytimes.com/ | 200 / 403 | 74 % | excluido: estado distinto según el cliente |
 | https://elpais.com/ | 200 / 200 | 100 % | coincide |
 | https://www.rtve.es/ | 200 / 200 | 100 % | coincide |
 | https://www.gov.uk/ | 200 / 200 | 100 % | coincide |
@@ -91,9 +97,9 @@ orientativa que hay que registrar como tal.
 | https://duckduckgo.com/ | 200 / 200 | 100 % | coincide |
 | https://www.bing.com/ | 200 / 200 | 100 % | coincide |
 | https://www.yahoo.com/ | 200 / 200 | 100 % | coincide |
-| https://www.linkedin.com/ | 200 / 200 | 40 % | difiere |
+| https://www.linkedin.com/ | 403 / 403 | 100 % | coincide |
 | https://x.com/ | 200 / 200 | 100 % | coincide |
-| https://www.facebook.com/ | 200 / 200 | 100 % | coincide |
+| https://www.facebook.com/ | 200 / 200 | 95 % | coincide |
 | https://www.instagram.com/ | 200 / 200 | 100 % | coincide |
 | https://www.youtube.com/ | 200 / 200 | 100 % | coincide |
 | https://www.netflix.com/ | 200 / 200 | 100 % | coincide |
@@ -106,7 +112,7 @@ orientativa que hay que registrar como tal.
 | https://ubuntu.com/ | 200 / 200 | 100 % | coincide |
 | https://archlinux.org/ | 200 / 200 | 100 % | coincide |
 | https://www.kernel.org/ | 200 / 200 | 100 % | coincide |
-| https://www.gnu.org/ | inspect.timeout / error | — | no comparable |
+| https://www.gnu.org/ | inspect.timeout / error | — | excluido: no contesta |
 | https://letsencrypt.org/ | 200 / 200 | 100 % | coincide |
 | https://www.eff.org/ | 200 / 200 | 100 % | coincide |
 | https://www.theguardian.com/ | 200 / 200 | 100 % | coincide |
@@ -118,7 +124,7 @@ orientativa que hay que registrar como tal.
 | https://www.bloomberg.com/ | 403 / 403 | 100 % | coincide |
 | https://www.dropbox.com/ | 200 / 200 | 100 % | coincide |
 
-Coinciden: **46/49 (94 %)** de los comparables (objetivo: 100 %).
+Coinciden: **48/48 (100 %)** de los sitios estables (objetivo: 100 %). Excluidos: 2 de 50 (4 %; límite: 10 %).
 
 ## SC-003 — Evaluación de las cabeceras de seguridad (segunda mitad)
 
@@ -242,13 +248,45 @@ Historial de ejecuciones de este script, el mismo día:
 | 2 | 45/49 | Corregido (`headerPairs` en `apps/api/src/inspect/safe-fetch.ts`, prueba en `tests/integration/raw-headers.test.ts`). Aparecen dos **fallos del MVP** en Redirect Inspector, cuya cadena reutiliza HTTP Headers (ver abajo) |
 | 3 (esta) | 46/49 | Corregidos los dos fallos del MVP. ubuntu.com y duckduckgo.com coinciden ahora con curl |
 
-Las diferencias que quedan en esta ejecución se deben a los servidores, no a la herramienta:
+Las diferencias que quedan en esta ejecución se deben a los servidores, no a la herramienta. Con la
+redacción de SC-003 precisada el 2026-11-12 (spec, Clarifications), son los sitios que no responden
+de forma estable y quedan fuera del cálculo. La tabla siguiente es la de la ejecución del
+2026-11-12, con las causas deducidas a mano; la del 2026-11-13, con la comprobación automática, la
+corrige en google.com (ver debajo).
 
 | URL | Causa |
 | --- | --- |
 | `https://www.nytimes.com/` | El servidor responde 200 a URLkit y 403 a curl con el mismo `User-Agent`: protección contra bots que distingue clientes |
 | `https://www.google.com/`, `https://www.linkedin.com/` | Mismo estado; las cabeceras cambian entre dos peticiones seguidas (experimentos, consentimiento, enrutado). En otras ejecuciones LinkedIn coincidió |
 | `https://www.gnu.org/` | No respondió en 15 s ni a URLkit ni a curl |
+
+La comprobación automática del 2026-11-13 confirma nytimes.com (estado distinto según el cliente)
+y gnu.org (no contesta). LinkedIn coincidió. **google.com no era inestable**: URLkit y curl
+repiten cada uno su respuesta, pero URLkit no acaba en la misma página. Redirect Inspector, cuya
+cadena reutiliza HTTP Headers, toma por redirección al cargar la página este código de la
+portada:
+
+```js
+document.getElementById(id).onclick = function () { … else top.location = '/doodles/'; };
+```
+
+La asignación está dentro del `onclick` del botón «Voy a tener suerte» y solo se ejecuta al
+pulsarlo. URLkit la sigue hasta `https://doodles.google/` y compara sus cabeceras con las de la
+portada. Es un fallo de `detectJsRedirect` en `packages/core/src/tools/inspect/logic.ts`, de la
+misma familia que el de ubuntu.com: afecta a Redirect Inspector, HTTP Headers, Metadata y Security
+Analysis con cualquier URL de google.com. Corregido el 2026-11-13: una asignación dentro de un
+manejador de evento (`onclick`, `addEventListener`, `.on("click", …)`) ya no cuenta como
+redirección. La prueba está en `packages/core/tests/unit/inspect.test.ts` y la regla, en
+`specs/001-mvp-url-toolkit/data-model.md` (RedirectChain). La portada conserva una redirección
+calculada real, dentro de una condición para navegadores antiguos
+(`setTimeout(function(){location.href=f},0)`); se informa sin seguirla, como manda la spec, y la
+cadena termina en la portada. Con la corrección, SC-003 da 48/48.
+
+En esa misma ejecución, SC-005 dio 4/6 por dos fallos de red pasajeros (`self-signed.badssl.com`
+sin resolver y un fallo de negociación en `untrusted-root.badssl.com`). Repetidos tres veces cada
+uno, los dos devolvieron `tls.self-signed`, como se espera. SC-004 se compara contra los valores
+esperados de las instantáneas del 2026-11-12 y las páginas vivas ya han cambiado, así que su
+resultado sigue siendo el de esas instantáneas.
 
 Entre ejecuciones también aparecieron fallos pasajeros de red (un `inspect.network` en
 facebook.com, un fallo en un host de badssl.com) que desaparecieron al repetir sin cambiar nada.

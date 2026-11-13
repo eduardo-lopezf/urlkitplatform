@@ -35,6 +35,14 @@ la API pública existente sin romper nada de lo publicado.
 - Q: ¿Security Analysis da una valoración global o solo hallazgos? → A: Solo una lista de
   hallazgos ordenados por gravedad, sin nota, puntuación ni veredicto global.
 
+### Session 2026-11-12
+
+- Q: ¿Cómo se mide el 100 % de SC-003 si algunos servidores no responden igual a dos peticiones?
+  → A: Sobre los sitios que responden de forma estable. Los que no contestan, distinguen clientes
+  o cambian sus cabeceras entre dos peticiones seguidas se excluyen con su causa registrada, hasta
+  un 10 % del conjunto. El script de referencia comprueba esas causas repitiendo la petición desde
+  cada cliente (`validation/reference-sets.md`).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Ver las cabeceras HTTP de una página (HTTP Headers) (Priority: P1)
@@ -326,8 +334,12 @@ aparecen, ordenados por gravedad y enlazados a su herramienta.
 - **SC-002**: El 100 % de los intentos de conectar con destinos internos o privados se bloquean en
   las pruebas de seguridad, en las cinco herramientas.
 - **SC-003**: En un conjunto de al menos 50 sitios de referencia, el estado y las cabeceras
-  mostrados coinciden con los del servidor en el 100 % de los casos, y la evaluación de cabeceras
-  de seguridad coincide con la revisión manual en el 95 % o más.
+  mostrados coinciden con los que recibe otro cliente HTTP con el mismo `User-Agent` en el 100 %
+  de los sitios que responden de forma estable, y la evaluación de cabeceras de seguridad coincide
+  con la revisión manual en el 95 % o más. Un sitio no responde de forma estable si no contesta,
+  si da un estado distinto según el cliente o si sus cabeceras cambian entre dos peticiones
+  seguidas. Esos sitios se excluyen del cálculo con su causa registrada, y no pueden pasar del
+  10 % del conjunto.
 - **SC-004**: En un conjunto de al menos 50 páginas con metadatos conocidos, título, descripción,
   imagen y URL canónica se extraen correctamente en el 95 % o más.
 - **SC-005**: En un conjunto de hosts de prueba con certificados caducados, autofirmados, de otro
