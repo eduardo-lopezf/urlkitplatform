@@ -282,9 +282,14 @@ calculada real, dentro de una condición para navegadores antiguos
 (`setTimeout(function(){location.href=f},0)`); se informa sin seguirla, como manda la spec, y la
 cadena termina en la portada. Con la corrección, SC-003 da 48/48.
 
-En esa misma ejecución, SC-005 dio 4/6 por dos fallos de red pasajeros (`self-signed.badssl.com`
-sin resolver y un fallo de negociación en `untrusted-root.badssl.com`). Repetidos tres veces cada
-uno, los dos devolvieron `tls.self-signed`, como se espera. SC-004 se compara contra los valores
+En esa misma ejecución, SC-005 dio 4/6 (`self-signed.badssl.com` sin resolver y un fallo de
+negociación en `untrusted-root.badssl.com`). Repetidos tres veces cada uno, los dos devolvieron
+`tls.self-signed`, como se espera. Al preparar 002/T098b se vio que los fallos de negociación no
+son de la red: la sonda TLS envía una clave poscuántica que badssl.com corta a ratos
+(`validation/usability.md`, «Ensayo previo»). Corregido el 2026-11-12: la sonda reintenta con
+curvas clásicas cuando el servidor corta la negociación, y el cliente HTTP también. Repetido el
+script con las dos correcciones: SC-003 47/47 de los sitios estables (3 de 50 excluidos; esta vez
+ubuntu.com no contestó a curl) y SC-005 6/6. SC-004 se compara contra los valores
 esperados de las instantáneas del 2026-11-12 y las páginas vivas ya han cambiado, así que su
 resultado sigue siendo el de esas instantáneas.
 

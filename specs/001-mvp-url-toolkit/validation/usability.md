@@ -23,6 +23,8 @@ de una URL engañosa usando Explain URL.
 
 - **Registro**: acierto o fallo por URL, tiempo hasta responder y comentarios literales.
 - **Éxito**: al menos 9 de 10 participantes aciertan las URLs 1 a 4.
+- **Sesión**: se hace junto con la prueba de Security Analysis de la v2, con los mismos
+  participantes (`specs/002-v2-network-analysis/validation/usability.md`, «Sesión conjunta»).
 
 ## Ensayo previo sin participantes (2026-11-12)
 
