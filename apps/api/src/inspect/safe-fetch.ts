@@ -21,6 +21,14 @@ import {
 
 export const USER_AGENT = 'URLkit-RedirectInspector/1.0 (+https://urlkit.example/about)';
 
+/**
+ * Key exchange groups for the one retry after a server cuts the TLS handshake. Node (OpenSSL
+ * 3.5+) offers a post-quantum hybrid key share by default, as current browsers do; the larger
+ * ClientHello makes some servers reset the connection (badssl.com, 2026-11-12). Shared with the
+ * TLS connector.
+ */
+export const CLASSIC_GROUPS = 'X25519:P-256:P-384';
+
 export interface TransportResponse {
   status: number;
   headers: Record<string, string | string[] | undefined>;
@@ -95,41 +103,67 @@ function captureRawHeaders(sink: {
     );
 }
 
-export const undiciTransport: Transport = async ({ url, address, family, signal }) => {
-  const pinned = (
-    _host: string,
-    options: { all?: boolean },
-    callback: (...args: unknown[]) => void,
-  ) => {
-    if (options.all) callback(null, [{ address, family } satisfies LookupAddress]);
-    else callback(null, address, family);
-  };
-  const agent = new Agent({
-    connect: { lookup: pinned as never },
-    keepAliveTimeout: 1,
-    pipelining: 0,
-  });
-  const sink: { raw: Array<[string, string]> } = { raw: [] };
-  try {
-    const res = await request(url, {
-      dispatcher: agent.compose(captureRawHeaders(sink)),
-      method: 'GET',
-      maxRedirections: 0,
-      signal,
-      headers: {
-        'user-agent': USER_AGENT,
-        accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.5',
+/**
+ * The transport over undici. `ca` replaces the trust store, for tests only: production uses
+ * Node's bundled Mozilla roots.
+ */
+export function createUndiciTransport({ ca }: { ca?: Array<string | Buffer> } = {}): Transport {
+  const once = async (
+    { url, address, family, signal }: Parameters<Transport>[0],
+    groups?: string,
+  ): Promise<TransportResponse> => {
+    const pinned = (
+      _host: string,
+      options: { all?: boolean },
+      callback: (...args: unknown[]) => void,
+    ) => {
+      if (options.all) callback(null, [{ address, family } satisfies LookupAddress]);
+      else callback(null, address, family);
+    };
+    const agent = new Agent({
+      connect: {
+        lookup: pinned as never,
+        ...(groups ? { ecdhCurve: groups } : {}),
+        ...(ca ? { ca } : {}),
       },
-    } as Parameters<typeof request>[1]);
-    const body = res.body;
-    body.on('error', () => undefined); // a body destroyed on purpose must not surface as an error
-    body.once('close', () => void agent.close().catch(() => undefined));
-    return { status: res.statusCode, headers: res.headers, rawHeaders: sink.raw, body };
-  } catch (error) {
-    void agent.close().catch(() => undefined);
-    throw error;
-  }
-};
+      keepAliveTimeout: 1,
+      pipelining: 0,
+    });
+    const sink: { raw: Array<[string, string]> } = { raw: [] };
+    try {
+      const res = await request(url, {
+        dispatcher: agent.compose(captureRawHeaders(sink)),
+        method: 'GET',
+        maxRedirections: 0,
+        signal,
+        headers: {
+          'user-agent': USER_AGENT,
+          accept: 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.5',
+        },
+      } as Parameters<typeof request>[1]);
+      const body = res.body;
+      body.on('error', () => undefined); // a body destroyed on purpose must not surface as an error
+      body.once('close', () => void agent.close().catch(() => undefined));
+      return { status: res.statusCode, headers: res.headers, rawHeaders: sink.raw, body };
+    } catch (error) {
+      void agent.close().catch(() => undefined);
+      throw error;
+    }
+  };
+  // A server that cuts the TLS handshake gets one retry, to the same pinned address, offering
+  // classic groups only (001 research R6). Nothing was received, so a second GET changes nothing.
+  return async (req) => {
+    try {
+      return await once(req);
+    } catch (error) {
+      const reset = (error as { code?: string }).code === 'ECONNRESET';
+      if (!reset || req.url.protocol !== 'https:' || req.signal.aborted) throw error;
+      return once(req, CLASSIC_GROUPS);
+    }
+  };
+}
+
+export const undiciTransport: Transport = createUndiciTransport();
 
 export function createSafeFetch({
   resolve = systemResolver,

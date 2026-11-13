@@ -3,7 +3,12 @@
  * CA is passed as the trust store; everything else is the production code path.
  */
 import { readFileSync } from 'node:fs';
-import { createServer as createNetServer, type Server as NetServer, type Socket } from 'node:net';
+import {
+  createConnection,
+  createServer as createNetServer,
+  type Server as NetServer,
+  type Socket,
+} from 'node:net';
 import { createServer as createTlsServer, type Server as TlsServer } from 'node:tls';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { TlsObservation } from '@urlkit/core';
@@ -32,6 +37,11 @@ let plain: NetServer;
 let plainPort = 0;
 let refusedPort = 0;
 const held: Socket[] = [];
+// Cuts the connection when the ClientHello is large, as badssl.com does with the post-quantum
+// key share Node sends by default (2026-11-12); a small one is passed on to the `valid` server.
+let picky: NetServer;
+let pickyPort = 0;
+const clientHellos: number[] = [];
 
 const listen = (server: NetServer | TlsServer) =>
   new Promise<number>((resolve) =>
@@ -58,6 +68,21 @@ beforeAll(async () => {
     socket.once('data', () => socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')),
   );
   plainPort = await listen(plain);
+  const validPort = servers.get('valid')?.port ?? 0;
+  picky = createNetServer((socket) =>
+    socket.once('data', (hello: Buffer) => {
+      const size = hello.readUInt16BE(3); // TLS record length
+      clientHellos.push(size);
+      if (size > 1000) return socket.resetAndDestroy();
+      const upstream = createConnection(validPort, '127.0.0.1', () => {
+        upstream.write(hello);
+        socket.pipe(upstream).pipe(socket);
+      });
+      upstream.on('error', () => socket.destroy());
+      socket.on('error', () => upstream.destroy());
+    }),
+  );
+  pickyPort = await listen(picky);
   const closed = createNetServer();
   refusedPort = await listen(closed);
   await new Promise<void>((resolve) => closed.close(() => resolve()));
@@ -66,7 +91,7 @@ beforeAll(async () => {
 afterAll(async () => {
   for (const socket of held) socket.destroy();
   await Promise.all(
-    [...[...servers.values()].map((s) => s.server), silent, plain].map(
+    [...[...servers.values()].map((s) => s.server), silent, plain, picky].map(
       (s) => new Promise<void>((resolve) => s.close(() => resolve())),
     ),
   );
@@ -157,6 +182,15 @@ describe('TLS connector', () => {
       kind: 'error',
       code: 'tls.refused',
     });
+  });
+
+  it('retries once with classic key exchange groups when the server cuts the handshake', async () => {
+    clientHellos.length = 0;
+    const result = await createProbeTls(relaxed)({ host: 'localhost', port: pickyPort, sni: true });
+    expect(result).toMatchObject({ kind: 'handshake', authorized: true });
+    // The first attempt is what a current browser sends; only the retry drops to classic groups.
+    expect(clientHellos).toHaveLength(2);
+    expect(clientHellos[1]).toBeLessThan(1000);
   });
 
   it('blocks localhost with the default policy, before connecting', async () => {

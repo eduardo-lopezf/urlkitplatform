@@ -110,7 +110,13 @@ Alternativas consideradas.
   ejecutarlas), sin cookies, sin seguir recursos, `User-Agent` identificable del servicio.
 - **Método**: `GET` (muchos servidores responden mal a `HEAD`), descartando el cuerpo salvo el
   fragmento HTML necesario.
-- **Errores de TLS**: el salto se marca con el error y la inspección se detiene ahí.
+- **Errores de TLS**: el salto se marca con el error y la inspección se detiene ahí. Si el servidor
+  corta la negociación TLS (`ECONNRESET`) antes de responder, la petición se repite una vez, a la
+  misma IP fijada y dentro del mismo límite del salto, ofreciendo solo grupos clásicos
+  (`X25519:P-256:P-384`). Node (OpenSSL 3.5 y posteriores) ofrece por defecto una clave híbrida
+  poscuántica, como los navegadores actuales, y algunos servidores cortan ese `ClientHello` más
+  grande. No se recibió nada, así que repetir el `GET` no cambia nada en el destino (añadido al
+  validar la 002, 2026-11-12; la sonda TLS hace lo mismo, 002 research R5).
 - **Alcance**: la protección es **completa en el MVP**; no se entrega por partes ni se aplaza a la
   versión 2 (Principio V). Una validación incompleta no reduce el riesgo, lo oculta: sin fijación
   de IP, la comprobación de rangos se sortea con DNS rebinding.

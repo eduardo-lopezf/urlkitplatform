@@ -197,6 +197,12 @@ lo cargan; `pnpm size` lo vigila.
   `servername` (SNI) solo se envía si el host es un nombre; con una IP literal se omite y se
   indica en el resultado.
 - Completa el *handshake*, lee y cierra. No envía datos de aplicación. Tiempo de espera de 5 s.
+- Si el servidor corta la conexión antes de terminar el *handshake* (`ECONNRESET`), reintenta una
+  vez, a la misma IP validada, ofreciendo solo grupos clásicos (`X25519:P-256:P-384`) y con su
+  propio tiempo de espera. Node (OpenSSL 3.5 y posteriores) ofrece por defecto una clave híbrida
+  poscuántica, como los navegadores actuales; algunos servidores cortan ese `ClientHello` más
+  grande. El primer intento sigue siendo el del navegador (añadido al preparar T098b,
+  2026-11-12).
 - La observación incluye:
   - `protocol` (`getProtocol()`), `cipher` (`getCipher()`) y `alpn`;
   - `authorized` y `authorizationError`, la verificación de OpenSSL contra el almacén de raíces

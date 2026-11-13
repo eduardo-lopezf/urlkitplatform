@@ -16,7 +16,7 @@ import {
   type TLSSocket,
 } from 'node:tls';
 import type { CertObservation, ProbeTls, TlsFailure, TlsObservation } from '@urlkit/core';
-import { systemResolver } from '../../inspect/safe-fetch.ts';
+import { CLASSIC_GROUPS, systemResolver } from '../../inspect/safe-fetch.ts';
 import { DEFAULT_POLICY, resolveTarget, type Policy, type Resolver } from '../../inspect/ssrf.ts';
 import { readSct } from './x509.ts';
 
@@ -101,53 +101,65 @@ export function createProbeTls({
     if (!target.ok) return { kind: 'blocked', code: `inspect.blocked.${target.reason}` };
     const name = host.replace(/^\[|\]$/g, '');
 
-    return new Promise<TlsObservation | TlsFailure>((settle) => {
-      let done = false;
-      const socket = connect({
-        host: target.address,
-        port,
-        ...(sni ? { servername: name } : {}),
-        rejectUnauthorized: false,
-        checkServerIdentity: () => undefined,
-        ALPNProtocols: ['h2', 'http/1.1'],
-        ...(ca ? { ca } : {}),
+    // One handshake, as a current browser makes it unless `groups` narrows the key exchange.
+    // `reset` tells a server that cut the connection before the handshake finished.
+    const attempt = (budgetMs: number, groups?: string) =>
+      new Promise<{ result: TlsObservation | TlsFailure; reset: boolean }>((settle) => {
+        let done = false;
+        const socket = connect({
+          host: target.address,
+          port,
+          ...(sni ? { servername: name } : {}),
+          rejectUnauthorized: false,
+          checkServerIdentity: () => undefined,
+          ALPNProtocols: ['h2', 'http/1.1'],
+          ...(groups ? { ecdhCurve: groups } : {}),
+          ...(ca ? { ca } : {}),
+        });
+        const finish = (result: TlsObservation | TlsFailure, reset = false) => {
+          if (done) return;
+          done = true;
+          clearTimeout(timer);
+          socket.destroy();
+          settle({ result, reset });
+        };
+        const timer = setTimeout(() => finish({ kind: 'error', code: 'tls.timeout' }), budgetMs);
+        socket.once('error', (error) =>
+          finish(failure(error), (error as { code?: string }).code === 'ECONNRESET'),
+        );
+        socket.once('secureConnect', () => {
+          try {
+            const chain = peerChain(socket);
+            const leaf = chain[0];
+            const observed = chain.map(observeCert);
+            if (leaf && observed[0]) observed[0].sct = readSct(leaf.raw);
+            const cipher = socket.getCipher();
+            finish({
+              kind: 'handshake',
+              observedAt: now().toISOString(),
+              host,
+              port,
+              sniSent: sni,
+              protocol: socket.getProtocol(),
+              cipher: cipher?.standardName ?? cipher?.name ?? null,
+              alpn: socket.alpnProtocol || null,
+              authorized: socket.authorized,
+              authorizationError: authorizationCode(socket),
+              hostMatches: leaf
+                ? (sni ? leaf.checkHost(name) : leaf.checkIP(name)) !== undefined
+                : false,
+              chain: observed,
+            });
+          } catch (error) {
+            finish(failure(error));
+          }
+        });
       });
-      const finish = (result: TlsObservation | TlsFailure) => {
-        if (done) return;
-        done = true;
-        clearTimeout(timer);
-        socket.destroy();
-        settle(result);
-      };
-      const timer = setTimeout(() => finish({ kind: 'error', code: 'tls.timeout' }), timeoutMs);
-      socket.once('error', (error) => finish(failure(error)));
-      socket.once('secureConnect', () => {
-        try {
-          const chain = peerChain(socket);
-          const leaf = chain[0];
-          const observed = chain.map(observeCert);
-          if (leaf && observed[0]) observed[0].sct = readSct(leaf.raw);
-          const cipher = socket.getCipher();
-          finish({
-            kind: 'handshake',
-            observedAt: now().toISOString(),
-            host,
-            port,
-            sniSent: sni,
-            protocol: socket.getProtocol(),
-            cipher: cipher?.standardName ?? cipher?.name ?? null,
-            alpn: socket.alpnProtocol || null,
-            authorized: socket.authorized,
-            authorizationError: authorizationCode(socket),
-            hostMatches: leaf
-              ? (sni ? leaf.checkHost(name) : leaf.checkIP(name)) !== undefined
-              : false,
-            chain: observed,
-          });
-        } catch (error) {
-          finish(failure(error));
-        }
-      });
-    });
+
+    // The retry gets its own time limit: a cut can take seconds to arrive, and a shared limit
+    // left the retry without time (measured against badssl.com, 2026-11-12). Only a server that
+    // cut the first handshake ever waits longer than `timeoutMs`.
+    const first = await attempt(timeoutMs);
+    return first.reset ? (await attempt(timeoutMs, CLASSIC_GROUPS)).result : first.result;
   };
 }
