@@ -400,6 +400,7 @@
   "ui.diff.component.fragment": "Fragmento",
   "ui.diff.empty": "(vacío)",
   "ui.explain.realSite": "Sitio real",
+  "ui.explain.looksLike": "Se ve como: {host}",
   "ui.explain.parts": "Parte por parte",
   "ui.explain.signals": "Avisos",
   "ui.explain.noSignals": "No hay avisos para esta URL.",

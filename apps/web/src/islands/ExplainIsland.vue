@@ -30,13 +30,20 @@ const error = computed(() => (result.value && !result.value.ok ? result.value.er
 const tracker = runTracker('explain');
 watch(result, (r) => r && tracker(url.value, r.ok));
 
+/**
+ * A homograph or mixed-script host is shown by its ASCII form first: its Unicode form reads as
+ * the site it imitates (T103 rehearsal, SC-007). Other hosts keep their Unicode form.
+ */
+const deceptive = computed(
+  () => ok.value?.signals.some((s) => s.id === 'homograph' || s.id === 'mixed-scripts') ?? false,
+);
+
 /** Host split so the registrable domain can be highlighted. */
 const host = computed(() => {
   if (!ok.value) return null;
-  const full = ok.value.url.host.unicode;
-  const domain = ok.value.url.registrableDomain
-    ? hostToUnicode(ok.value.url.registrableDomain)
-    : null;
+  const registrable = ok.value.url.registrableDomain;
+  const full = deceptive.value ? ok.value.url.host.ascii : ok.value.url.host.unicode;
+  const domain = registrable ? (deceptive.value ? registrable : hostToUnicode(registrable)) : null;
   if (!domain || !full.endsWith(domain)) return { before: '', domain: full };
   return { before: full.slice(0, full.length - domain.length), domain };
 });
@@ -77,7 +84,10 @@ const targets = computed(() =>
           <span class="uk-muted">{{ host.before }}</span
           ><mark>{{ host.domain }}</mark>
         </p>
-        <p v-if="ok.url.host.ascii !== ok.url.host.unicode" class="uk-muted mono">
+        <p v-if="deceptive" class="uk-muted mono">
+          {{ text('ui.explain.looksLike', { host: ok.url.host.unicode }) }}
+        </p>
+        <p v-else-if="ok.url.host.ascii !== ok.url.host.unicode" class="uk-muted mono">
           {{ ok.url.host.ascii }}
         </p>
       </section>

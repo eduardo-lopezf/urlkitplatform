@@ -18,8 +18,17 @@ test('explains a campaign URL part by part', async ({ page }) => {
 test('a homograph shows its Punycode and a notice', async ({ page }) => {
   await page.goto('/es/explain');
   await fill(page, 'URL', 'https://аррӏе.com/');
-  await expect(page.locator('.site')).toContainText('xn--');
+  await expect(page.locator('.site mark')).toHaveText('xn--80ak6aa92e.com');
+  await expect(page.locator('.site')).toContainText('Se ve como: аррӏе.com');
   await expect(page.locator('.signals')).toContainText('otro alfabeto');
+});
+
+test('a legitimate international domain keeps its Unicode form first', async ({ page }) => {
+  await page.goto('/es/explain');
+  await fill(page, 'URL', 'https://www.münchen.de/');
+  await expect(page.locator('.site mark')).toHaveText('münchen.de');
+  await expect(page.locator('.site')).toContainText('www.xn--mnchen-3ya.de');
+  await expect(page.locator('.site')).not.toContainText('Se ve como');
 });
 
 test('switching language changes the text and keeps the URL', async ({ page }) => {
