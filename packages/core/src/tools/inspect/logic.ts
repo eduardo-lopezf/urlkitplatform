@@ -44,13 +44,42 @@ export function parseMetaRefresh(html: string | null): string | null {
 const LOCATION = String.raw`(?<![\w$.])(?:(?:window|document|top|self|parent)\.)?location(?![\w$])`;
 const LITERAL_ASSIGN = new RegExp(
   String.raw`${LOCATION}(?:\.href)?\s*=\s*(["'\x60])([^"'\x60]+)\1\s*(?:[;)<\n]|$)`,
+  'g',
 );
 const LITERAL_CALL = new RegExp(
   String.raw`${LOCATION}\.(?:replace|assign)\(\s*(["'\x60])([^"'\x60]+)\1\s*\)`,
+  'g',
 );
 const ANY_REDIRECT = new RegExp(
   String.raw`${LOCATION}(?:\.href)?\s*=(?!=)|${LOCATION}\.(?:replace|assign)\(`,
+  'g',
 );
+/**
+ * The start of a function body registered as an event handler: `x.onclick = function () {`,
+ * `addEventListener("click", () => {` or jQuery's `.on("click", function () {`.
+ */
+const HANDLER_START =
+  /(?:\.on[a-z]+\s*=|(?:addEventListener|\.on)\(\s*(["'\x60])[\w:. -]+\1\s*,)\s*(?:async\s+)?(?:function\b[^{}]*|(?:\([^()]*\)|[\w$]+)\s*=>\s*)$/;
+
+/**
+ * Whether the code at `index` is inside an event handler: walking back, some block that is
+ * still open there is the body of a handler. Such code runs on a click, never on load.
+ */
+function inEventHandler(code: string, index: number): boolean {
+  let depth = 0;
+  for (let i = index - 1; i >= 0; i--) {
+    if (code[i] === '}') depth++;
+    else if (code[i] === '{') {
+      if (depth > 0) depth--;
+      else if (HANDLER_START.test(code.slice(Math.max(0, i - 200), i))) return true;
+    }
+  }
+  return false;
+}
+
+/** First match of a global pattern that runs on load (outside any event handler). */
+const onLoad = (code: string, pattern: RegExp) =>
+  [...code.matchAll(pattern)].find((m) => !inEventHandler(code, m.index));
 
 /** Script elements, including one left open by the read limit. */
 const SCRIPT = /<script\b([^>]*)>([\s\S]*?)(?:<\/script\s*>|$)/gi;
@@ -70,7 +99,8 @@ function scriptText(html: string): string {
 /**
  * Detects a JavaScript redirect without executing anything (FR-033). Only a literal string
  * assigned to `location` is followable (data-model.md); anything computed is reported only.
- * Only script content counts: an HTML attribute such as `data-form-location="…"` is not code.
+ * Only script content counts: an HTML attribute such as `data-form-location="…"` is not code,
+ * and an assignment inside an event handler only runs on a click.
  */
 export function detectJsRedirect(
   html: string | null,
@@ -78,9 +108,9 @@ export function detectJsRedirect(
   if (!html) return null;
   const code = scriptText(html);
   if (!code) return null;
-  const literal = LITERAL_ASSIGN.exec(code) ?? LITERAL_CALL.exec(code);
+  const literal = onLoad(code, LITERAL_ASSIGN) ?? onLoad(code, LITERAL_CALL);
   if (literal?.[2] && !literal[2].includes('${')) return { url: literal[2], literal: true };
-  return ANY_REDIRECT.test(code) ? { url: null, literal: false } : null;
+  return onLoad(code, ANY_REDIRECT) ? { url: null, literal: false } : null;
 }
 
 const ANCHOR_HREF = /<a\b[^>]*?\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;

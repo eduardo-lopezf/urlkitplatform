@@ -109,6 +109,40 @@ describe('hop interpretation', () => {
     ).toEqual({ url: '/real', literal: true });
   });
 
+  // Found validating 002 against google.com (SC-003, 2026-11-13): the "I'm Feeling Lucky" button
+  // sets `top.location` in its click handler, which never runs when the page loads.
+  it('ignores location assignments inside event handlers', () => {
+    expect(
+      detectJsRedirect(
+        "<script>(function(){var id='b';document.getElementById(id).onclick = function(){if (this.form.q.value){this.checked = 1;}\nelse top.location='/doodles/';};})();</script>",
+      ),
+    ).toBeNull();
+    expect(
+      detectJsRedirect(
+        '<script>btn.addEventListener("click", () => { location.href = "/next"; });</script>',
+      ),
+    ).toBeNull();
+    expect(
+      detectJsRedirect(
+        "<script>$('#go').on('click', function () { window.location.replace('/x'); });</script>",
+      ),
+    ).toBeNull();
+    // What runs on load is still followed, next to a handler or inside an IIFE or a timer.
+    expect(
+      detectJsRedirect(
+        '<script>a.onclick = function () { location = "/click"; };\nlocation.href = "/load";</script>',
+      ),
+    ).toEqual({ url: '/load', literal: true });
+    expect(
+      detectJsRedirect('<script>(function () { window.location = "/iife"; })();</script>'),
+    ).toEqual({ url: '/iife', literal: true });
+    expect(
+      detectJsRedirect(
+        '<script>setTimeout(function () { location.replace("/later"); }, 0);</script>',
+      ),
+    ).toEqual({ url: '/later', literal: true });
+  });
+
   // Found validating 002 against duckduckgo.com.
   it('decodes HTML entities in the meta refresh content', () => {
     expect(

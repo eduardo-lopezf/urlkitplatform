@@ -90,7 +90,9 @@ aunque coincidan con una regla (FR-014). El resultado es determinista.
 `loop` se detecta al repetirse una URL normalizada; `blocked` cuando la IP resuelta o el destino
 no pasan la validación SSRF; las redirecciones `javascript` se detectan y se informan, pero no se
 siguen salvo que el patrón sea una asignación literal a `location`. Solo cuenta el contenido de
-los `<script>` ejecutables (un atributo como `data-form-location` no es código), y un `meta refresh`
+los `<script>` ejecutables (un atributo como `data-form-location` no es código), una asignación
+dentro de un manejador de evento (`onclick`, `addEventListener`) no cuenta, porque solo se ejecuta
+al pulsar (corregido al validar SC-003 de la 002, 2026-11-13), y un `meta refresh`
 dentro de `<noscript>` no se sigue, porque un navegador con scripts no lo aplica; las entidades HTML
 del `content` se decodifican (corregido al validar la 002, 2026-11-12). Un salto `interstitial`
 (FR-037, R22) es una respuesta HTML 2xx sin redirección automática que enlaza (`<a href>`) a una
