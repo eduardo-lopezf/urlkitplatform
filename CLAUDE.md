@@ -36,7 +36,8 @@ Si no modificaste ningún fichero, dilo explícitamente.
 
 El MVP está **implementado y en validación**: las cinco herramientas, la API `/v1` y la web
 funcionan en local con todas las puertas de calidad en verde. En `specs/001-mvp-url-toolkit/tasks.md`
-hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas) y
+hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas; el
+protocolo está ensayado y se hace en una sesión conjunta con 002/T098b) y
 T111–T114 (despliegue: necesitan el VPS, el dominio y las cuentas; la guía está en
 `infrastructure/README.md`, "Despliegue autogestionado"). Todo lo que se podía preparar en local
 está hecho: el build de Pages se reprodujo con Node 24 y la tabla de proveedores de
@@ -48,11 +49,19 @@ La v2 (`specs/002-v2-network-analysis`) está **implementada en local**: HTTP He
 DNS y Security Analysis, con sus endpoints `/v1` y sus páginas, y las puertas de calidad en verde.
 Está validada contra la red real desde local (T096, T098; registro en
 `specs/002-v2-network-analysis/validation/`). Queda el despliegue, que va con el de la 001: sale en
-la misma imagen de la API y su comprobación en producción forma parte de T113. Quedan también dos
-piezas de validación: T098b (prueba de usabilidad de Security Analysis, que puede compartir
-sesión con T103) y la cifra de producción de T098a (tiempos de SC-001, ya medidos en local), que
-va en T113. Se hizo entera en
-Node: el servicio de sondas en Python no entró (`docs/arquitectura.md` §11).
+la misma imagen de la API y su comprobación en producción forma parte de T113. Quedan también:
+
+- T098b, la prueba de usabilidad de Security Analysis: protocolo, enlaces y ensayo en
+  `validation/usability.md`; solo faltan los participantes, los mismos de T103.
+- La muestra humana de SC-003 (segunda mitad) y SC-004: las hojas están en `validation/` y hay una
+  página local para revisarlas en `apps/api/scripts/out/review-2026-11-12.html` (ignorada por git,
+  como las instantáneas). Se puntúan como dice `validation/reference-sets.md`.
+- La cifra de producción de T098a (tiempos de SC-001, ya medidos en local), que va en T113.
+
+SC-003 se precisó el 2026-11-12 (spec, Clarifications): el 100 % se mide sobre los sitios que
+responden de forma estable, con un máximo del 10 % de excluidos y su causa registrada, y
+`apps/api/scripts/reference-check.ts` comprueba esa estabilidad por sí mismo. La v2 se hizo entera
+en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md` §11).
 
 Despliegue, lo que no se deduce del código:
 
@@ -169,6 +178,13 @@ se revisan a mano. El grafo completo está en `plan.md`, sección "Grafo de depe
    conectores de `apps/api` (`safeFetch` y el de TLS), y un servicio en otro lenguaje tendría que
    pasar los mismos.
 10. **Pruebas primero** en el núcleo: escribe la prueba, compruébala en rojo y luego implementa.
+11. **El reintento TLS con curvas clásicas no es un adorno.** Node (OpenSSL 3.5 y posteriores,
+    también la imagen de producción) ofrece por defecto una clave poscuántica; algunos servidores
+    cortan ese `ClientHello` más grande. Los dos conectores (`safeFetch` y la sonda TLS)
+    reintentan una vez, a la misma IP validada, con `CLASSIC_GROUPS`. No lo quites ni lo
+    conviertas en el primer intento: el primero debe ser el de un navegador actual (001 research
+    R6, 002 research R5). En `safeFetch` el reintento cabe en los 5 s del salto por decisión: darle
+    más plazo exige cambiar antes la spec de la 001.
 
 ## Flujo de trabajo
 
