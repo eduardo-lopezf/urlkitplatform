@@ -88,7 +88,8 @@ Despliegue, lo que no se deduce del código:
   producción: activarlos exige antes su fila en `docs/privacidad.md`.
 
 `RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
-(sin `REDIS_URL`, esa prueba se salta; en CI hay un servicio Valkey y se ejecuta). Igual con
+(sin `REDIS_URL`, esa prueba se salta en local; en CI hay un servicio Valkey y, si faltara, la
+suite falla en lugar de saltarse: `apps/api/tests/requires.ts`). Igual con
 PostgreSQL: `DATABASE_URL=postgres://urlkit:urlkit@localhost:5432/urlkit` (cada suite crea y borra
 su propia base); la prueba de copias necesita además `PG_TOOLS="docker compose exec -T postgres"`
 y `PG_TOOLS_HOST=localhost:5432`. Si el 5432 está ocupado, `POSTGRES_PORT` mueve el puerto de

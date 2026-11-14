@@ -11,8 +11,9 @@ import { migrateToLatest } from '../../src/db/migrate.ts';
 import { createPgUsageStore } from '../../src/db/usage-store.ts';
 import { PLAN_LIST } from '../../src/quota/plans.ts';
 import { DATABASE_URL, freshDatabase, type TestDatabase } from '../db.ts';
+import { skipUnless } from '../requires.ts';
 
-describe.skipIf(!DATABASE_URL)('admin CLI (003)', () => {
+describe.skipIf(skipUnless(Boolean(DATABASE_URL), 'DATABASE_URL'))('admin CLI (003)', () => {
   let database: TestDatabase;
   let db: Db;
 

@@ -9,6 +9,7 @@ import { createDb, type Db } from '../../src/db/client.ts';
 import { migrateDown, migrateToLatest } from '../../src/db/migrate.ts';
 import type { ApiKeysTable, OrganizationsTable, UsageDailyTable } from '../../src/db/schema.ts';
 import { DATABASE_URL, freshDatabase, type TestDatabase } from '../db.ts';
+import { skipUnless } from '../requires.ts';
 
 /** Column → PostgreSQL type. `satisfies` fails to compile if a column is added or removed. */
 const ORGANIZATIONS = {
@@ -37,7 +38,7 @@ const USAGE_DAILY = {
 
 const HASH = Buffer.alloc(32, 1);
 
-describe.skipIf(!DATABASE_URL)('database schema (003)', () => {
+describe.skipIf(skipUnless(Boolean(DATABASE_URL), 'DATABASE_URL'))('database schema (003)', () => {
   let database: TestDatabase;
   let db: Db;
   let raw: pg.Client;

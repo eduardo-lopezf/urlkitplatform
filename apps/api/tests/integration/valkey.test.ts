@@ -14,12 +14,13 @@ import { isBlockedAddress } from '../../src/inspect/ssrf.ts';
 import { createLimiter } from '../../src/quota/limiter.ts';
 import { RedisStore, type QuotaStore } from '../../src/quota/store.ts';
 import { post, testApp } from '../helpers.ts';
+import { skipUnless } from '../requires.ts';
 
 const REDIS_URL = process.env.REDIS_URL;
 const CLIENT_IP = '198.51.100.23';
 const SHORT_PATH = '/s/privado-123';
 
-describe.skipIf(!REDIS_URL)('privacy with a real Valkey', () => {
+describe.skipIf(skipUnless(Boolean(REDIS_URL), 'REDIS_URL'))('privacy with a real Valkey', () => {
   let redis: Redis;
   let server: Server;
   let port = 0;

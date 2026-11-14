@@ -13,6 +13,7 @@ import { createUsageRecorder } from '../../src/usage/record.ts';
 import { pruneUsage, usageCutoff } from '../../src/usage/prune.ts';
 import { post, T0, testApp } from '../helpers.ts';
 import { DATABASE_URL, freshDatabase, type TestDatabase } from '../db.ts';
+import { skipUnless } from '../requires.ts';
 
 const URL_IN = 'https://ejemplo.com/secret-path?utm_source=x';
 /**
@@ -28,7 +29,7 @@ async function expectCounts(read: () => Promise<unknown>, expected: unknown) {
   expect(await read()).toEqual(expected);
 }
 
-describe.skipIf(!DATABASE_URL)('usage counts (003)', () => {
+describe.skipIf(skipUnless(Boolean(DATABASE_URL), 'DATABASE_URL'))('usage counts (003)', () => {
   let database: TestDatabase;
   let db: Db;
 

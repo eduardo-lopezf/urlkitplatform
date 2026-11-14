@@ -10,8 +10,9 @@ import { createPgKeyStore } from '../../src/db/key-store.ts';
 import { migrateToLatest } from '../../src/db/migrate.ts';
 import { DATABASE_URL, freshDatabase, type TestDatabase } from '../db.ts';
 import { keyStoreBehaviour } from '../key-store-behaviour.ts';
+import { skipUnless } from '../requires.ts';
 
-describe.skipIf(!DATABASE_URL)('PostgreSQL KeyStore', () => {
+describe.skipIf(skipUnless(Boolean(DATABASE_URL), 'DATABASE_URL'))('PostgreSQL KeyStore', () => {
   const open: Array<{ database: TestDatabase; db: Db }> = [];
 
   async function make() {
