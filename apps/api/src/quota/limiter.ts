@@ -3,6 +3,7 @@
  * is allowed while every window is under its limit. Keys:
  *   quota:{bucket}:{window}:{windowStart}:{subjectType}:{subjectId}
  */
+import type { Logger } from '../privacy/logger.ts';
 import { planFor } from './plans.ts';
 import type { QuotaStore } from './store.ts';
 import { subjectKey } from './subject.ts';
@@ -15,33 +16,37 @@ import {
 } from './types.ts';
 
 export interface Limiter {
-  consume(subject: Subject, bucket: QuotaBucket): Promise<QuotaDecision>;
+  /** `planId` is the organization's plan for `organization` subjects (003, research R5). */
+  consume(subject: Subject, bucket: QuotaBucket, planId?: string): Promise<QuotaDecision>;
   /** Gives back one use that the service could not provide (DNS `503`, 002/T072). */
-  refund(subject: Subject, bucket: QuotaBucket): Promise<void>;
+  refund(subject: Subject, bucket: QuotaBucket, planId?: string): Promise<void>;
 }
 
 export function createLimiter({
   store,
   now = Date.now,
+  logger,
 }: {
   store: QuotaStore;
   now?: () => number;
+  logger?: Logger;
 }): Limiter {
-  const keys = (subject: Subject, bucket: QuotaBucket) => {
+  const keys = (subject: Subject, bucket: QuotaBucket, planId?: string) => {
     const nowSeconds = now() / 1000;
-    return (Object.keys(planFor(subject).limits[bucket]) as QuotaWindow[]).map((window) => {
+    const limits = planFor(subject, planId, logger).limits[bucket];
+    return (Object.keys(limits) as QuotaWindow[]).map((window) => {
       const size = WINDOW_SECONDS[window];
       const start = Math.floor(nowSeconds / size) * size;
       return `quota:${bucket}:${window}:${start}:${subjectKey(subject)}`;
     });
   };
   return {
-    async refund(subject, bucket) {
-      for (const key of keys(subject, bucket)) await store.decrement?.(key);
+    async refund(subject, bucket, planId) {
+      for (const key of keys(subject, bucket, planId)) await store.decrement?.(key);
     },
-    async consume(subject, bucket) {
+    async consume(subject, bucket, planId) {
       const nowSeconds = now() / 1000;
-      const windows = Object.entries(planFor(subject).limits[bucket]) as Array<
+      const windows = Object.entries(planFor(subject, planId, logger).limits[bucket]) as Array<
         [QuotaWindow, number]
       >;
       const states = [];

@@ -2,7 +2,14 @@ import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { cleanTool } from '@urlkit/core';
 import { CleanRequest, CleanResultSchema, ToolErrorSchema } from '@urlkit/contracts';
 import type { AppDeps } from '../../app.ts';
-import { applyQuota, badRequest, identify, measure, quotaExceeded } from './shared.ts';
+import {
+  AUTH_RESPONSES,
+  applyQuota,
+  badRequest,
+  identify,
+  measure,
+  quotaExceeded,
+} from './shared.ts';
 
 const route = createRoute({
   method: 'post',
@@ -21,15 +28,18 @@ const route = createRoute({
       description: 'Límite de uso alcanzado',
       content: { 'application/json': { schema: ToolErrorSchema } },
     },
+    ...AUTH_RESPONSES,
   },
 });
 
 export function registerClean(app: OpenAPIHono, deps: AppDeps): void {
   app.openapi(route, async (c) => {
     const input = c.req.valid('json'); // 1. validate (route schema)
-    const subject = identify(c, deps); // 2. identity
-    const quota = await applyQuota(c, deps, subject, 'local'); // 3. quota
-    if (!quota.allowed) return quotaExceeded(c, deps, 'clean', quota);
+    const who = await identify(c, deps, 'clean', 'local'); // 2. identity
+    if (!('subject' in who)) return who;
+    const { subject } = who;
+    const quota = await applyQuota(c, deps, who, 'local'); // 3. quota
+    if (!quota.allowed) return quotaExceeded(c, deps, 'clean', quota, subject.type);
     const result = await cleanTool.run(input, { catalog: deps.catalog }); // 4. invoke (catalog injected)
     measure(deps, 'clean', result); // 5. measure
     return result.ok ? c.json(result.value, 200) : badRequest(c, result.error); // 6. respond

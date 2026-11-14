@@ -4,6 +4,8 @@ import { createLogger } from '../src/privacy/logger.ts';
 import { createLimiter } from '../src/quota/limiter.ts';
 import { MemoryStore } from '../src/quota/store.ts';
 import { createMetrics } from '../src/metrics/registry.ts';
+import { disabledVerifier } from '../src/auth/verify.ts';
+import { noUsageRecorder } from '../src/usage/record.ts';
 
 export const SECRET = 'test-secret-with-enough-entropy-0123456789';
 export const T0 = Date.UTC(2026, 10, 6, 10, 0, 0); // 2026-11-06T10:00:00Z
@@ -61,6 +63,8 @@ export function testApp(overrides: Partial<AppDeps> = {}) {
       queryDns: deps.dnsQuerier(),
     }),
     clientIp: (c) => c.req.header('x-test-ip') ?? '203.0.113.7',
+    keyVerifier: disabledVerifier,
+    usageRecorder: noUsageRecorder,
     ...overrides,
   };
   return { app: createApp(deps), deps, lines, clock, store };

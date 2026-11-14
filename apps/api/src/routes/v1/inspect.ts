@@ -3,7 +3,14 @@ import { inspectTool, parseUrl } from '@urlkit/core';
 import { InspectRequest, RedirectChainSchema, ToolErrorSchema } from '@urlkit/contracts';
 import type { AppDeps } from '../../app.ts';
 import { withSpan } from '../../observability/tracing.ts';
-import { applyQuota, badRequest, identify, measure, quotaExceeded } from './shared.ts';
+import {
+  AUTH_RESPONSES,
+  applyQuota,
+  badRequest,
+  identify,
+  measure,
+  quotaExceeded,
+} from './shared.ts';
 
 const route = createRoute({
   method: 'post',
@@ -24,6 +31,7 @@ const route = createRoute({
       description: 'Límite de uso alcanzado',
       content: { 'application/json': { schema: ToolErrorSchema } },
     },
+    ...AUTH_RESPONSES,
   },
 });
 
@@ -36,9 +44,11 @@ const domainOf = (url: string) => {
 export function registerInspect(app: OpenAPIHono, deps: AppDeps): void {
   app.openapi(route, async (c) => {
     const input = c.req.valid('json');
-    const subject = identify(c, deps);
-    const quota = await applyQuota(c, deps, subject, 'inspect');
-    if (!quota.allowed) return quotaExceeded(c, deps, 'inspect', quota);
+    const who = await identify(c, deps, 'inspect', 'inspect');
+    if (!('subject' in who)) return who;
+    const { subject } = who;
+    const quota = await applyQuota(c, deps, who, 'inspect');
+    if (!quota.allowed) return quotaExceeded(c, deps, 'inspect', quota, subject.type);
     const started = deps.now();
     const result = await withSpan(
       'inspect',

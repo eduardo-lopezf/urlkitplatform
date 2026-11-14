@@ -20,6 +20,31 @@ services:
     # `default` lets development reach it on localhost:6379; the API reaches it on `internal`.
     networks: [default, internal]
 
+  # Organizations, API key hashes and daily usage counts (003, research R12). Never URLs or IPs.
+  # Like Valkey: the API reaches it on `internal`; `default` only lets development reach it on
+  # localhost, and its port is bound to loopback, so nothing outside the server can connect.
+  postgres:
+    logging: *logging
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: urlkit
+      POSTGRES_DB: urlkit
+      # Set POSTGRES_PASSWORD in .env on a server (openssl rand -hex 24). The default is only for
+      # development: the database is unreachable from outside either way.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-urlkit}
+    # POSTGRES_PORT moves the development port if 5432 is taken by another project.
+    ports:
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U urlkit -d urlkit']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [default, internal]
+
   api:
     logging: *logging
     profiles: [full, selfhosted]
@@ -27,6 +52,7 @@ services:
     restart: unless-stopped
     environment:
       REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgres://urlkit:${POSTGRES_PASSWORD:-urlkit}@postgres:5432/urlkit
       # `:?` would break `docker compose up -d` for Valkey alone: Compose interpolates every service.
       # Without a secret of 32+ characters the API refuses to start (NODE_ENV=production).
       QUOTA_SECRET: ${QUOTA_SECRET:-}
@@ -40,7 +66,9 @@ services:
       TRUST_PROXY: '1'
     ports:
       - '127.0.0.1:8787:8787'
-    depends_on: [redis]
+    depends_on:
+      redis: { condition: service_started }
+      postgres: { condition: service_healthy }
     # Outbound traffic of the inspector leaves only through the egress network, whose internal
     # ranges are dropped by egress-guard. Second barrier: never a substitute for IP validation.
     networks: [internal, egress]
@@ -98,6 +126,7 @@ services:
     networks: [internal]
 
 volumes:
+  postgres_data: {}
   caddy_data: {}
   caddy_config: {}
 

@@ -53,6 +53,26 @@ test('local tools send nothing but the anonymous metrics event', async ({
   }
 });
 
+test('the web never sends an Authorization header (003, FR-014)', async ({ page, requests }) => {
+  // Network tools answer from a stub: only the outgoing request matters here.
+  await page.route('**/v1/**', (route) =>
+    route.fulfill({
+      status: 429,
+      json: { code: 'quota.exceeded', message: { code: 'quota.exceeded' }, retryAfterSeconds: 60 },
+    }),
+  );
+  for (const path of PAGES) await page.goto(path);
+  await page.goto('/es/inspect');
+  await fill(page, 'URL', 'https://ejemplo.com/');
+  await page.getByRole('button', { name: 'Inspeccionar' }).click();
+  await page.goto('/es/headers');
+  await fill(page, 'URL', 'https://ejemplo.com/');
+  await page.getByRole('button', { name: 'Analizar' }).click();
+  await page.waitForTimeout(500);
+  expect(requests.some((r) => r.url().includes('/v1/inspect'))).toBe(true);
+  for (const r of requests) expect(await r.headerValue('authorization'), r.url()).toBeNull();
+});
+
 test('every page carries a strict CSP and no referrer', async ({ page }) => {
   for (const path of PAGES) {
     await page.goto(path);

@@ -14,6 +14,8 @@ import type { SecurityAdapters } from './probes/security.ts';
 import { reportError } from './observability/errors.ts';
 import type { Logger } from './privacy/logger.ts';
 import type { Limiter } from './quota/limiter.ts';
+import type { KeyVerifier } from './auth/verify.ts';
+import type { UsageRecorder } from './usage/record.ts';
 import { registerClean } from './routes/v1/clean.ts';
 import { registerDiff } from './routes/v1/diff.ts';
 import { registerDns } from './routes/v1/dns.ts';
@@ -47,6 +49,10 @@ export interface AppDeps {
   /** v2: the three adapters of Security Analysis, with its time budgets (002/T084). */
   securityAdapters: () => SecurityAdapters;
   clientIp: (c: Context) => string;
+  /** 003: checks the `Authorization` header of tool requests (research R3). */
+  keyVerifier: KeyVerifier;
+  /** 003: counts requests served with a key (research R6). */
+  usageRecorder: UsageRecorder;
 }
 
 /** 2 × 32,000 characters for diff, plus JSON overhead. */

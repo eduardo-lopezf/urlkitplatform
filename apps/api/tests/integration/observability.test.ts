@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ErrorEvent } from '@sentry/node';
 import { scrubEvent } from '../../src/observability/errors.ts';
 import { safeAttributes } from '../../src/observability/tracing.ts';
+import { generateKey } from '../../src/auth/key-format.ts';
 
 const INPUT = [
   'https://ejemplo.com/secret-path?token=abc',
@@ -96,5 +97,22 @@ describe('trace attributes', () => {
     expect(safeAttributes({ 'url.registrable_domain': 'https://ejemplo.com/secret-path' })).toEqual(
       {},
     );
+  });
+});
+
+describe('API keys never reach the error service (003, FR-042)', () => {
+  it('scrubs the Authorization header and any key in messages', () => {
+    const key = generateKey();
+    const event = {
+      event_id: 'e2',
+      level: 'error',
+      message: `verification failed for ${key.key}`,
+      request: { headers: { authorization: `Bearer ${key.key}` } },
+      extra: { authorization: `Bearer ${key.key}` },
+      exception: { values: [{ type: 'Error', value: `bad key ${key.key}` }] },
+    } as unknown as ErrorEvent;
+    const scrubbed = JSON.stringify(scrubEvent(event));
+    expect(scrubbed).not.toContain(key.key);
+    expect(scrubbed).not.toContain(key.secret);
   });
 });

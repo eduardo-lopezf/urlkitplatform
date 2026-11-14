@@ -3,7 +3,7 @@
  *
  * Fields are allow-listed: anything not in SAFE_FIELDS is dropped, whatever its name. Values of
  * allowed fields are still scanned and anything that looks like a URL or an IP is redacted, so a
- * mistake at a call site cannot put user input in the logs.
+ * mistake at a call site cannot put user input in the logs. API keys are redacted the same way.
  */
 const SAFE_FIELDS = new Set([
   'tool',
@@ -26,6 +26,9 @@ const SAFE_FIELDS = new Set([
 const URL_LIKE = /\b[a-z][a-z0-9+.-]*:\/\/\S*/gi;
 const IPV4 = /\b\d{1,3}(?:\.\d{1,3}){3}\b/g;
 const IPV6 = /\b(?:[0-9a-f]{0,4}:){2,7}[0-9a-f]{0,4}\b/gi;
+/** API keys and anything after `Bearer` (003, FR-042): never written, whatever the field. */
+const API_KEY = /\buk_[0-9a-z]+_[A-Za-z0-9_-]+/g;
+const BEARER = /\bbearer\s+\S+/gi;
 
 export type LogFields = Record<string, unknown>;
 export type Sink = (line: string) => void;
@@ -37,7 +40,12 @@ export interface Logger {
 }
 
 export function redact(value: string): string {
-  return value.replace(URL_LIKE, '[url]').replace(IPV4, '[ip]').replace(IPV6, '[ip]');
+  return value
+    .replace(BEARER, '[credential]')
+    .replace(API_KEY, '[key]')
+    .replace(URL_LIKE, '[url]')
+    .replace(IPV4, '[ip]')
+    .replace(IPV6, '[ip]');
 }
 
 function sanitize(fields: LogFields): LogFields {

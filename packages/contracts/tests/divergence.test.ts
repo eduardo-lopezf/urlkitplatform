@@ -54,6 +54,14 @@ for (const [name, schema] of Object.entries(designedV2.components.schemas))
   if (!(name in designed.components.schemas) && name in generated.components.schemas)
     designed.components.schemas[name] = schema;
 
+/**
+ * v3 part 1 additions (specs/003-api-keys/contracts/api-auth.md): every tool operation also
+ * answers 401 (auth.invalid) and 503 (auth.unavailable). Nothing else in the contract changes.
+ */
+for (const [path, methods] of Object.entries(designed.paths))
+  if (!/^\/(metrics|openapi)/.test(path))
+    for (const op of Object.values(methods)) op.responses = { ...op.responses, 401: {}, 503: {} };
+
 /** Schemas that only exist in the generated document because they are derived from code. */
 const GENERATED_ONLY = new Set(['MessageCode', 'ErrorCode']);
 

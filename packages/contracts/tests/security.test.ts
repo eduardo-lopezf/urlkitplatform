@@ -29,3 +29,22 @@ describe('authentication is declared and optional (Principio IV)', () => {
     }
   });
 });
+
+describe('API key responses (003, contracts/api-auth.md)', () => {
+  const tools = Object.entries(doc.paths).filter(([path]) => !/^\/(metrics|openapi)/.test(path));
+
+  it('every tool endpoint declares 401 auth.invalid and 503 auth.unavailable', () => {
+    expect(tools.length).toBe(10);
+    for (const [path, ops] of tools) {
+      const responses = (ops.post as unknown as { responses: Record<string, unknown> }).responses;
+      expect(responses, path).toHaveProperty('401');
+      expect(responses, path).toHaveProperty('503');
+    }
+  });
+
+  it('declares auth.unavailable as a contract code, and auth.invalid as no longer reserved', () => {
+    const text = JSON.stringify(doc);
+    expect(text).toContain('auth.unavailable');
+    expect(text).not.toMatch(/Reservada: no se emite en el MVP/);
+  });
+});

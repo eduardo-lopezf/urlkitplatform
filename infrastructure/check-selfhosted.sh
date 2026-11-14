@@ -37,9 +37,15 @@ SINCE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 echo 'Servicios'
 running=$(compose ps --status running --services 2>/dev/null)
-for s in redis api egress-guard caddy; do
+for s in redis postgres api egress-guard caddy; do
   if printf '%s\n' "$running" | grep -qx "$s"; then ok "$s en marcha"; else ko "$s" 'no está en marcha'; fi
 done
+# Organizations and key hashes (003): reachable only from the server itself.
+pg_port=$(compose port postgres 5432 2>/dev/null)
+case "$pg_port" in
+  127.0.0.1:*) ok "PostgreSQL solo escucha en loopback ($pg_port)" ;;
+  *) ko 'PostgreSQL' "puerto publicado fuera de loopback: ${pg_port:-ninguno}" ;;
+esac
 if compose port --protocol udp caddy 443 >/dev/null 2>&1; then
   ok 'Caddy publica 443/udp (HTTP/3)'
 else

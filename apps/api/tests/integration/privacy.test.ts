@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { createLogger } from '../../src/privacy/logger.ts';
 import { quotaSubjectInput, subjectHash } from '../../src/privacy/subject-hash.ts';
 import { post, SECRET, T0, testApp } from '../helpers.ts';
+import { generateKey, hashSecret } from '../../src/auth/key-format.ts';
+import { MemoryKeyStore } from '../../src/auth/key-store.ts';
+import { createKeyVerifier } from '../../src/auth/verify.ts';
 
 const SENSITIVE = ['https://', 'utm_source', 'secret-path', '203.0.113.7', '2001:db8'];
 
@@ -198,5 +201,34 @@ describe('subjectHash', () => {
     expect(subjectHash('2001:db8:1:2::1', SECRET, day1)).not.toBe(
       subjectHash('2001:db8:1:3::1', SECRET, day1),
     );
+  });
+});
+
+describe('API keys never reach the logs (003, FR-042)', () => {
+  it('redacts a key even inside an allowed field', () => {
+    const key = generateKey();
+    const lines: string[] = [];
+    createLogger((line) => lines.push(line)).error('oops', { code: `bad ${key.key}` });
+    const out = lines.join('\n');
+    expect(out).not.toContain(key.key);
+    expect(out).not.toContain(key.secret);
+  });
+
+  it('logs no key or secret while serving valid, invalid and unavailable-store requests', async () => {
+    const store = new MemoryKeyStore(() => T0);
+    const org = await store.createOrganization({ name: 'Acme', planId: 'organization' });
+    const key = generateKey();
+    await store.createKey(org.id, key.id, hashSecret(key.secret));
+    const forged = generateKey();
+    const { app, lines } = testApp({ keyVerifier: createKeyVerifier({ store, now: () => T0 }) });
+    const body = { url: 'https://ejemplo.com/secret-path?utm_source=x' };
+    await post(app, '/v1/clean', body, { authorization: `Bearer ${key.key}` });
+    await post(app, '/v1/inspect', body, { authorization: `Bearer ${forged.key}` });
+    await post(app, '/v1/clean', body, { authorization: `Basic ${key.key}` });
+    store.failing = true;
+    await post(app, '/v1/clean', body, { authorization: `Bearer uk_${forged.id}_${key.secret}` });
+    const out = lines.join('\n');
+    for (const needle of [key.key, key.secret, forged.key, forged.secret, ...SENSITIVE])
+      expect(out).not.toContain(needle);
   });
 });

@@ -6,6 +6,7 @@
  *   node apps/api/scripts/reference-check.ts --score <folder>/sc003-review.csv
  *   node apps/api/scripts/reference-check.ts --score <folder>/sc004-review.csv
  *   node apps/api/scripts/reference-check.ts --timing <api base URL> [--limit <n>]
+ *   node apps/api/scripts/reference-check.ts --auth-overhead <api base URL> --key <file> [--limit <n>]
  *
  * - SC-003 (HTTP Headers): status and header names of the final response, compared with what
  *   `curl` receives for the same URL and User-Agent. For the manual half, every response is saved
@@ -212,6 +213,74 @@ async function timing(base: string, limit: number): Promise<string> {
     '| --- | --- | --- |',
     ...slowest,
   ].join('\n');
+}
+
+// ---------------------------------------------------------------- --auth-overhead (003 SC-004)
+
+/**
+ * What a key adds to the response time (003/T047, SC-004: at most 50 ms at p95). It alternates the
+ * same `/v1/clean` request without and with the key, so network tools' variance does not hide the
+ * difference. The key is read from a file, never from the command line. Each anonymous request
+ * carries its own documentation-range client IP (TRUST_PROXY=1) so the anonymous quota does not
+ * stop the run.
+ */
+async function authOverhead(base: string, keyFile: string, count: number): Promise<string> {
+  const key = readFileSync(keyFile, 'utf8').trim();
+  const body = JSON.stringify({ url: 'https://ejemplo.com/?utm_source=x&id=1' });
+  const times = { anonymous: [] as number[], key: [] as number[] };
+  for (let i = 0; i < count; i++) {
+    for (const kind of ['anonymous', 'key'] as const) {
+      const headers: Record<string, string> = {
+        'content-type': 'application/json',
+        'x-forwarded-for': `198.51.100.${(i % 254) + 1}`,
+      };
+      if (kind === 'key') headers.authorization = `Bearer ${key}`;
+      const t0 = performance.now();
+      const res = await fetch(`${base}/v1/clean`, { method: 'POST', headers, body });
+      await res.arrayBuffer();
+      if (res.status !== 200) throw new Error(`${kind}: HTTP ${res.status}`);
+      times[kind].push(performance.now() - t0);
+    }
+  }
+  const p95 = (xs: number[]) =>
+    percentile(
+      [...xs].sort((a, b) => a - b),
+      0.95,
+    );
+  const ms = (x: number) => `${x.toFixed(1)} ms`;
+  const diff = p95(times.key) - p95(times.anonymous);
+  return [
+    `**Fecha**: ${new Date().toISOString()} · **API**: \`${base}\` · **Peticiones**: ${count} de cada tipo`,
+    '',
+    '| Tipo | p50 | p95 |',
+    '| --- | --- | --- |',
+    `| Sin clave | ${ms(
+      percentile(
+        [...times.anonymous].sort((a, b) => a - b),
+        0.5,
+      ),
+    )} | ${ms(p95(times.anonymous))} |`,
+    `| Con clave | ${ms(
+      percentile(
+        [...times.key].sort((a, b) => a - b),
+        0.5,
+      ),
+    )} | ${ms(p95(times.key))} |`,
+    '',
+    `Diferencia en el p95: **${ms(diff)}** (objetivo: ≤ 50 ms) ${diff <= 50 ? '✅' : '❌'}`,
+  ].join('\n');
+}
+
+const overheadArg = process.argv.indexOf('--auth-overhead');
+if (overheadArg !== -1) {
+  const base = process.argv[overheadArg + 1]?.replace(/\/$/, '');
+  const keyArg = process.argv.indexOf('--key');
+  const keyFile = keyArg !== -1 ? process.argv[keyArg + 1] : undefined;
+  if (!base || !keyFile) throw new Error('--auth-overhead needs the API base URL and --key <file>');
+  const limitArg = process.argv.indexOf('--limit');
+  const count = limitArg !== -1 ? Number(process.argv[limitArg + 1]) : 200;
+  process.stdout.write((await authOverhead(base, keyFile, count)) + '\n');
+  process.exit(0);
 }
 
 const timingArg = process.argv.indexOf('--timing');

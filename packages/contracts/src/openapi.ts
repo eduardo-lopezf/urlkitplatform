@@ -25,6 +25,14 @@ const RATE_LIMIT_HEADERS = {
 const json = (schema: z.ZodType) => ({ 'application/json': { schema } });
 
 const badRequest = { description: 'Entrada inválida', content: json(ToolErrorSchema) };
+const unauthorized = {
+  description:
+    'Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.',
+  headers: { 'WWW-Authenticate': { schema: { type: 'string' as const } } },
+  content: json(ToolErrorSchema),
+};
+const authUnavailable =
+  'No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.';
 const quotaExceeded = {
   description: 'Límite de uso alcanzado',
   headers: { 'Retry-After': { schema: { type: 'integer' as const } }, ...RATE_LIMIT_HEADERS },
@@ -55,10 +63,16 @@ function tool(
     responses: {
       200: { description, headers: RATE_LIMIT_HEADERS, content: json(result) },
       400: badRequest,
+      401: unauthorized,
       429: quotaExceeded,
-      ...(extra.unavailable === undefined
-        ? {}
-        : { 503: { description: extra.unavailable, content: json(ToolErrorSchema) } }),
+      503: {
+        description:
+          extra.unavailable === undefined
+            ? authUnavailable
+            : `${extra.unavailable} ${authUnavailable}`,
+        headers: { 'Retry-After': { schema: { type: 'integer' as const } } },
+        content: json(ToolErrorSchema),
+      },
     },
   });
 }
@@ -71,12 +85,7 @@ export function buildOpenApiDocument() {
     scheme: 'bearer',
     bearerFormat: 'urlkit-api-key',
     description:
-      'Clave de API en `Authorization: Bearer <clave>`. Declarada desde la v1 y opcional: sin uso en el MVP. Cuando se active, la clave determinará el sujeto de la cuota (`api-key` u `organization`) y las cabeceras `RateLimit-*` serán las mismas que para el visitante anónimo.',
-  });
-  registry.registerComponent('responses', 'Unauthorized', {
-    description:
-      'Clave de API ausente o inválida. Reservada: no se emite en el MVP, donde la clave es opcional.',
-    content: { 'application/json': { schema: { $ref: '#/components/schemas/ToolError' } } },
+      'Clave de API de una organización en `Authorization: Bearer uk_<id>_<secreto>`. Opcional: sin cabecera, la petición es anónima como siempre. Con una clave válida, la cuota es la del plan de la organización, compartida por todas sus claves, con las mismas cabeceras `RateLimit-*`. Las claves son para integraciones de servidor a servidor: CORS no permite enviarlas desde otros orígenes.',
   });
 
   tool(
@@ -207,9 +216,9 @@ export function buildOpenApiDocument() {
     openapi: '3.1.0',
     info: {
       title: 'URLkit API',
-      version: '1.1.0',
+      version: '1.2.0',
       description:
-        'API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto.',
+        'API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto. La 1.2.0 activa, de forma compatible, las claves de API de organizaciones: sin clave nada cambia.',
     },
     servers: [
       { url: 'https://api.urlkit.example/v1', description: 'Producción (dominio provisional)' },

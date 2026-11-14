@@ -3,11 +3,19 @@ on: [push, pull_request]
 jobs:
   quality:
     runs-on: ubuntu-latest
-    # Real Valkey so apps/api/tests/integration/valkey.test.ts runs instead of being skipped.
+    # Real Valkey and PostgreSQL so the integration tests (valkey.test.ts and the 003 database
+    # tests) run instead of being skipped.
     services:
       redis:
         image: valkey/valkey:8-alpine
         ports: ['6379:6379']
+      postgres:
+        image: postgres:17-alpine
+        env: { POSTGRES_USER: urlkit, POSTGRES_PASSWORD: urlkit, POSTGRES_DB: urlkit }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U urlkit -d urlkit" --health-interval 5s --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -18,7 +26,11 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm boundaries
       - run: pnpm test
-        env: { REDIS_URL: 'redis://localhost:6379' }
+        env:
+          REDIS_URL: 'redis://localhost:6379'
+          DATABASE_URL: 'postgres://urlkit:urlkit@localhost:5432/urlkit'
+          # pg_dump/pg_restore of the server's major version, for the backup test (003/T045).
+          PG_TOOLS: 'docker run --rm -i --network host postgres:17-alpine'
       - run: pnpm --filter @urlkit/web exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - run: pnpm build

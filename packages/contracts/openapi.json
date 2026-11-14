@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "URLkit API",
-    "version": "1.1.0",
-    "description": "API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto."
+    "version": "1.2.0",
+    "description": "API v1 de URLkit. Anónima y gratuita con limitación de tasa por IP seudonimizada. Las URLs enviadas no se almacenan ni se registran. El esquema `apiKey` está declarado desde esta versión y es opcional. La 1.1.0 añade, de forma compatible, las herramientas de análisis técnico de la v2 del producto. La 1.2.0 activa, de forma compatible, las claves de API de organizaciones: sin clave nada cambia."
   },
   "servers": [
     {
@@ -31,19 +31,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "urlkit-api-key",
-        "description": "Clave de API en `Authorization: Bearer <clave>`. Declarada desde la v1 y opcional: sin uso en el MVP. Cuando se active, la clave determinará el sujeto de la cuota (`api-key` u `organization`) y las cabeceras `RateLimit-*` serán las mismas que para el visitante anónimo."
-      }
-    },
-    "responses": {
-      "Unauthorized": {
-        "description": "Clave de API ausente o inválida. Reservada: no se emite en el MVP, donde la clave es opcional.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ToolError"
-            }
-          }
-        }
+        "description": "Clave de API de una organización en `Authorization: Bearer uk_<id>_<secreto>`. Opcional: sin cabecera, la petición es anónima como siempre. Con una clave válida, la cuota es la del plan de la organización, compartida por todas sus claves, con las mismas cabeceras `RateLimit-*`. Las claves son para integraciones de servidor a servidor: CORS no permite enviarlas desde otros orígenes."
       }
     },
     "schemas": {
@@ -295,6 +283,7 @@
           "quota.exceeded",
           "auth.missing",
           "auth.invalid",
+          "auth.unavailable",
           "request.invalid",
           "request.too-large",
           "internal.error"
@@ -335,6 +324,7 @@
           "quota.exceeded",
           "auth.missing",
           "auth.invalid",
+          "auth.unavailable",
           "request.invalid",
           "request.too-large",
           "internal.error"
@@ -1773,6 +1763,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -1794,6 +1801,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -1871,6 +1895,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -1892,6 +1933,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -1995,6 +2053,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2016,6 +2091,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2109,6 +2201,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2130,6 +2239,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2208,6 +2334,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2229,6 +2372,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2323,6 +2483,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2344,6 +2521,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2438,6 +2632,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2459,6 +2670,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2556,6 +2784,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2577,6 +2822,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },
@@ -2682,6 +2944,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2715,7 +2994,14 @@
             }
           },
           "503": {
-            "description": "Ningún resolutor respondió (dns.unavailable). El cliente puede reintentar; el uso no se descuenta de la cuota.",
+            "description": "Ningún resolutor respondió (dns.unavailable). El cliente puede reintentar; el uso no se descuenta de la cuota. No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2807,6 +3093,23 @@
               }
             }
           },
+          "401": {
+            "description": "Cabecera `Authorization` presente pero no válida: vacía, con otro esquema, mal formada, inexistente, revocada o de una organización desactivada (auth.invalid). El cuerpo es el mismo en todos los casos. Cada respuesta 401 consume un uso de la cuota anónima de quien la envía.",
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
           "429": {
             "description": "Límite de uso alcanzado",
             "headers": {
@@ -2828,6 +3131,23 @@
               "RateLimit-Reset": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "No se pudo comprobar la clave porque su almacenamiento no responde (auth.unavailable). Reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
                 }
               }
             },

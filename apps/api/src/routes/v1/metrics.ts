@@ -1,7 +1,7 @@
 import { createRoute, type OpenAPIHono } from '@hono/zod-openapi';
 import { MetricsEvent, ToolErrorSchema } from '@urlkit/contracts';
 import type { AppDeps } from '../../app.ts';
-import { applyQuota, identify, quotaExceeded } from './shared.ts';
+import { applyQuota, identifyAnonymous, quotaExceeded } from './shared.ts';
 
 const route = createRoute({
   method: 'post',
@@ -23,8 +23,8 @@ const route = createRoute({
 export function registerMetrics(app: OpenAPIHono, deps: AppDeps): void {
   app.openapi(route, async (c) => {
     const event = c.req.valid('json');
-    const subject = identify(c, deps);
-    const quota = await applyQuota(c, deps, subject, 'metrics');
+    const subject = identifyAnonymous(c, deps); // keys are ignored here
+    const quota = await applyQuota(c, deps, { subject }, 'metrics');
     if (!quota.allowed) return quotaExceeded(c, deps, 'metrics', quota);
     deps.metrics.toolRun(event.tool, event.outcome);
     return c.body(null, 204);

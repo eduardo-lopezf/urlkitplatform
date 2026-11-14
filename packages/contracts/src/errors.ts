@@ -6,10 +6,15 @@ import { CODES, ERROR_CODES } from '@urlkit/core/codes';
 
 export const CONTRACT_CODES = [
   'quota.exceeded',
-  /** Reserved for v3 (API keys). Never emitted in the MVP. */
+  /** Reserved: no endpoint requires a key yet (003, research R8). */
   'auth.missing',
-  /** Reserved for v3 (API keys). Never emitted in the MVP. */
+  /**
+   * An `Authorization` header that is present but not a valid key: empty, another scheme,
+   * malformed, unknown, revoked, or of an inactive organization. Same body in every case (003).
+   */
   'auth.invalid',
+  /** The key could not be checked because its storage does not answer; retry later (003). */
+  'auth.unavailable',
   /** The request body does not match the contract (wrong JSON, missing or mistyped field). */
   'request.invalid',
   /** The request body is larger than the accepted size. */

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://urlkit.example/schemas/plans.json",
+  "title": "URLkit API plans",
+  "type": "object",
+  "required": ["plans"],
+  "additionalProperties": false,
+  "properties": {
+    "$comment": { "type": "string" },
+    "plans": {
+      "type": "object",
+      "required": ["anonymous"],
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,39}$" },
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "propertyNames": {
+          "enum": ["inspect", "local", "metrics", "headers", "metadata", "tls", "dns", "security"]
+        },
+        "additionalProperties": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "hour": { "type": "integer", "minimum": 1 },
+            "day": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    }
+  }
+}

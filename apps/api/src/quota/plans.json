@@ -1,0 +1,24 @@
+{
+  "$comment": "Plans of the API (003, research R4). Versioned with the code and reviewed like it (Principio X). A bucket missing from a plan falls back to `anonymous`; no plan is ever unlimited.",
+  "plans": {
+    "anonymous": {
+      "inspect": { "hour": 10, "day": 50 },
+      "local": { "hour": 600 },
+      "metrics": { "hour": 300 },
+      "headers": { "hour": 10, "day": 50 },
+      "metadata": { "hour": 10, "day": 50 },
+      "tls": { "hour": 10, "day": 50 },
+      "dns": { "hour": 10, "day": 50 },
+      "security": { "hour": 10, "day": 50 }
+    },
+    "organization": {
+      "inspect": { "hour": 100, "day": 1000 },
+      "local": { "hour": 6000 },
+      "headers": { "hour": 100, "day": 1000 },
+      "metadata": { "hour": 100, "day": 1000 },
+      "tls": { "hour": 100, "day": 1000 },
+      "dns": { "hour": 100, "day": 1000 },
+      "security": { "hour": 100, "day": 1000 }
+    }
+  }
+}

@@ -9,7 +9,14 @@ import {
 import type { AppDeps } from '../../app.ts';
 import { withSpan } from '../../observability/tracing.ts';
 import { localize } from '../../presentation/localize.ts';
-import { applyQuota, badRequest, identify, measure, quotaExceeded } from './shared.ts';
+import {
+  AUTH_RESPONSES,
+  applyQuota,
+  badRequest,
+  identify,
+  measure,
+  quotaExceeded,
+} from './shared.ts';
 
 const route = createRoute({
   method: 'post',
@@ -31,6 +38,7 @@ const route = createRoute({
       description: 'Límite de uso alcanzado',
       content: { 'application/json': { schema: ToolErrorSchema } },
     },
+    ...AUTH_RESPONSES,
   },
 });
 
@@ -45,9 +53,11 @@ export function registerHeaders(app: OpenAPIHono, deps: AppDeps): void {
   app.openapi(route, async (c) => {
     const input = c.req.valid('json');
     const { lang } = c.req.valid('query');
-    const subject = identify(c, deps);
-    const quota = await applyQuota(c, deps, subject, 'headers');
-    if (!quota.allowed) return quotaExceeded(c, deps, 'headers', quota);
+    const who = await identify(c, deps, 'headers', 'headers');
+    if (!('subject' in who)) return who;
+    const { subject } = who;
+    const quota = await applyQuota(c, deps, who, 'headers');
+    if (!quota.allowed) return quotaExceeded(c, deps, 'headers', quota, subject.type);
     const result = await withSpan(
       'headers',
       { 'urlkit.tool': 'headers', 'url.registrable_domain': domainOf(input.url) },

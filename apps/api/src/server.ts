@@ -21,6 +21,13 @@ import { createLogger } from './privacy/logger.ts';
 import { clientIpFrom } from './quota/client-ip.ts';
 import { createLimiter } from './quota/limiter.ts';
 import { MemoryStore, RedisStore, type QuotaStore } from './quota/store.ts';
+import { createDb, type Db } from './db/client.ts';
+import { migrateToLatest } from './db/migrate.ts';
+import { createPgKeyStore } from './db/key-store.ts';
+import { createKeyVerifier, disabledVerifier } from './auth/verify.ts';
+import { createPgUsageStore } from './db/usage-store.ts';
+import { createUsageRecorder, noUsageRecorder } from './usage/record.ts';
+import { pruneUsage } from './usage/prune.ts';
 
 const env = process.env;
 const production = env.NODE_ENV === 'production';
@@ -51,6 +58,27 @@ async function quotaStore(): Promise<QuotaStore> {
   );
 }
 
+/**
+ * The database of organizations and API keys (003, research R10). Without DATABASE_URL keys are
+ * disabled outside production; in production the API refuses to start, as without REDIS_URL.
+ * Pending migrations are applied before listening.
+ */
+async function database(): Promise<Db | null> {
+  if (!env.DATABASE_URL) {
+    if (production) {
+      logger.error('config.invalid', { code: 'DATABASE_URL is required in production' });
+      process.exit(1);
+    }
+    logger.warn('keys.disabled', {
+      code: 'DATABASE_URL not set: API keys are disabled (development only)',
+    });
+    return null;
+  }
+  const db = createDb(env.DATABASE_URL);
+  await migrateToLatest(db.kysely);
+  return db;
+}
+
 /** Behind Caddy (TRUST_PROXY=1) the client IP comes from X-Forwarded-For. */
 function clientIp(c: Context): string {
   return clientIpFrom({
@@ -64,11 +92,22 @@ await initTracing(env);
 await initErrorReporting(env);
 
 const safeFetch = createSafeFetch();
+const db = await database();
+const usage = db ? createPgUsageStore(db.kysely) : null;
+if (usage) {
+  // Retention of usage counts (FR-033): at start-up and then once a day.
+  const prune = () =>
+    pruneUsage(usage).catch(() =>
+      logger.warn('usage.prune-failed', { code: 'usage.prune-failed' }),
+    );
+  void prune();
+  setInterval(prune, 24 * 60 * 60 * 1000).unref();
+}
 const app = createApp({
   catalog,
   secret,
   now: Date.now,
-  limiter: createLimiter({ store: await quotaStore() }),
+  limiter: createLimiter({ store: await quotaStore(), logger }),
   logger,
   metrics: createMetrics(),
   webOrigin: env.WEB_ORIGIN ?? 'http://localhost:4321',
@@ -78,6 +117,8 @@ const app = createApp({
   dnsQuerier: () => createQueryDns(),
   securityAdapters: () => createSecurityAdapters({ safeFetch }),
   clientIp,
+  keyVerifier: db ? createKeyVerifier({ store: createPgKeyStore(db.kysely) }) : disabledVerifier,
+  usageRecorder: usage ? createUsageRecorder({ store: usage, logger }) : noUsageRecorder,
 });
 
 const port = Number(env.PORT ?? 8787);

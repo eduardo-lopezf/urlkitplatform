@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --watch src/server.ts",
     "start": "node src/server.ts",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "admin": "node src/admin/cli.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.6",
@@ -26,11 +27,14 @@
     "dns-packet": "^5.6.1",
     "hono": "^4.13.16",
     "ioredis": "^6.0.0",
+    "kysely": "^0.29.9",
+    "pg": "^8.23.1",
     "undici": "^8.12.4",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/dns-packet": "^5.6.5",
+    "@types/pg": "^8.23.1",
     "ajv": "^8.20.0",
     "yaml": "^2.9.1"
   }
