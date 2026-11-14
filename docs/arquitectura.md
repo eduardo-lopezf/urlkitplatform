@@ -79,8 +79,8 @@ de la sección 11.
 | Componente | Tecnología | Responsabilidad |
 |---|---|---|
 | Persistencia | PostgreSQL | Cuentas, organizaciones, claves de API, trabajos, informes, historial |
-| ORM | SQLAlchemy 2 | Acceso a datos del servicio que posee el esquema |
-| Migraciones | Alembic | Evolución del esquema |
+| Acceso a datos | `kysely` sobre `pg`, en `apps/api` | Consultas tipadas del servicio que posee el esquema. La API Node es la que valida las claves en cada petición, así que es la dueña; un servicio Python solo para tres tablas añadiría un lenguaje y una llamada por petición (`specs/003-api-keys/research.md`, R1) |
+| Migraciones | Migrador de Kysely, con `up` y `down` | Evolución del esquema con plan de reversión |
 | Cola de trabajos | arq (Python) o BullMQ (Node), según el servicio dueño | Análisis por lotes e informes |
 | Pagos | Stripe | Planes y API de pago |
 
@@ -159,7 +159,7 @@ El sistema habla TypeScript, Python y SQL. Ningún tipo cruza una frontera sin c
 | Núcleo ↔ catálogo de reglas | Esquema del catálogo | JSON Schema | Semántico propio (sección 6) | Validación en CI + corpus |
 | Adaptadores ↔ catálogo de mensajes | Lista de códigos | Códigos + parámetros | Deprecación anunciada (sección 7) | Paridad de claves entre idiomas |
 | Servicio ↔ Valkey | Convención de claves | Prefijo con versión | Prefijo nuevo al cambiar formato | Integración |
-| Servicio ↔ PostgreSQL (v3) | Esquema SQL | Migraciones Alembic | Migración con plan de reversión | Integración |
+| Servicio ↔ PostgreSQL (v3) | Esquema SQL | Migraciones Kysely (`up`/`down`) | Migración con plan de reversión | Integración |
 
 Reglas que aplican a todas:
 
@@ -472,3 +472,4 @@ lugar de confiar en los logs.
 | 1.2.0 | 2026-11-06 | Superficie SSRF completa desde el MVP con vectores compartidos entre lenguajes; contratos preparados para claves de API, cuotas por organización y persistencia futura; límites estrictos del servicio de sondas |
 | 1.3.0 | 2026-11-10 | Despliegue del MVP en un VPS autogestionado con Compose; proveedor gestionado con autoescalado y Valkey gestionado cuando el tráfico lo pida |
 | 1.4.0 | 2026-11-11 | Versión 2 en Node dentro de `apps/api`: condición de la sección 11 evaluada y frontera de Python cerrada; pila de la versión 2 sustituida; `services/probes/` sin etapa |
+| 1.5.0 | 2026-11-13 | Versión 3, primera parte (claves de API): PostgreSQL propiedad de la API Node, con `kysely` sobre `pg` y su migrador en lugar de SQLAlchemy y Alembic |
