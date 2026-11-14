@@ -112,7 +112,8 @@ Así se despliega el MVP (research R12): la web en Cloudflare Pages y la API en 
 
 ```bash
 git clone -b production <repositorio> urlkit && cd urlkit
-cp .env.example .env        # rellenar QUOTA_SECRET (openssl rand -hex 32), API_DOMAIN, WEB_ORIGIN
+cp .env.example .env        # rellenar QUOTA_SECRET (openssl rand -hex 32), POSTGRES_PASSWORD
+                            # (openssl rand -hex 24), API_DOMAIN y WEB_ORIGIN
 docker compose --profile selfhosted up -d --build
 ```
 
@@ -132,7 +133,7 @@ infrastructure/check-selfhosted.sh
 
 Lee `API_DOMAIN` de `.env` y comprueba:
 
-- los cuatro servicios y el 443/udp;
+- los cinco servicios (con `postgres`) y el 443/udp;
 - las 16 reglas de salida, y que **bloquean**: la API intenta conectar con `10.255.255.1` y el
   contador de la regla `DROP` de `10.0.0.0/8` tiene que subir. Una regla que existe pero no se
   recorre, por otro motor de `iptables` u otra cadena, no bloquea nada. Fallar la conexión no basta,
@@ -153,8 +154,50 @@ El servidor sigue la rama `production`, la misma que publica la web (ver "Public
 git pull && docker compose --profile selfhosted up -d --build && infrastructure/check-selfhosted.sh
 ```
 
-No hay datos que migrar ni copias que hacer: Valkey solo guarda contadores con caducidad, y los
-certificados de Caddy viven en el volumen `caddy_data`. Lo único que hay que conservar es `.env`.
+La API aplica sola las migraciones pendientes de la base de datos al arrancar. Valkey solo guarda
+contadores con caducidad y los certificados de Caddy viven en el volumen `caddy_data`. Lo que hay
+que conservar es `.env` y las copias de PostgreSQL (ver "Copias de seguridad").
+
+### Claves de API
+
+Las organizaciones y sus claves se gestionan con la herramienta de administración, dentro del
+contenedor de la API ([contrato](../specs/003-api-keys/contracts/admin-cli.md)). No hay ningún
+endpoint de administración.
+
+```bash
+docker compose exec api node apps/api/src/admin/cli.ts plans list
+docker compose exec api node apps/api/src/admin/cli.ts org create --name "Acme" --plan organization
+docker compose exec api node apps/api/src/admin/cli.ts key create Acme      # la clave se muestra una vez
+docker compose exec api node apps/api/src/admin/cli.ts key list Acme
+docker compose exec api node apps/api/src/admin/cli.ts key revoke <id>      # efecto en menos de 1 min
+docker compose exec api node apps/api/src/admin/cli.ts org deactivate Acme  # todas sus claves dejan de funcionar
+docker compose exec api node apps/api/src/admin/cli.ts usage show Acme --from 2026-11-01
+```
+
+Con `--json` la salida es JSON. La clave completa solo aparece en la salida de `key create`: hazla
+llegar al cliente por un canal seguro y no la guardes en el servidor. Antes de dar la primera clave
+a un tercero, `docs/privacidad.md` describe qué se guarda (ya lo hace).
+
+### Copias de seguridad
+
+PostgreSQL guarda las organizaciones, los resúmenes de las claves y los recuentos de uso. Si se
+pierde, todas las claves dejan de funcionar. Una copia diaria basta:
+
+```bash
+docker compose exec -T postgres pg_dump -U urlkit --format=custom urlkit > urlkit-$(date +%F).dump
+```
+
+Para restaurar en una base vacía (por ejemplo, en un servidor nuevo, antes de arrancar la API):
+
+```bash
+docker compose up -d postgres
+docker compose exec -T postgres pg_restore -U urlkit -d urlkit --clean --if-exists < urlkit-AAAA-MM-DD.dump
+docker compose --profile selfhosted up -d
+```
+
+Las claves activas siguen funcionando y las revocadas siguen revocadas; lo comprueba
+`apps/api/tests/integration/backup.test.ts`. Guarda las copias fuera del servidor: contienen los
+nombres de las organizaciones, pero ninguna clave ni dato de las peticiones.
 
 ### Poner o cambiar el dominio, o el proveedor de DNS
 

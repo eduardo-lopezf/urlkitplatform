@@ -1,6 +1,6 @@
 # Privacidad: qué se guarda, qué no y por qué
 
-**Estado**: vigente | **Fecha**: 2026-11-11
+**Estado**: vigente | **Fecha**: 2026-11-13
 
 Este documento describe los compromisos de privacidad del producto y cómo se materializan. No es
 un texto legal: es la descripción técnica que cualquier persona puede verificar y que el equipo
@@ -59,9 +59,10 @@ registros.
 
 ## Qué no se guarda nunca
 
-- **Las URLs enviadas.** No hay base de datos en la que puedan estar: el MVP no tiene
-  persistencia. Y cuando llegue (v3, para historial e informes), guardar algo requerirá que tú lo
-  pidas explícitamente.
+- **Las URLs enviadas.** La única base de datos guarda organizaciones con clave de API y sus
+  recuentos de uso (ver "Claves de API para organizaciones"), y no tiene ninguna columna en la que
+  pueda caber una URL. Cuando llegue el historial (v3), guardar algo requerirá que tú lo pidas
+  explícitamente.
 - **Las URLs en los registros.** Los registros estructurados del servidor excluyen por
   construcción los campos de URL, consulta y dirección IP. No es una política: es un filtro en el
   propio registrador, con una prueba que lo verifica.
@@ -98,6 +99,29 @@ Consecuencia honesta: si compartes red con mucha gente —una oficina, una unive
 compartís el contador. El mensaje de límite lo explica, y las cuatro herramientas locales siguen
 funcionando sin límite porque no pasan por el servidor. Si los resolutores DNS no responden, esa
 consulta no cuenta para tu límite.
+
+## Claves de API para organizaciones
+
+Desde la v3, una organización puede usar la API con una clave que le da el equipo de URLkit, para
+tener límites mayores que los anónimos. Sin clave, todo funciona como siempre y no se guarda nada.
+La web no usa claves.
+
+De una organización con clave se guarda **solo** esto:
+
+| Dato | Para qué | Cuánto tiempo |
+|---|---|---|
+| Nombre y una nota interna del equipo | Saber de quién es cada clave | Mientras exista la organización |
+| Plan asignado y estado (activa o desactivada) | Aplicar sus límites | Mientras exista la organización |
+| Resumen SHA-256 de cada clave, su identificador corto y sus fechas | Comprobar la clave en cada petición, sin poder reconstruirla | Mientras exista la organización; una clave revocada queda como revocada |
+| Recuento diario de usos por clave y herramienta | Ver el consumo y decidir el plan | **13 meses**; después se borra solo |
+
+No se guarda la clave completa (se muestra una sola vez, al crearla), ni datos personales de
+contacto, ni ninguna URL, consulta, resultado o dirección IP de las peticiones: el recuento es un
+número por día. Las claves nunca aparecen en los registros, las trazas ni el servicio de errores.
+
+Solo el equipo de URLkit puede ver estos datos, con una herramienta de administración que se
+ejecuta en el propio servidor; no hay ninguna página ni endpoint público que los muestre. A la base
+de datos solo se puede conectar desde el propio servidor.
 
 ## Qué se mide
 
@@ -201,7 +225,10 @@ Cloudflare, o declarar en la tabla que no lo publica, como ya se hace.
 
 - **v2** (HTTP Headers, Metadata, TLS, DNS y Security Analysis): ya disponible. Lo que llega al
   servidor con cada una está descrito arriba, en "Las herramientas de análisis técnico".
-- **v3** (cuentas, historial, informes): guardar algo será **opcional y explícito**. Tener cuenta
-  no cambiará el funcionamiento de las herramientas gratuitas, y seguirán usándose sin cuenta.
+- **v3, primera parte** (claves de API para organizaciones): ya disponible. Qué se guarda está
+  arriba, en "Claves de API para organizaciones".
+- **v3, siguientes partes** (cuentas, historial, informes): guardar algo será **opcional y
+  explícito**. Tener cuenta no cambiará el funcionamiento de las herramientas gratuitas, y seguirán
+  usándose sin cuenta.
 
 Cualquier cambio en este documento se hace junto al cambio de código que lo motiva, nunca después.

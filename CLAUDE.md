@@ -63,6 +63,19 @@ responden de forma estable, con un máximo del 10 % de excluidos y su causa regi
 `apps/api/scripts/reference-check.ts` comprueba esa estabilidad por sí mismo. La v2 se hizo entera
 en Node: el servicio de sondas en Python no entró (`docs/arquitectura.md` §11).
 
+La v3, primera parte (`specs/003-api-keys`, claves de API y cuotas por plan), está **implementada
+en local** con las puertas de calidad en verde; su despliegue va con el resto (T111–T114). Es la
+primera persistencia del producto:
+
+- PostgreSQL es propiedad de `apps/api`, con `kysely` sobre `pg` y su migrador (`src/db/`); la
+  API aplica las migraciones al arrancar. Nadie más toca esas tablas (Principio IX).
+- Las organizaciones y sus claves se gestionan con la CLI `apps/api/src/admin/cli.ts`, que se
+  ejecuta dentro del contenedor de la API (`docker compose exec api node apps/api/src/admin/cli.ts …`).
+  No hay endpoint de administración.
+- Sin `DATABASE_URL` las claves están desactivadas fuera de producción; en producción la API no
+  arranca sin ella.
+- Los planes son datos versionados en `apps/api/src/quota/plans.json`, no tablas.
+
 Despliegue, lo que no se deduce del código:
 
 - `infrastructure/check-selfhosted.sh` comprueba el perfil `selfhosted` igual en local, en el VPS
@@ -75,7 +88,11 @@ Despliegue, lo que no se deduce del código:
   producción: activarlos exige antes su fila en `docs/privacidad.md`.
 
 `RedisStore` se prueba contra Valkey real con `REDIS_URL=redis://localhost:6379 pnpm test`
-(sin `REDIS_URL`, esa prueba se salta; en CI hay un servicio Valkey y se ejecuta). En Node 26,
+(sin `REDIS_URL`, esa prueba se salta; en CI hay un servicio Valkey y se ejecuta). Igual con
+PostgreSQL: `DATABASE_URL=postgres://urlkit:urlkit@localhost:5432/urlkit` (cada suite crea y borra
+su propia base); la prueba de copias necesita además `PG_TOOLS="docker compose exec -T postgres"`
+y `PG_TOOLS_HOST=localhost:5432`. Si el 5432 está ocupado, `POSTGRES_PORT` mueve el puerto de
+desarrollo. En Node 26,
 `astro check` no arranca (dependencia transitiva rota); `pnpm typecheck` usa `vue-tsc`. Para e2e
 con el Chrome instalado: `PW_CHANNEL=chrome pnpm test:e2e`.
 
@@ -201,8 +218,9 @@ la spec primero.
 
 ## Lo que todavía no existe y no hay que crear
 
-- **Base de datos, ORM, migraciones y colas**: llegan en la v3 con cuentas, historial, lotes e
-  informes. El MVP no guarda nada.
+- **Colas, cuentas con sesión, historial, lotes e informes**: llegan en partes posteriores de la
+  v3. La base de datos ya existe (PostgreSQL, ver "Estado actual"), pero solo guarda
+  organizaciones, resúmenes de claves y recuentos de uso; nunca URLs.
 - **`services/probes/` (Python)**: no entró en la v2, porque Node resolvió su alcance
   (`docs/arquitectura.md` §11). Solo se crea si una necesidad futura reabre esa sección. No hay
   código Python de producción.
