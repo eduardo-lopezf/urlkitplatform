@@ -118,6 +118,11 @@ docker compose --profile selfhosted up -d --build
 
 Caddy pide el certificado de `API_DOMAIN` al arrancar; el registro DNS tiene que existir antes.
 
+**Sin dominio todavía.** Con `API_DOMAIN=localhost` la pila arranca igual: Caddy usa su CA local y
+no pide nada fuera. Así se comprueba el servidor, Docker y egress-guard antes de decidir el dominio
+o el DNS. Mientras tanto basta con abrir el 22/tcp en el cortafuegos: la comprobación se ejecuta en
+el propio servidor, contra `https://localhost`.
+
 Comprobación, la misma en local, en el servidor y en CI (trabajo `egress-linux`, sobre Docker
 Engine en Linux):
 
@@ -150,6 +155,30 @@ git pull && docker compose --profile selfhosted up -d --build && infrastructure/
 
 No hay datos que migrar ni copias que hacer: Valkey solo guarda contadores con caducidad, y los
 certificados de Caddy viven en el volumen `caddy_data`. Lo único que hay que conservar es `.env`.
+
+### Poner o cambiar el dominio, o el proveedor de DNS
+
+El dominio de la API solo existe en `.env` (`API_DOMAIN`, y `WEB_ORIGIN` para CORS); ni el código ni
+la imagen dependen de él ni del proveedor de DNS. Para poner el primero o cambiarlo:
+
+1. Crear el registro `A` del nuevo nombre a la IP del VPS en el DNS que toque (ver "2. DNS") y
+   esperar a que resuelva.
+2. Abrir 80/tcp, 443/tcp y 443/udp en el cortafuegos del proveedor. El 80 lo necesita Caddy para
+   obtener el certificado.
+3. Editar `API_DOMAIN` (y `WEB_ORIGIN` si cambia la web) en `.env` y aplicar:
+
+   ```bash
+   docker compose --profile selfhosted up -d && infrastructure/check-selfhosted.sh
+   ```
+
+   Compose recrea Caddy y la API con el valor nuevo, y Caddy pide el certificado del nombre nuevo.
+
+4. Si cambia el nombre de la API, la web hay que reconstruirla con el `PUBLIC_API_URL` nuevo, que
+   también fija la CSP (ver "5. Web en Cloudflare Pages").
+
+Cambiar de proveedor de DNS es lo mismo sin tocar `.env`: crear el registro `A` en el nuevo y mover
+los servidores de nombres del dominio. Lo único propio de Cloudflare es que el registro vaya en
+modo **solo DNS**, y su fila en `docs/privacidad.md`, que hay que actualizar si cambia.
 
 ### 5. Web en Cloudflare Pages
 
