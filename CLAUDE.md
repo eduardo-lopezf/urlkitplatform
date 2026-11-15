@@ -36,7 +36,7 @@ Si no modificaste ningún fichero, dilo explícitamente.
 
 El MVP está **implementado y en validación**: las cinco herramientas, la API `/v1` y la web
 funcionan en local con todas las puertas de calidad en verde. En `specs/001-mvp-url-toolkit/tasks.md`
-hay 127 de 132 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas; el
+hay 128 de 133 tareas marcadas. Quedan abiertas T103 (prueba de usabilidad con personas; el
 protocolo está ensayado y se hace en una sesión conjunta con 002/T098b) y
 T111–T114 (despliegue: necesitan el VPS, el dominio y las cuentas; la guía está en
 `infrastructure/README.md`, "Despliegue autogestionado"). Todo lo que se podía preparar en local

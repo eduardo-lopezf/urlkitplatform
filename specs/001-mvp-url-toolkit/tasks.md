@@ -290,6 +290,7 @@ botones; la URL se conserva; un enlace copiado reproduce la entrada en otra vent
 - [X] T099 [P] Add security headers (strict CSP without inline scripts from third parties, `Referrer-Policy: no-referrer`, `Permissions-Policy`, HSTS) to static hosting config in `apps/web/public/_headers`
 - [X] T100 [P] Add an "Acerca de / Privacidad" page explaining no ads, no account, no cookies and what anonymous counters exist in `apps/web/src/pages/[lang]/about.astro`
 - [X] T101 [P] Publish human-readable API docs page rendered from `/v1/openapi.json` in `apps/web/src/pages/[lang]/api.astro`
+- [X] T101a [P] Write e2e test for the pages that are not tools (`/es/`, `/en/`, `/es/about`, `/en/about`, `/es/api`, `/en/api`): axe AA and no horizontal scroll, in both Playwright projects (desktop and 320 px), in `apps/web/tests/e2e/pages.spec.ts`. Added on 2026-11-15: an axe failure on `/api` (scrollable code blocks unreachable by keyboard) had gone unnoticed because only the tool pages ran axe (SC-008)
 - [X] T102 Run `pnpm size` and `pnpm lhci`, fix any page over budget (JS inicial < 150 KB, carga < 1 s 4G) in `apps/web/`
 - [ ] T103 Run a usability check for SC-007 (≥ 90 % of non-technical participants identify the real domain with Explain URL) and record results in `specs/001-mvp-url-toolkit/validation/usability.md`
 - [X] T104 [P] Write project `README.md` (what it is, how to run, links to spec and constitution) at repository root
