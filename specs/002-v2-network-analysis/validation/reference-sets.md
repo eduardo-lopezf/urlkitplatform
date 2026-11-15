@@ -320,7 +320,8 @@ Las dos hojas están preparadas (ver «Muestra humana de SC-003 y SC-004»).
 
 ## Muestra humana de SC-003 y SC-004
 
-**Estado**: preparada el 2026-11-12, pendiente de que una persona la rellene. Las dos muestras salen
+**Estado**: preparada el 2026-11-12. Revisada por Claude el 2026-11-15 (ver «Revisión de Claude»);
+la revisión humana sigue pendiente. Las dos muestras salen
 de las instantáneas del 2026-11-12, que son las mismas que se evaluaron. Están ignoradas por git:
 quien revise necesita la copia local de `apps/api/scripts/out/`. La semilla es fija (`20261112`),
 así que la selección es reproducible.
@@ -379,3 +380,31 @@ Se fusiona cada hoja con los valores de URLkit y se pasa por
 
 Objetivo: el 95 % o más en cada una. Cualquier desacuerdo se investiga como un posible fallo
 antes de puntuar.
+
+### Revisión de Claude (2026-11-15)
+
+Se rellenaron las dos hojas en copias aparte, para que las originales sigan en blanco para la
+persona: [`sc003-sample-2026-11-12.claude.csv`](./sc003-sample-2026-11-12.claude.csv) y
+[`sc004-sample-2026-11-12.claude.csv`](./sc004-sample-2026-11-12.claude.csv). Cada fila lleva su
+justificación en `notes`.
+
+| Hoja | Resultado | Método |
+| --- | --- | --- |
+| SC-003 | **40/40 (100 %)** | A ciegas: cada estado se decidió con las líneas de la instantánea y la rúbrica, sin ver el de URLkit. En las CSP se analizó la directiva `script-src` completa |
+| SC-004 | **40/40 (100 %)** | Confirmación: título y descripción se compararon completos con la etiqueta de origen, decodificando entidades; las ausencias de imagen se buscaron en todo el documento |
+
+Casos que merecían atención y salieron bien:
+
+- **eff.org, `x-frame-options: SAMEORIGIN, SAMEORIGIN`**: vale como `SAMEORIGIN`. Es el desacuerdo
+  que motivó la corrección del 2026-11-12, y el estado actual de URLkit coincide.
+- **stackoverflow.com y open.spotify.com**: `'unsafe-eval'` en `script-src`. Un nonce neutraliza
+  `'unsafe-inline'`, no `'unsafe-eval'`, así que las dos están mal configuradas.
+- **vimeo.com, imagen**: la página escapa dos veces (`&amp;amp;`); decodificar una vez da `&amp;`,
+  como devuelve URLkit.
+- **The Guardian, BBC y Wikipedia**: no declaran imagen en ningún punto del documento, así que la
+  imagen vacía es correcta.
+
+**Límite**: es la tercera comprobación de la misma persona que hizo la segunda (Claude), no una
+revisión humana independiente. Refuerza el resultado, pero no cierra la condición de "muestra
+humana" de SC-003 y SC-004. Para cerrarla basta con que una persona rellene las hojas originales
+con la página local de revisión.
