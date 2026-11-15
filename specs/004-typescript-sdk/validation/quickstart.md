@@ -22,7 +22,8 @@ El registro de la API durante los escenarios no contiene la clave, URLs ni `ejem
 
 No se puede medir sin una persona que no conozca el SDK. Lo que sí se ha comprobado es que el
 ejemplo de "Primera llamada" del README funciona tal cual (escenarios 1 y 2): instalar, crear el
-cliente y llamar son tres líneas. Queda para una revisión con una persona, junto con la sesión de
-usabilidad pendiente (001/T103, 002/T098b).
+cliente y llamar son tres líneas. Queda para una revisión con una persona que programe: el
+protocolo y su ensayo están en [usability.md](./usability.md). No va en la sesión conjunta de la
+001 y la 002, que es con personas sin perfil técnico.
 
 La base de datos de desarrollo conserva la organización de prueba `SdkDemo`.

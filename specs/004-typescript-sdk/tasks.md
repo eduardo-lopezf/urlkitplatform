@@ -160,7 +160,7 @@ regenerar.
 - [X] T021 [P] Update `CLAUDE.md`, editing only the affected sentences: the v3 part 2 state, `packages/sdk/` exists (generated types, `pnpm --filter @urlkit/sdk generate` after a contract change), its consumer test lives in `apps/api/tests/sdk/`, and it is not published
 - [X] T022 Run `pnpm lint`, `pnpm typecheck`, `pnpm boundaries`, `pnpm test` (with the 003 services), `pnpm test:e2e`, `pnpm build`, `pnpm size` and `pnpm lhci`, and fix any failure. Confirm `size` and `lhci` do not change. Record the run in `specs/004-typescript-sdk/validation/quality-gates.md`
 - [X] T023 Run the [quickstart.md](./quickstart.md) scenarios 1–10 against a local API and record them in `specs/004-typescript-sdk/validation/quickstart.md`. Time scenario 1 from reading the README to the first correct call (SC-001: under 5 minutes)
-  - Done as: scenarios 1–10 pass (4, 8 and 10 by automated tests). SC-001 needs a person who does not know the SDK and is left for the pending usability session; the README example was checked to work as written.
+  - Done as: scenarios 1–10 pass (4, 8 and 10 by automated tests). SC-001 needs a person who does not know the SDK and is left for the pending usability session; the README example was checked to work as written. Protocol and rehearsal (2026-11-15) in `specs/004-typescript-sdk/validation/usability.md`: it needs a developer, not the non-technical participants of 001/T103 and 002/T098b.
 
 ---
 

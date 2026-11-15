@@ -16,6 +16,10 @@ npm install @urlkit/sdk
 
 Necesita Node 24 o posterior (o cualquier entorno de servidor con `fetch` estándar).
 
+Los ejemplos usan `import` y `await` en el nivel superior, así que tu código debe ser un módulo
+ES: añade `"type": "module"` a tu `package.json` (`npm init -y` lo crea como CommonJS) o usa la
+extensión `.mts` o `.mjs`.
+
 ## Primera llamada
 
 ```ts
@@ -32,6 +36,9 @@ console.log(rateLimit?.remaining);
 
 Sin `apiKey` el cliente usa la API de forma anónima, con los límites gratuitos. Con una clave de tu
 organización, usa los límites de su plan.
+
+Para usar otra instancia de la API, por ejemplo una local, indica su dirección con `/v1` incluido:
+`createClient({ apiKey, baseUrl: 'http://localhost:8787/v1' })`.
 
 | Opción    | Para qué                                                      |
 | --------- | ------------------------------------------------------------- |
