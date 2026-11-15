@@ -52,6 +52,14 @@ module.exports = {
       to: { path: `${SRC}packages/i18n/` },
     },
     {
+      name: 'sdk-is-standalone',
+      comment:
+        'packages/sdk is published on its own (004, research R8): it imports only its own files and Node built-ins.',
+      severity: 'error',
+      from: { path: `${SRC}packages/sdk/src/` },
+      to: { pathNot: `${SRC}packages/sdk/src/`, dependencyTypesNot: ['core'] },
+    },
+    {
       name: 'packages-never-import-apps',
       severity: 'error',
       from: { path: `${SRC}packages/` },

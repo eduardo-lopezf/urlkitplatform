@@ -233,7 +233,7 @@ despliegue o dos lenguajes:
 |---|---|---|
 | `services/probes/` | Sin etapa | La versión 2 se resolvió en Node (sección 11); solo se crea si una necesidad futura reabre esa sección |
 | Suites en `tests/` de la raíz | Sin etapa | En el MVP no hay suite que cruce despliegues; `tests/ssrf-vectors/` sí existe desde el MVP, porque son datos compartidos entre lenguajes |
-| `packages/sdk/` | v3 | La web no llama a la API para las herramientas locales; hasta que haya consumidores externos no hay a quién dar soporte. Cuando exista será **generado** desde `openapi.json`, con verificación en CI de que está al día: el Principio IX prohíbe mantener a mano una segunda definición de los tipos |
+| `packages/sdk/` | v3, segunda parte (existe) | Cliente TypeScript de la API. Sus tipos se **generan** desde `openapi.json` con `openapi-typescript`, y sus pruebas fallan si el fichero generado no coincide con el contrato o si falta el método de una herramienta: el Principio IX prohíbe mantener a mano una segunda definición de los tipos. No depende de ningún otro paquete del monorepo (regla `sdk-is-standalone`), porque se publica solo |
 
 ## 7. Catálogo de reglas: versionado y compatibilidad
 
@@ -473,3 +473,4 @@ lugar de confiar en los logs.
 | 1.3.0 | 2026-11-10 | Despliegue del MVP en un VPS autogestionado con Compose; proveedor gestionado con autoescalado y Valkey gestionado cuando el tráfico lo pida |
 | 1.4.0 | 2026-11-11 | Versión 2 en Node dentro de `apps/api`: condición de la sección 11 evaluada y frontera de Python cerrada; pila de la versión 2 sustituida; `services/probes/` sin etapa |
 | 1.5.0 | 2026-11-13 | Versión 3, primera parte (claves de API): PostgreSQL propiedad de la API Node, con `kysely` sobre `pg` y su migrador en lugar de SQLAlchemy y Alembic |
+| 1.6.0 | 2026-11-14 | Versión 3, segunda parte: `packages/sdk/` existe, con tipos generados por `openapi-typescript` y sin dependencias en tiempo de ejecución |

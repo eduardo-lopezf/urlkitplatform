@@ -8,6 +8,8 @@ export default tseslint.config(
     ignores: [
       '**/node_modules/**',
       '**/dist/**',
+      // Generated from the contract by packages/sdk/scripts/generate.ts (004, research R1).
+      'packages/sdk/src/generated/**',
       '**/.astro/**',
       '**/coverage/**',
       '**/playwright-report/**',

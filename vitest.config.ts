@@ -5,6 +5,7 @@ export default defineConfig({
     projects: [
       'packages/core',
       'packages/contracts',
+      'packages/sdk',
       'packages/rules',
       'packages/i18n',
       'apps/api',

@@ -17,3 +17,5 @@ CLAUDE.md
 docs/
 # Legal text: kept exactly as published at fsl.software.
 LICENSE.md
+# Generated from the contract by packages/sdk/scripts/generate.ts; compared verbatim by its test.
+packages/sdk/src/generated/

@@ -37,6 +37,7 @@ describe('package boundaries', () => {
       ['ui-knows-no-domain', 'packages/ui/src/bad.ts'],
       ['api-i18n-only-in-presentation', 'apps/api/src/routes/bad.ts'],
       ['packages-never-import-apps', 'packages/rules/src/bad.ts'],
+      ['sdk-is-standalone', 'packages/sdk/src/bad.ts'],
     ];
     for (const [rule, from] of expected)
       expect(found, `${rule} from ${from}`).toContainEqual(expect.objectContaining({ rule, from }));

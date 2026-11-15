@@ -76,6 +76,16 @@ primera persistencia del producto:
   arranca sin ella.
 - Los planes son datos versionados en `apps/api/src/quota/plans.json`, no tablas.
 
+La v3, segunda parte (`specs/004-typescript-sdk`), añade **`packages/sdk/`**, el cliente TypeScript
+de la API, implementado en local y **sin publicar** (publicarlo es decisión de la persona, y antes
+hay que decidir su licencia):
+
+- Sus tipos se generan desde `packages/contracts/openapi.json`: tras cambiar el contrato, ejecuta
+  `pnpm --filter @urlkit/sdk generate`. `src/generated/` no se edita a mano ni pasa por Prettier.
+- No importa ningún otro paquete del monorepo (regla `sdk-is-standalone` de `pnpm boundaries`).
+- Su prueba contra la API real está en `apps/api/tests/sdk/`, porque un paquete no puede importar
+  de una aplicación.
+
 Despliegue, lo que no se deduce del código:
 
 - `infrastructure/check-selfhosted.sh` comprueba el perfil `selfhosted` igual en local, en el VPS
@@ -225,7 +235,6 @@ la spec primero.
 - **`services/probes/` (Python)**: no entró en la v2, porque Node resolvió su alcance
   (`docs/arquitectura.md` §11). Solo se crea si una necesidad futura reabre esa sección. No hay
   código Python de producción.
-- **`packages/sdk/`**: v3, y será **generado** desde `openapi.json`, nunca escrito a mano.
 - **Suites en `tests/` de la raíz**: solo para lo que cruza dos despliegues o dos lenguajes. En el
   MVP, ese directorio contiene únicamente `ssrf-vectors/`, que son datos.
 ---
