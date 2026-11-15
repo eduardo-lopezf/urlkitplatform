@@ -62,17 +62,17 @@ const link = computed(() =>
   <div class="uk-stack">
     <UrlInput
       id="diff-a"
+      v-model="a"
       :paste-label="text('ui.input.paste')"
       :clear-label="text('ui.input.clear')"
-      v-model="a"
       :label="text('ui.diff.a')"
       autofocus
     />
     <UrlInput
       id="diff-b"
+      v-model="b"
       :paste-label="text('ui.input.paste')"
       :clear-label="text('ui.input.clear')"
-      v-model="b"
       :label="text('ui.diff.b')"
       :hint="text('ui.local')"
     />

@@ -1,8 +1,10 @@
 name: ci
 on: [push, pull_request]
+# Runners are pinned to the VPS's Ubuntu (26.04 LTS, infrastructure/README.md) instead of
+# ubuntu-latest, so CI does not change system on its own and checks what production runs.
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # Real Valkey and PostgreSQL so the integration tests (valkey.test.ts and the 003 database
     # tests) run instead of being skipped.
     services:
@@ -17,9 +19,9 @@ jobs:
           --health-cmd "pg_isready -U urlkit -d urlkit" --health-interval 5s --health-timeout 3s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with: { node-version: 24, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
@@ -39,13 +41,14 @@ jobs:
 
   # Second SSRF barrier (Principio V) on Linux Docker Engine, which T110 could only test on
   # Docker Desktop. It does not replace T111: the provider's own network is not tested here.
+  # On Arm, like the VPS (Hetzner Arm): the images are built and run for arm64, as in production.
   egress-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     # Job-wide: the selfhosted step runs `up` again, and the API must keep the same secret.
     env:
       QUOTA_SECRET: ci-only-${{ github.run_id }}-0123456789abcdef0123
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Start Valkey, API and egress-guard on Docker Engine
         run: docker compose --profile full up -d --build --wait redis api egress-guard
       - name: Egress rules are in place

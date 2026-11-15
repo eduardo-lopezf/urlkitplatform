@@ -95,8 +95,10 @@ Así se despliega el MVP (research R12): la web en Cloudflare Pages y la API en 
 
 ### 1. Servidor
 
-- Un VPS Linux (por ejemplo Hetzner Cloud en la UE) con Ubuntu LTS y **Docker Engine** del
-  repositorio oficial de Docker, no Docker Desktop ni el paquete snap.
+- Un VPS Linux (por ejemplo Hetzner Cloud en la UE, Arm) con **Ubuntu 26.04 LTS** y **Docker
+  Engine** del repositorio oficial de Docker, no Docker Desktop ni el paquete snap. Es la misma
+  versión en la que CI ejecuta sus trabajos (`.github/workflows/ci.yml`; `egress-linux`, además,
+  en Arm): si cambias la del VPS, cambia también la de CI.
 - Cortafuegos de entrada del proveedor: solo 80/tcp, 443/tcp y 443/udp (HTTP/3), y 22/tcp
   restringido a tu IP. Nada más: Valkey, la API y la monitorización ya escuchan solo en loopback.
 - Actualizaciones de seguridad automáticas del sistema (`unattended-upgrades`).
