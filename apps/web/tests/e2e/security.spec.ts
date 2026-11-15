@@ -67,7 +67,20 @@ test('groups findings by severity, links each to its tool and never gives a verd
     'href',
     /\/es\/tls#u=/,
   );
-  // What is not checked sits right below the findings, always.
+  // A one-line summary of what was not checked comes before the findings (T088a), and links to
+  // the full block, which sits right below the findings, always.
+  const summary = page.locator('.not-checked-summary');
+  await expect(summary).toContainText('la reputación del sitio y el contenido de la página');
+  const order = await page.evaluate(() => {
+    const s = document.querySelector('.not-checked-summary');
+    const f = document.querySelector('section[aria-labelledby="security-findings"]');
+    return !!s && !!f && !!(s.compareDocumentPosition(f) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(order).toBe(true);
+  await expect(summary.getByRole('link', { name: 'Ver detalles' })).toHaveAttribute(
+    'href',
+    '#security-not-checked',
+  );
   const notChecked = page.getByRole('heading', { name: 'Qué no se ha comprobado' });
   await expect(notChecked).toBeVisible();
   await expect(page.getByText('reputación', { exact: false }).first()).toBeVisible();

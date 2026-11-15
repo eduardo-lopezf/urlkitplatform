@@ -138,6 +138,14 @@ sitios reales aparecen muchos tiempos agotados.
   documento de 2525 px: después de nueve hallazgos, a más de dos pantallas. A 1024 × 768 empieza
   a 1262 px, también fuera de la primera pantalla. La pregunta 2 obliga a desplazarse; si muchos
   participantes no lo encuentran, el resultado medirá la posición de la sección, no su texto.
+  **Atendida el 2026-11-15 (T088a):** encima de los hallazgos hay ahora una línea de resumen
+  («No se ha comprobado: la reputación del sitio y el contenido de la página. Ver detalles»), con
+  un enlace al bloque completo, que sigue debajo de los hallazgos. Medido con una revisión
+  simulada de nueve hallazgos parecida a la del enlace 1: a 360 × 740, el resumen empieza a 627 px
+  y el hallazgo más grave a 756 px (antes, 708); a 1024 × 768, a 487 px y 592 px (antes, 568), los
+  dos en la primera pantalla. En el móvil el formulario ocupa casi toda la primera pantalla, así
+  que las dos preguntas siguen pidiendo desplazarse un poco; se mantiene el registro de si el
+  participante tuvo que hacerlo.
 - **Las partes incompletas pueden confundir.** Con un certificado inválido, redirecciones y
   cabeceras aparecen como «Incompleto» porque el servidor HTTP no acepta conectar sin un
   certificado válido. Es correcto, pero la palabra puede leerse como un fallo de la herramienta.

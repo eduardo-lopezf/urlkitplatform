@@ -62,6 +62,15 @@ const link = computed(() =>
   url.value.trim() ? shareLink(props.lang, 'security', { url: url.value.trim() }) : '',
 );
 
+/** "la reputación del sitio y el contenido de la página": what was not checked, in one line (T088a). */
+const notCheckedList = computed(() =>
+  new Intl.ListFormat(props.lang, { type: 'conjunction' }).format(
+    (result.value?.scope.notChecked ?? []).map((item) =>
+      text(`ui.security.notCheckedShort.${item}`),
+    ),
+  ),
+);
+
 /** Link to the tool that explains a finding: the input, or the destination for TLS and DNS. */
 function detail(tool: ToolId): string | null {
   const r = result.value;
@@ -116,6 +125,11 @@ function detail(tool: ToolId): string | null {
       <p v-if="result.finalUrl" class="final">
         <span class="uk-label">{{ text('ui.security.final') }}</span>
         <span class="mono url"><InertLink :href="result.finalUrl" :text="result.finalUrl" /></span>
+      </p>
+
+      <p class="not-checked-summary">
+        {{ text('ui.security.notCheckedSummary', { items: notCheckedList }) }}
+        <a href="#security-not-checked">{{ text('ui.security.notCheckedDetails') }}</a>
       </p>
 
       <section aria-labelledby="security-findings" class="uk-stack">
@@ -218,6 +232,9 @@ function detail(tool: ToolId): string | null {
 .detail {
   display: block;
   font-size: var(--text-sm);
+}
+.not-checked-summary {
+  margin: 0;
 }
 .not-checked p {
   margin: var(--space-2) 0 0;
