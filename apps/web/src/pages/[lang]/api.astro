@@ -59,7 +59,7 @@ const perWindow = ({ hour, day }: Windows) =>
       <tr>
         <th scope="col">{es ? 'Herramienta' : 'Tool'}</th>
         <th scope="col">{es ? 'Sin clave' : 'Without a key'}</th>
-        <th scope="col">{es ? 'Con clave (plan organization)' : 'With a key (organization plan)'}</th>
+        <th scope="col">{es ? 'Con clave' : 'With a key'}</th>
       </tr>
     </thead>
     <tbody>
@@ -77,8 +77,8 @@ const perWindow = ({ hour, day }: Windows) =>
   <p>
     {
       es
-        ? 'Cada herramienta de red tiene su propio límite: agotar uno no bloquea las demás. Cada respuesta trae las cabeceras RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset; las 429 traen además Retry-After.'
-        : 'Each network tool has its own limit: using one up does not block the others. Every response carries the RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset headers; 429 responses also carry Retry-After.'
+        ? 'Con clave, los límites son los del plan organization, el único que hay por ahora. Cada herramienta de red tiene su propio límite: agotar uno no bloquea las demás. Cada respuesta trae las cabeceras RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset; las 429 traen además Retry-After.'
+        : 'With a key, the limits are those of the organization plan, the only one for now. Each network tool has its own limit: using one up does not block the others. Every response carries the RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset headers; 429 responses also carry Retry-After.'
     }
   </p>
   <h2>{es ? 'Claves de API' : 'API keys'}</h2>
@@ -160,9 +160,12 @@ const perWindow = ({ hour, day }: Windows) =>
     width: 100%;
     border-collapse: collapse;
   }
+  /* Cells may break a word only when it does not fit: at 320 px, wider system fonts (Linux in CI)
+     made the table 25 px wider than the screen. */
   .limits th,
   .limits td {
-    padding: var(--space-1) var(--space-2);
+    padding: var(--space-1);
+    overflow-wrap: anywhere;
     border-bottom: 1px solid var(--color-border);
     text-align: left;
     vertical-align: top;
