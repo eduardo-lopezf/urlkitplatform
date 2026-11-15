@@ -49,6 +49,14 @@ plan; por último, que el operador pueda revocar claves y ver el consumo.
   organización durante 30 s (plan, research R3) para no consultar el almacenamiento en cada
   petición y cumplir SC-004; exigir la petición siguiente obligaría a consultarlo siempre.
 
+### Session 2026-11-15
+
+- Q: ¿Puede la página pública de la API documentar las claves, si la web «no cambia»? → A: Sí.
+  FR-014 y «Lo que no cambia» se refieren al comportamiento: la web no envía claves y sus
+  visitantes siguen siendo anónimos. La página de la API sí debe explicar la cabecera opcional
+  `Authorization: Bearer`, los límites de cada plan y los errores `auth.invalid` y
+  `auth.unavailable`, porque es la documentación de la API para quien integra (tarea T042a).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Usar la API con una clave emitida por el operador (Priority: P1)

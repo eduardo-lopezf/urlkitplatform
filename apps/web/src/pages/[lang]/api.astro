@@ -6,6 +6,7 @@
 import openapi from '@urlkit/contracts/openapi.json';
 import { LANGS, type Lang } from '@urlkit/i18n';
 import Base from '../../layouts/Base.astro';
+import { API_LIMITS, LIMIT_ROWS, type Windows } from '../../lib/api-limits.ts';
 
 export const getStaticPaths = () => LANGS.map((lang) => ({ params: { lang } }));
 const lang = Astro.params.lang as Lang;
@@ -14,6 +15,25 @@ const es = lang === 'es';
 type Op = { summary?: string; description?: string; operationId?: string; responses: Record<string, { description?: string }> };
 const paths = Object.entries(openapi.paths as Record<string, Record<string, Op>>);
 const server = (openapi.servers?.[0]?.url as string | undefined) ?? '';
+
+// Read from the contract, so the text follows it (003/T042a). /metrics/events is internal to the
+// web and /openapi.json is the contract itself: neither is a tool.
+type Param = { name?: string };
+const toolPaths = paths.filter(([path]) => path !== '/metrics/events' && path !== '/openapi.json');
+const toolCount = toolPaths.length;
+const langPaths = toolPaths
+  .filter(([, methods]) =>
+    Object.values(methods).some((op) =>
+      ((op as { parameters?: Param[] }).parameters ?? []).some((p) => p.name === 'lang'),
+    ),
+  )
+  .map(([path]) => path)
+  .join(', ');
+
+const perWindow = ({ hour, day }: Windows) =>
+  es
+    ? `${hour} por hora${day ? ` y ${day} al día` : ''}`
+    : `${hour} per hour${day ? ` and ${day} per day` : ''}`;
 ---
 
 <Base
@@ -26,17 +46,64 @@ const server = (openapi.servers?.[0]?.url as string | undefined) ?? '';
   <p class="lede">
     {
       es
-        ? 'Las cinco herramientas, sin cuenta y con límites de uso por visitante. Las respuestas usan códigos estables; añade ?lang=es o ?lang=en a /explain para recibir también el texto.'
-        : 'All five tools, no account, with per-visitor limits. Responses use stable codes; add ?lang=es or ?lang=en to /explain to also get the text.'
+        ? `Las ${toolCount} herramientas, sin cuenta y con límites de uso por visitante, o con una clave de API y los límites de su plan. Las respuestas usan códigos estables; en ${langPaths} añade ?lang=es o ?lang=en para recibir también el texto.`
+        : `All ${toolCount} tools, no account, with per-visitor limits, or with an API key and the limits of its plan. Responses use stable codes; on ${langPaths} add ?lang=es or ?lang=en to also get the text.`
     }
   </p>
   <p>
     {es ? 'Contrato completo:' : 'Full contract:'} <code>{server}/openapi.json</code>
   </p>
-  <ul class="limits">
-    <li>{es ? 'Redirect Inspector: 10 por hora y 50 al día.' : 'Redirect Inspector: 10 per hour and 50 per day.'}</li>
-    <li>{es ? 'Resto de herramientas: 600 por hora.' : 'Other tools: 600 per hour.'}</li>
-    <li>{es ? 'Cabeceras RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset en cada respuesta; Retry-After en las 429.' : 'RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset headers on every response; Retry-After on 429.'}</li>
+  <h2>{es ? 'Límites de uso' : 'Usage limits'}</h2>
+  <table class="limits">
+    <thead>
+      <tr>
+        <th scope="col">{es ? 'Herramienta' : 'Tool'}</th>
+        <th scope="col">{es ? 'Sin clave' : 'Without a key'}</th>
+        <th scope="col">{es ? 'Con clave (plan organization)' : 'With a key (organization plan)'}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        LIMIT_ROWS.map(({ bucket, tools }) => (
+          <tr>
+            <th scope="row">{tools}</th>
+            <td>{perWindow(API_LIMITS.anonymous[bucket])}</td>
+            <td>{perWindow(API_LIMITS.organization[bucket])}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <p>
+    {
+      es
+        ? 'Cada herramienta de red tiene su propio límite: agotar uno no bloquea las demás. Cada respuesta trae las cabeceras RateLimit-Limit, RateLimit-Remaining y RateLimit-Reset; las 429 traen además Retry-After.'
+        : 'Each network tool has its own limit: using one up does not block the others. Every response carries the RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset headers; 429 responses also carry Retry-After.'
+    }
+  </p>
+  <h2>{es ? 'Claves de API' : 'API keys'}</h2>
+  <p>
+    {
+      es
+        ? 'La clave es opcional: sin ella, la petición es anónima. Con una clave de organización, envíala en la cabecera Authorization: Bearer y la cuota pasa a ser la de su plan, compartida por todas las claves de la organización. Las claves son para integraciones de servidor a servidor: no las pongas en una página web, porque quedan a la vista, y la API no las acepta desde otros orígenes del navegador. Por ahora las emite el equipo de URLkit; no hay alta en la web.'
+        : 'The key is optional: without one, the request is anonymous. With an organization key, send it in the Authorization: Bearer header and the quota becomes that of its plan, shared by all the keys of the organization. Keys are for server-to-server integrations: do not put them in a web page, where anyone can read them, and the API does not accept them from other browser origins. For now the URLkit team issues them; there is no sign-up on the web.'
+    }
+  </p>
+  <ul>
+    <li>
+      <code>401 auth.invalid</code> — {
+        es
+          ? 'la cabecera Authorization está pero no vale: mal formada, inexistente, revocada o de una organización desactivada. La respuesta es la misma en todos los casos y cuenta para la cuota anónima.'
+          : 'the Authorization header is present but not valid: malformed, unknown, revoked or from a disabled organization. The response is the same in every case and counts towards the anonymous quota.'
+      }
+    </li>
+    <li>
+      <code>503 auth.unavailable</code> — {
+        es
+          ? 'no se pudo comprobar la clave en ese momento; reintenta pasados los segundos de Retry-After. Las peticiones sin clave no se ven afectadas.'
+          : 'the key could not be checked just then; retry after the seconds in Retry-After. Requests without a key are not affected.'
+      }
+    </li>
   </ul>
   {
     paths.map(([path, methods]) =>
@@ -64,9 +131,17 @@ const server = (openapi.servers?.[0]?.url as string | undefined) ?? '';
   }
   <h2>{es ? 'Ejemplo' : 'Example'}</h2>
   <pre
-    class="mono">curl -X POST {server}/clean \
+    class="mono"
+    tabindex="0">curl -X POST {server}/clean \
   -H 'content-type: application/json' \
   -d '&#123;"url":"https://ejemplo.com/?utm_source=x&amp;id=1"&#125;'</pre>
+  <p>{es ? 'Con clave:' : 'With a key:'}</p>
+  <pre
+    class="mono"
+    tabindex="0">curl -X POST {server}/inspect \
+  -H 'content-type: application/json' \
+  -H "authorization: Bearer $URLKIT_API_KEY" \
+  -d '&#123;"url":"https://ejemplo.com/"&#125;'</pre>
 </Base>
 
 <style>
@@ -80,6 +155,17 @@ const server = (openapi.servers?.[0]?.url as string | undefined) ?? '';
   .op p,
   .op ul {
     margin: 0;
+  }
+  .limits {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .limits th,
+  .limits td {
+    padding: var(--space-1) var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: top;
   }
   pre {
     overflow-x: auto;
