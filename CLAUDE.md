@@ -53,10 +53,11 @@ la misma imagen de la API y su comprobación en producción forma parte de T113.
 
 - T098b, la prueba de usabilidad de Security Analysis: protocolo, enlaces y ensayo en
   `validation/usability.md`; solo faltan los participantes, los mismos de T103.
-- La muestra humana de SC-003 (segunda mitad) y SC-004: las hojas están en `validation/` y hay una
-  página local para revisarlas en `apps/api/scripts/out/review-2026-11-12.html` (ignorada por git,
-  como las instantáneas). Se puntúan como dice `validation/reference-sets.md`.
 - La cifra de producción de T098a (tiempos de SC-001, ya medidos en local), que va en T113.
+
+La muestra de SC-003 (segunda mitad) y SC-004 se cerró el 2026-11-15 con la revisión de Claude
+(40/40 cada una), por decisión de la persona y sin revisión humana: `validation/reference-sets.md`,
+«Decisión del 2026-11-15», dice qué no cubre.
 
 SC-003 se precisó el 2026-11-12 (spec, Clarifications): el 100 % se mide sobre los sitios que
 responden de forma estable, con un máximo del 10 % de excluidos y su causa registrada, y

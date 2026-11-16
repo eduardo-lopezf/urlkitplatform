@@ -8,8 +8,8 @@ Ejecutado con `node apps/api/scripts/reference-check.ts`, contra la red real, de
 | --- | --- |
 | SC-001 tiempos de respuesta, desde local | 98–100 % por debajo del objetivo en las cinco herramientas (≥ 95 %); falta la medición en producción |
 | SC-003 HTTP Headers (estado y cabeceras frente a curl) | 48/48 (100 %) de los sitios estables, 2 de 50 excluidos (4 %, límite 10 %), ejecución del 2026-11-13, tras corregir un falso positivo de Redirect Inspector en google.com |
-| SC-003 evaluación de cabeceras frente a revisión manual | 412/412 (100 %) tras corregir los dos fallos encontrados (411/412 antes); revisión independiente, falta muestra humana |
-| SC-004 Metadata | 200/200 (100 %) sobre las instantáneas del 2026-11-12; revisión independiente, falta muestra humana |
+| SC-003 evaluación de cabeceras frente a revisión manual | 412/412 (100 %) tras corregir los dos fallos encontrados (411/412 antes); revisión independiente; muestra de 40 revisada por Claude, 40/40, aceptada en lugar de la humana (2026-11-15) |
+| SC-004 Metadata | 200/200 (100 %) sobre las instantáneas del 2026-11-12; revisión independiente; muestra de 40 revisada por Claude, 40/40, aceptada en lugar de la humana (2026-11-15) |
 | SC-005 TLS | 6/6 (100 %) |
 | SC-006 DNSSEC | 7/7 (100 %) |
 
@@ -169,7 +169,8 @@ contado como ausente, la última política válida de `Referrer-Policy`, y HSTS 
 Límites:
 
 - **No es una revisión humana**: es una segunda implementación más una revisión hecha por Claude.
-  Conviene que una persona revise una muestra antes de dar SC-003 por cumplido.
+  La muestra que debía revisar una persona la revisó también Claude, y la persona responsable lo
+  aceptó (ver «Decisión del 2026-11-15»).
 - Mide la rúbrica tal como está escrita. Si la rúbrica cambia (por ejemplo, el umbral de HSTS), el
   resultado deja de valer.
 
@@ -202,8 +203,8 @@ Cómo se obtuvieron los valores esperados:
 Límites de este resultado:
 
 - **No es una revisión humana.** Es una comparación con una segunda implementación más una revisión
-  hecha por Claude. Antes de dar SC-004 por cumplido conviene que una persona revise una muestra
-  (por ejemplo 10 páginas, 40 campos) sobre las mismas instantáneas.
+  hecha por Claude. La muestra de 10 páginas y 40 campos que debía revisar una persona la revisó
+  también Claude, y la persona responsable lo aceptó (ver «Decisión del 2026-11-15»).
 - **No cubre dos casos** que no aparecieron en páginas reales: varias `og:image` y `og:image`
   relativa. Los cubren las pruebas unitarias de `packages/core/tests/unit/metadata.test.ts`.
 - **Vale para las instantáneas de ese día.** Al repetir el script, las páginas vivas pueden haber
@@ -311,17 +312,14 @@ En SC-006, el primer dominio inexistente elegido (`…example.org`) respondía `
 en lugar de `NXDOMAIN`, como hacen a propósito algunos servidores autoritativos firmados ("black
 lies"). La herramienta informa lo que dice el DNS; el caso se cambió por un `.com` inexistente.
 
-Pendiente, fuera de este script:
-
-- SC-003, segunda mitad: que una persona revise una muestra.
-- SC-004: que una persona revise una muestra de los valores esperados (ver la sección de SC-004).
-
-Las dos hojas están preparadas (ver «Muestra humana de SC-003 y SC-004»).
+Fuera de este script, la muestra de SC-003 (segunda mitad) y SC-004 se cerró el 2026-11-15 con la
+revisión de Claude, por decisión de la persona responsable (ver «Decisión del 2026-11-15»).
 
 ## Muestra humana de SC-003 y SC-004
 
-**Estado**: preparada el 2026-11-12. Revisada por Claude el 2026-11-15 (ver «Revisión de Claude»);
-la revisión humana sigue pendiente. Las dos muestras salen
+**Estado**: preparada el 2026-11-12. Revisada por Claude el 2026-11-15 (ver «Revisión de Claude»)
+y **cerrada** ese día con esa revisión, sin revisión humana (ver «Decisión del 2026-11-15»). Las
+hojas originales siguen en blanco por si una persona quiere revisarlas. Las dos muestras salen
 de las instantáneas del 2026-11-12, que son las mismas que se evaluaron. Están ignoradas por git:
 quien revise necesita la copia local de `apps/api/scripts/out/`. La semilla es fija (`20261112`),
 así que la selección es reproducible.
@@ -405,6 +403,21 @@ Casos que merecían atención y salieron bien:
   imagen vacía es correcta.
 
 **Límite**: es la tercera comprobación de la misma persona que hizo la segunda (Claude), no una
-revisión humana independiente. Refuerza el resultado, pero no cierra la condición de "muestra
-humana" de SC-003 y SC-004. Para cerrarla basta con que una persona rellene las hojas originales
-con la página local de revisión.
+revisión humana independiente. Refuerza el resultado, pero por sí sola no cumple la condición de
+"muestra humana" de SC-003 y SC-004; se dio por cumplida con la decisión que sigue.
+
+### Decisión del 2026-11-15
+
+La persona responsable decidió dar SC-003 (segunda mitad) y SC-004 por cumplidos con la revisión de
+Claude, en lugar de esperar a una revisión humana. Puntuación con
+`node apps/api/scripts/reference-check.ts --score`, fusionando las hojas `*.claude.csv` con los
+valores de URLkit como dice «Cómo se puntúan»:
+
+- SC-003, evaluación de cabeceras: **40/40 (100 %)**, sin desacuerdos (objetivo ≥ 95 %).
+- SC-004, metadatos: **40/40 (100 %)**, sin desacuerdos (objetivo ≥ 95 %).
+
+Lo que esto **no** es: una comprobación independiente. La segunda implementación, la revisión de
+las diferencias y esta muestra salen todas de Claude, así que un error de interpretación de la
+rúbrica compartido entre ellas no se habría detectado. Si en producción aparece un desacuerdo en
+cabeceras o metadatos, se revisa antes esta decisión; las hojas originales siguen en blanco para
+que una persona pueda rellenarlas con la página local de revisión.
