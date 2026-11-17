@@ -262,8 +262,9 @@ desactivados devuelve el error enseguida; con `401` nunca reintenta.
   versiones de Node que admite el proyecto y entornos compatibles). El navegador no es un objetivo.
 - **Sin dependencias en tiempo de ejecución** salvo que el plan justifique alguna, para que
   instalarlo no traiga código ajeno a una integración.
-- **Nombre y licencia**: el nombre previsto es `@urlkit/sdk` y la licencia la del proyecto; ambos
-  se confirman en el plan y quedan preparados, pero la publicación queda fuera.
+- **Nombre y licencia**: el nombre previsto es `@urlkit/sdk`. La licencia iba a ser la del
+  proyecto; el 2026-11-17 la persona decidió **Apache-2.0** para el SDK, la excepción dentro del
+  repositorio (research R7). Ambos quedan preparados, pero la publicación queda fuera.
 - **Espera máxima por defecto** de los reintentos y número de intentos por defecto: se fijan en el
   plan, con valores conservadores.
 - **Validación en tiempo de ejecución**: el SDK confía en que la API cumple su contrato; no valida

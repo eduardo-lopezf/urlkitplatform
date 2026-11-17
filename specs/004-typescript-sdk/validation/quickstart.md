@@ -14,7 +14,7 @@ PostgreSQL; clave creada con la CLI de la 003 para una organización de prueba (
 | 7 | API inaccesible | ✅ | `UrlkitTransportError` `network` |
 | 8 | Contrato cambiado sin regenerar | ✅ (automático) | Ver `quality-gates.md`, T004 |
 | 9 | Reintentos | ✅ | `503` con `Retry-After: 1` → espera 1015 ms → `200`; ante `401`, una sola petición |
-| 10 | Paquete instalado fuera del monorepo | ✅ (automático) | `pack.test.ts`: instalado desde el `.tgz` en un directorio vacío, llamada con clave correcta; solo viajan `dist`, `README.md`, `LICENSE.md` y `package.json` |
+| 10 | Paquete instalado fuera del monorepo | ✅ (automático) | `pack.test.ts`: instalado desde el `.tgz` en un directorio vacío, llamada con clave correcta; solo viajan `dist`, `README.md`, `LICENSE` y `package.json` |
 
 El registro de la API durante los escenarios no contiene la clave, URLs ni `ejemplo.com`.
 

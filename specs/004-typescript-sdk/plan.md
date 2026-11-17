@@ -85,8 +85,8 @@ cliente.
   usa tipos generados más las ayudas.
 - Las fronteras ganan una regla (`sdk-is-standalone`), que endurece el grafo.
 
-**Decisión pendiente de la persona, que no bloquea**: la licencia del paquete antes de publicarlo
-(research R7). El plan usa la del proyecto, como dice la spec.
+**Licencia del paquete**: Apache-2.0, decidida por la persona el 2026-11-17 (research R7); el
+resto del repositorio sigue con `FSL-1.1-ALv2`.
 
 ## Project Structure
 
@@ -114,7 +114,7 @@ packages/sdk/                        + paquete nuevo @urlkit/sdk
 ├── tsconfig.build.json              + compilación a dist (ESM, declaraciones, rewriteRelativeImportExtensions)
 ├── vitest.config.ts                 +
 ├── README.md                        + instalación, cliente con y sin clave, errores, límites, reintentos, no navegador
-├── LICENSE                          + la del proyecto (R7)
+├── LICENSE                          + Apache-2.0 (R7)
 ├── scripts/generate.ts              + openapi-typescript sobre packages/contracts/openapi.json
 ├── src/
 │   ├── generated/openapi.ts         + GENERADO: paths, components, operations; no se edita

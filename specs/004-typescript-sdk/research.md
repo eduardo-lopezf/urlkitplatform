@@ -122,10 +122,17 @@ Cada decisión con su razón y sus alternativas. La spec es [spec.md](./spec.md)
     constante exportada declaran la versión del contrato con la que se generó (FR-042).
 - **Razón**: un único `package.json`, sin compilar para desarrollar, y un paquete publicado que
   funciona sin TypeScript en el proyecto de quien lo instala.
-- **Licencia**: el plan prevé la del proyecto, `FSL-1.1-ALv2`, como pide la spec. **Antes de
-  publicar conviene decidirlo**: una licencia de uso restringido en una biblioteca cliente puede
-  frenar a quien integra, y es habitual que los SDK vayan con una licencia permisiva (MIT o
-  Apache-2.0) aunque el servicio no. No bloquea esta feature, porque no se publica.
+- **Licencia**: **Apache-2.0**, decidida por la persona el 2026-11-17. El plan preveía la del
+  proyecto, `FSL-1.1-ALv2`, y la dejaba pendiente antes de publicar.
+  - **Razón**: quien instala el SDK es cliente, no competidor, y una licencia no OSI con cláusula
+    de uso competidor obliga a una revisión legal antes de aceptarla como dependencia, justo con
+    el primer cliente externo. A cambio, la restricción no protege casi nada: el SDK son tipos
+    generados y ayudas finas, y el contrato `openapi.json` ya es público, así que cualquiera
+    genera un cliente equivalente. Lo que URLkit protege (`packages/core`, el catálogo, la API)
+    sigue con FSL. Apache-2.0 es además la licencia en la que FSL se convierte a los dos años.
+  - **Alternativas**: MIT (igual de habitual, sin concesión explícita de patentes); mantener FSL
+    (coherente con el repositorio, pero frena la adopción).
+  - El fichero es `packages/sdk/LICENSE`, el texto canónico de apache.org sin cambios.
 - **Alternativas**: dos paquetes (fuente y compilado); compilar también en desarrollo (un paso más
   antes de cada prueba).
 

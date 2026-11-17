@@ -78,8 +78,8 @@ primera persistencia del producto:
 - Los planes son datos versionados en `apps/api/src/quota/plans.json`, no tablas.
 
 La v3, segunda parte (`specs/004-typescript-sdk`), añade **`packages/sdk/`**, el cliente TypeScript
-de la API, implementado en local y **sin publicar** (publicarlo es decisión de la persona, y antes
-hay que decidir su licencia):
+de la API, implementado en local y **sin publicar** (publicarlo es decisión de la persona). Su
+licencia es Apache-2.0, la única excepción a la del proyecto (004 research R7):
 
 - Sus tipos se generan desde `packages/contracts/openapi.json`: tras cambiar el contrato, ejecuta
   `pnpm --filter @urlkit/sdk generate`. `src/generated/` no se edita a mano ni pasa por Prettier.

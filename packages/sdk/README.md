@@ -114,6 +114,12 @@ const urlkit = createClient({ apiKey, retries: { maxAttempts: 3, maxWaitSeconds:
 El contrato está publicado en `https://api.urlkit.example/v1/openapi.json`: cualquier generador de
 clientes OpenAPI produce un cliente para tu lenguaje.
 
+## Licencia
+
+[Apache License 2.0](./LICENSE). Copyright 2026 Eduardo. El resto de URLkit usa otra licencia
+(`FSL-1.1-ALv2`); esta biblioteca cliente es la excepción, para que puedas usarla en cualquier
+proyecto sin revisarla aparte.
+
 ## Privacidad
 
 El SDK no hace ninguna petición que no le pidas: sin telemetría, sin comprobaciones de versión, sin

@@ -81,6 +81,6 @@ console.log(JSON.stringify({ output: res.data.output, remaining: res.rateLimit.r
     ]);
     // Only the compiled package travels: no TypeScript sources, tests or generator.
     const installed = readdirSync(join(project, 'node_modules', '@urlkit', 'sdk'));
-    expect(installed.sort()).toEqual(['LICENSE.md', 'README.md', 'dist', 'package.json']);
+    expect(installed.sort()).toEqual(['LICENSE', 'README.md', 'dist', 'package.json']);
   });
 });

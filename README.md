@@ -102,6 +102,9 @@ Guía de contribución y puertas de calidad: [CONTRIBUTING.md](CONTRIBUTING.md).
 - No es una licencia de código abierto según la OSI: el código es público, pero con esa
   restricción temporal.
 
+El cliente TypeScript `packages/sdk/` es la excepción: va con [Apache 2.0](packages/sdk/LICENSE),
+para que quien integra URLkit pueda usarlo en cualquier proyecto.
+
 El catálogo de reglas es propio. Las listas públicas de parámetros de seguimiento (ClearURLs,
 AdGuard) se usan solo como referencia de contraste, y cualquier dato importado requiere revisión
 de licencia previa. Los vectores de Web Platform Tests se usan bajo licencia BSD-3, indicada junto
