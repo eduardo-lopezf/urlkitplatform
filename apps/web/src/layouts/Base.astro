@@ -83,6 +83,13 @@ const otherHref = `/${other}/${page ? `${page}` : ''}`;
           if (location.hash) link.hash = location.hash;
         });
       }
+      // A shared link opened in the same tab changes only the fragment, so the browser does not
+      // load the page again and the tool kept showing the previous input (pre-test 2026-11-17).
+      // In-page anchors (#main, #security-not-checked) point at an element and are left alone.
+      addEventListener('hashchange', () => {
+        const id = decodeURIComponent(location.hash.slice(1));
+        if (id && !document.getElementById(id)) location.reload();
+      });
     </script>
   </body>
 </html>

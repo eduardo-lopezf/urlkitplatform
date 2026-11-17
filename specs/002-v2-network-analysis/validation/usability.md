@@ -64,6 +64,10 @@ Una sola sesión de unos 30 minutos por participante:
 El orden va de lo sencillo a lo complejo: Explain URL no hace peticiones y su resultado aparece al
 instante.
 
+El guion palabra por palabra, la preparación de la víspera (con la API propia de la sesión, que se
+reinicia entre participantes por la cuota) y la hoja de resultados están en
+[`session-day.md`](./session-day.md).
+
 ## Ensayo previo sin participantes (2026-11-12)
 
 Comprueba que el material funciona, no la usabilidad. Se hizo contra una API local (Node 26,
@@ -157,6 +161,66 @@ sitios reales aparecen muchos tiempos agotados.
   empatados, sin una respuesta única).
 - **Privacidad**: el registro de la API local durante el ensayo (30 líneas) no contiene ninguna
   URL, dominio ni IP.
+
+## Simulación con Claude (2026-11-17), ensayo previo
+
+**Qué es y qué no es.** Un recorrido cognitivo hecho por Claude con diez personas ficticias, no
+una prueba con personas: Claude no carece de conocimientos técnicos y conoce las respuestas
+esperadas, porque escribió el protocolo. **No cuenta para SC-007 ni cierra la tarea**; sirve para
+encontrar lo que confundiría a alguien y corregirlo antes de la sesión real. La tabla
+«Resultados» sigue vacía para las personas.
+
+**Cómo se hizo.** La interfaz real, compilada y servida en local con la API de la sesión
+(`session-day.md`), en el navegador integrado a 360 × 740 y a 1280 × 800, en los dos idiomas.
+Cada persona «ve» solo las capturas de lo que hay en pantalla y se desplaza solo si su perfil lo
+haría. Cada respuesta se decidió con el texto visible en que se apoya, antes de compararla con la
+esperada, y se anota como fallo cuando la persona dudaría o se equivocaría, aunque Claude sepa la
+respuesta. El tiempo no se puede medir y no se registra.
+
+Las diez personas son las de la simulación de la 001
+(`specs/001-mvp-url-toolkit/validation/usability.md`, «Simulación con Claude»). Los 16 análisis
+(cuatro enlaces, dos idiomas, móvil y portátil) dieron el hallazgo alto esperado a la primera, sin
+repeticiones por TLS. Posiciones tras el análisis: a 360 × 740, el resumen «No se ha comprobado»
+empieza a 627 px en S1 y a 556 px en S2–S4, y los hallazgos a 691 px y 620 px; a 1280 × 800, a 487
+px y 527 px.
+
+| Part. | S1 P1/P2 | S2 P1/P2 | S3 P1/P2 | S4 P1/P2 | ¿Se desplazó? | Razonamiento |
+| --- | --- | --- | --- | --- | --- | --- |
+| A01 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | Un poco, en S1 | «Que no va cifrado»; la pregunta 2, con el resumen |
+| A02 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | La barra roja de «Gravedad alta» |
+| A03 | ✗/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | S1: en la primera pantalla ve «No se ha comprobado: la reputación del sitio…» y lo da como el problema más grave; el hallazgo alto queda justo debajo |
+| A04 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | No entiende «Redirect Inspector» ni «DNSSEC», pero no le hacen falta |
+| A05 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | Un poco, en S1 | Va directa a la barra roja |
+| A06 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | En S2–S4 lee «Redirects: Incomplete» y pregunta si la herramienta ha fallado |
+| A07 | ✗/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | S1: como A03. En S2–S4 el hallazgo alto asoma al pie de la primera pantalla |
+| A08 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | Repite «the certificate expired» sin saber qué es un certificado; vale según el criterio |
+| A09 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | Sí, en S1 | S3: «a problem with the certificate, self-signed», sin entender «vouches» |
+| A10 | ✓/✓ | ✓/✓ | ✓/✓ | ✓/✓ | No | El resaltado y el orden por gravedad |
+
+**Resultado simulado**: S1 8/10, por debajo del criterio (9 de 10); S2, S3 y S4 10/10. La pregunta
+2 la aciertan todos en todos los enlaces, gracias al resumen de T088a.
+
+Preguntas finales: lo confuso fue «Incompleto» (A04, A06), las frases largas (A09) y la cantidad
+de texto (A01). A la segunda, ocho dirían que no se fiarían solo por eso; A03 y A07, que
+«probablemente sí», justo las dos que no se desplazan: no llegan a leer «Esta revisión describe
+aspectos técnicos; no dice si puedes fiarte del sitio».
+
+Hallazgos y propuestas. **Aplicada el mismo día** la 1 (T088b); la 2 y la 3 siguen abiertas:
+
+1. **S1 en el móvil: el resumen ocupa el lugar donde se espera el problema principal.** En la
+   primera pantalla se ven «Destino final» y «No se ha comprobado…», y el hallazgo alto empieza
+   justo debajo del borde. En S2–S4 no pasa porque no hay «Destino final». En el navegador
+   integrado, el clic real desplazó la página 116 px y dejó el hallazgo a la vista; en un móvil real
+   no está garantizado, y por eso se mantiene el registro de si la persona se desplazó. Propuestas:
+   poner el hallazgo más grave antes del resumen, o llevar el foco a «Hallazgos» al terminar el
+   análisis. Es un cambio de la isla, sin tocar la API. **Aplicada**: al llegar la revisión, la
+   página se desplaza lo justo para que el grupo más grave quede entero a la vista, con el resumen
+   encima; si ya lo estaba, como en el portátil, no se mueve.
+2. **«Incompleto» se lee como un fallo de la herramienta**, como ya anotó el ensayo. Propuesta: que
+   el motivo («el certificado del destino no es válido») se lea como consecuencia del problema
+   encontrado, no como un error.
+3. **El aviso de que la revisión no dice si fiarse del sitio** solo lo leen quienes llegan al final.
+   Propuesta: valorar añadirlo a la línea de resumen de arriba.
 
 ## Resultados
 

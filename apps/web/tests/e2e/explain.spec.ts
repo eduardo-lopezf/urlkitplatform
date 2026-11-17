@@ -19,8 +19,26 @@ test('a homograph shows its Punycode and a notice', async ({ page }) => {
   await page.goto('/es/explain');
   await fill(page, 'URL', 'https://аррӏе.com/');
   await expect(page.locator('.site mark')).toHaveText('xn--80ak6aa92e.com');
-  await expect(page.locator('.site')).toContainText('Se ve como: аррӏе.com');
+  await expect(page.locator('.site')).toContainText('Imita a: аррӏе.com');
   await expect(page.locator('.signals')).toContainText('otro alfabeto');
+  // The part-by-part list agrees with the card: next to "El sitio real" it must not show the
+  // Unicode form, which reads as the site it imitates (simulated pre-test, 2026-11-17).
+  const parts = page.locator('.parts');
+  await expect(parts.locator('dt', { hasText: 'Dominio registrable' })).toContainText(
+    'xn--80ak6aa92e.com',
+  );
+  await expect(parts.locator('dt', { hasText: 'Host' })).toContainText('xn--80ak6aa92e.com');
+  await expect(parts).not.toContainText('аррӏе.com');
+});
+
+test('opening another shared link in the same tab shows that link', async ({ page }) => {
+  // Only the fragment changes, so the browser does not load the page again (pre-test 2026-11-17).
+  await page.goto(`/es/explain#u=${encodeURIComponent('https://paypal.com@ejemplo-malo.xyz/')}`);
+  await expect(page.locator('.site mark')).toHaveText('ejemplo-malo.xyz');
+  await page.evaluate(() => {
+    location.hash = `u=${encodeURIComponent('https://login.example.com.evil.top/')}`;
+  });
+  await expect(page.locator('.site mark')).toHaveText('evil.top');
 });
 
 test('a legitimate international domain keeps its Unicode form first', async ({ page }) => {
@@ -28,7 +46,7 @@ test('a legitimate international domain keeps its Unicode form first', async ({ 
   await fill(page, 'URL', 'https://www.münchen.de/');
   await expect(page.locator('.site mark')).toHaveText('münchen.de');
   await expect(page.locator('.site')).toContainText('www.xn--mnchen-3ya.de');
-  await expect(page.locator('.site')).not.toContainText('Se ve como');
+  await expect(page.locator('.site')).not.toContainText('Imita a');
 });
 
 test('switching language changes the text and keeps the URL', async ({ page }) => {

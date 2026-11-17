@@ -82,7 +82,10 @@ test('groups findings by severity, links each to its tool and never gives a verd
     '#security-not-checked',
   );
   const notChecked = page.getByRole('heading', { name: 'Qué no se ha comprobado' });
-  await expect(notChecked).toBeVisible();
+  // "Ver detalles" is an in-page link: following it keeps the result on screen.
+  await summary.getByRole('link', { name: 'Ver detalles' }).click();
+  await expect(notChecked).toBeInViewport();
+  await expect(headings.first()).toHaveText('Gravedad alta');
   await expect(page.getByText('reputación', { exact: false }).first()).toBeVisible();
   // The incomplete part is named with its reason.
   await expect(page.getByText('Los resolutores DNS no responden', { exact: false })).toBeVisible();
@@ -123,4 +126,26 @@ test('a shared #u= link never calls the API on its own', async ({ page }) => {
   await expect(page.getByLabel('URL')).toHaveValue(URL_IN);
   await page.waitForTimeout(500);
   expect(calls).toBe(0);
+});
+
+test('on a phone, the most serious finding is on screen when the review arrives', async ({
+  page,
+}) => {
+  // Pre-test of 2026-11-17: at 360 × 740 the summary and "Destino final" pushed the high finding
+  // below the fold, and people who do not scroll took the summary for the main problem.
+  await page.setViewportSize({ width: 360, height: 740 });
+  await page.route('**/v1/security', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: CORS,
+      body: JSON.stringify(REVIEW),
+    }),
+  );
+  await page.goto('/es/security');
+  await fill(page, 'URL', 'https://postman-echo.com/redirect-to?url=http://example.com/');
+  await page.getByRole('button', { name: 'Analizar' }).click();
+  const high = page.locator('.group[data-severity="high"]');
+  await expect(high).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('.not-checked-summary')).toBeInViewport({ ratio: 1 });
 });

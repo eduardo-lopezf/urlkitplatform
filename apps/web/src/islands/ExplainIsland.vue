@@ -48,6 +48,22 @@ const host = computed(() => {
   return { before: full.slice(0, full.length - domain.length), domain };
 });
 
+/**
+ * The value shown for a part. With a deceptive host, the host, its registrable domain and its
+ * subdomain are shown in ASCII, as on the card: next to "El sitio real", the Unicode form read as
+ * the site it imitates (simulated pre-test, 2026-11-17).
+ */
+function partValue(p: { component: string; value: string }): string {
+  const u = ok.value?.url;
+  if (!deceptive.value || !u) return p.value;
+  const registrable = u.registrableDomain;
+  if (p.component === 'host') return u.host.ascii;
+  if (p.component === 'registrable-domain') return registrable ?? p.value;
+  if (p.component === 'subdomain' && registrable && u.host.ascii.endsWith(`.${registrable}`))
+    return u.host.ascii.slice(0, -(registrable.length + 1));
+  return p.value;
+}
+
 const link = computed(() => (ok.value ? shareLink(props.lang, 'explain', { url: url.value }) : ''));
 const targets = computed(() =>
   ok.value ? sendTargets(props.lang, 'explain', ok.value.url.href) : [],
@@ -110,7 +126,7 @@ const targets = computed(() =>
           <template v-for="(p, i) in ok.parts" :key="i">
             <dt>
               {{ text(`ui.explain.component.${p.component}` as never) }}
-              <code>{{ p.value }}</code>
+              <code>{{ partValue(p) }}</code>
             </dt>
             <dd>{{ text(p.message) }}</dd>
           </template>

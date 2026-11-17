@@ -7,7 +7,9 @@ con personas.
 menos de 5 minutos desde la instalación, siguiendo solo la documentación del paquete.
 
 No forma parte de la sesión conjunta de la 001 y la 002 (`specs/002-v2-network-analysis/validation/usability.md`,
-«Sesión conjunta»): aquella pide personas sin perfil técnico, y esta, personas que programan.
+«Sesión conjunta»): aquella pide personas sin perfil técnico, y esta, personas que programan. Puede
+hacerse el mismo día; la hoja de resultados común está en
+[`session-day.md`](../../002-v2-network-analysis/validation/session-day.md).
 
 ## Protocolo
 

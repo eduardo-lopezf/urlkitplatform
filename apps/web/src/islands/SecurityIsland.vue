@@ -4,7 +4,7 @@
  * "Analizar". It lists findings under severity headings, each linked to the tool that explains
  * it, and always shows what was not checked. It never shows a score or a verdict (FR-064).
  */
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import type { ToolId } from '@urlkit/core';
 import ErrorMessage from '@urlkit/ui/components/ErrorMessage.vue';
 import InertLink from '@urlkit/ui/components/InertLink.vue';
@@ -41,6 +41,15 @@ async function run() {
   outcome.value = await callTool('security', { url: url.value.trim() });
   loading.value = false;
   track('security', outcome.value.kind === 'ok' ? 'success' : 'error');
+  if (outcome.value.kind === 'ok') {
+    // The most serious group must be on screen with the summary above it: on a phone they started
+    // below the fold, and people who do not scroll took the summary for the main problem
+    // (simulated pre-test, 2026-11-17). "nearest" does not move a page where it is already visible.
+    await nextTick();
+    document
+      .querySelector('#security-findings + .group, #security-findings ~ p')
+      ?.scrollIntoView({ block: 'nearest' });
+  }
 }
 
 const result = computed(() => (outcome.value?.kind === 'ok' ? outcome.value.value : null));
@@ -210,6 +219,8 @@ function detail(tool: ToolId): string | null {
 .group {
   padding-left: var(--space-3);
   border-left: 4px solid var(--color-border);
+  /* Room below it when run() scrolls it into view, so it is not cut at the screen's edge. */
+  scroll-margin-bottom: var(--space-4);
 }
 .group[data-severity='high'] {
   border-left-color: var(--color-danger);
