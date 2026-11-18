@@ -205,7 +205,7 @@ de texto (A01). A la segunda, ocho dirían que no se fiarían solo por eso; A03 
 «probablemente sí», justo las dos que no se desplazan: no llegan a leer «Esta revisión describe
 aspectos técnicos; no dice si puedes fiarte del sitio».
 
-Hallazgos y propuestas. **Aplicada el mismo día** la 1 (T088b); la 2 y la 3 siguen abiertas:
+Hallazgos y propuestas. **Aplicadas el mismo día** las tres (la 1 en T088b; la 2 y la 3 en T088c):
 
 1. **S1 en el móvil: el resumen ocupa el lugar donde se espera el problema principal.** En la
    primera pantalla se ven «Destino final» y «No se ha comprobado…», y el hallazgo alto empieza
@@ -218,9 +218,13 @@ Hallazgos y propuestas. **Aplicada el mismo día** la 1 (T088b); la 2 y la 3 sig
    encima; si ya lo estaba, como en el portátil, no se mueve.
 2. **«Incompleto» se lee como un fallo de la herramienta**, como ya anotó el ensayo. Propuesta: que
    el motivo («el certificado del destino no es válido») se lea como consecuencia del problema
-   encontrado, no como un error.
+   encontrado, no como un error. **Aplicada**: una parte detenida por el certificado dice «Sin
+   revisar: el certificado del destino no es válido.»; las demás partes incompletas siguen diciendo
+   «Incompleto» con su motivo.
 3. **El aviso de que la revisión no dice si fiarse del sitio** solo lo leen quienes llegan al final.
-   Propuesta: valorar añadirlo a la línea de resumen de arriba.
+   Propuesta: valorar añadirlo a la línea de resumen de arriba. **Aplicada**: el resumen empieza
+   por «Esta revisión no dice si puedes fiarte del sitio: no se ha comprobado…»; el aviso del final
+   se mantiene.
 
 ## Resultados
 

@@ -149,3 +149,67 @@ test('on a phone, the most serious finding is on screen when the review arrives'
   await expect(high).toBeInViewport({ ratio: 1 });
   await expect(page.locator('.not-checked-summary')).toBeInViewport({ ratio: 1 });
 });
+
+test('a part stopped by an invalid certificate reads as its consequence, not a failure', async ({
+  page,
+}) => {
+  // Pre-test of 2026-11-17: with an invalid certificate, "Incompleto" next to Redirecciones and
+  // Cabeceras read as a failure of the tool, not as a consequence of the problem it found.
+  const stopped = { state: 'incomplete', reason: { code: 'inspect.tls' } };
+  await page.route('**/v1/security', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: CORS,
+      body: JSON.stringify({
+        ...REVIEW,
+        finalUrl: undefined,
+        findings: [
+          {
+            code: 'tls.expired',
+            severity: 'high',
+            tool: 'tls',
+            params: { date: '2015-04-12' },
+          },
+        ],
+        parts: { ...REVIEW.parts, redirects: stopped, headers: stopped },
+      }),
+    }),
+  );
+  await page.goto('/es/security');
+  await fill(page, 'URL', 'https://expired.badssl.com/');
+  await page.getByRole('button', { name: 'Analizar' }).click();
+  const parts = page.locator('dl.parts dd');
+  await expect(parts.nth(1)).toHaveText('Sin revisar: el certificado del destino no es válido.');
+  await expect(parts.nth(2)).toHaveText('Sin revisar: el certificado del destino no es válido.');
+  // A part that stopped for another reason still says it is incomplete, with its reason.
+  await expect(parts.nth(4)).toContainText('Incompleto');
+  await expect(parts.nth(4)).toContainText('Los resolutores DNS no responden');
+  await expectAccessible(page);
+});
+
+test('the summary above the findings says the review is not a verdict on the site', async ({
+  page,
+}) => {
+  // Pre-test of 2026-11-17: the two people who do not scroll never read the note at the end.
+  await page.route('**/v1/security', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: CORS,
+      body: JSON.stringify(REVIEW),
+    }),
+  );
+  await page.goto('/es/security');
+  await fill(page, 'URL', URL_IN);
+  await page.getByRole('button', { name: 'Analizar' }).click();
+  await expect(page.locator('.not-checked-summary')).toContainText(
+    'Esta revisión no dice si puedes fiarte del sitio',
+  );
+  await page.goto('/en/security');
+  await fill(page, 'URL', URL_IN);
+  await page.getByRole('button', { name: 'Analyze' }).click();
+  await expect(page.locator('.not-checked-summary')).toContainText(
+    'This review does not say whether you can trust the site',
+  );
+});

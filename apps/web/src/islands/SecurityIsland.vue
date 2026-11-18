@@ -181,7 +181,15 @@ function detail(tool: ToolId): string | null {
         <dl class="parts">
           <template v-for="name in PARTS" :key="name">
             <dt>{{ text(`ui.security.part.${name}`) }}</dt>
-            <dd :data-state="result.parts[name].state">
+            <!-- Stopped by the certificate problem the review found: say so as its consequence,
+                 not as an incomplete check (pre-test of 2026-11-17, 002/T088c). -->
+            <dd
+              v-if="result.parts[name].reason?.code === 'inspect.tls'"
+              :data-state="result.parts[name].state"
+            >
+              {{ text('ui.security.state.stoppedByCertificate') }}
+            </dd>
+            <dd v-else :data-state="result.parts[name].state">
               {{ text(`ui.security.state.${result.parts[name].state}`) }}
               <span v-if="result.parts[name].reason" class="uk-muted reason">{{
                 text(result.parts[name].reason!)
